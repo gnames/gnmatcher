@@ -1,7 +1,7 @@
 ---
 
 # Path to keep working data and key-value stores
-WorkDir: /tmp/gnmatcher
+WorkDir: /opt/gnmatcher
 
 # Postgresql host for gnindex database
 PgHost: localhost

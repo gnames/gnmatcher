@@ -27,12 +27,12 @@ deps:
 	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@505cc35; \
 	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@ce690c5; \
 
-build:
+build: proto
 	cd gnmatcher; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
 
-release:
+release: proto
 	cd gnmatcher; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
@@ -45,6 +45,10 @@ release:
 	zip -9 /tmp/gnmatcher-$(VER)-win-64.zip gnmatcher.exe; \
 	$(GOCLEAN);
 
-install:
+install: proto
 	cd gnmatcher; \
 	$(FLAGS_SHARED) $(GOINSTALL);
+
+proto:
+	cd protob && \
+	protoc -I . ./protob.proto --go_out=plugins=grpc:.

@@ -22,9 +22,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/gnames/gnmatcher"
 	"github.com/spf13/cobra"
@@ -55,25 +58,20 @@ var rootCmd = &cobra.Command{
 	Use:   "gnmatcher",
 	Short: "Contains tools and algorithms to verify scientific names",
 	Run: func(cmd *cobra.Command, args []string) {
-		version, err := cmd.Flags().GetBool("version")
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		if version {
-			fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnmatcher.Version, gnmatcher.Build)
-			os.Exit(0)
-		}
+		versionFlag(cmd)
 
 		if len(args) == 0 {
-			_ = cmd.Help()
+			processStdin(cmd)
 			os.Exit(0)
 		}
+		data := getInput(cmd, args)
+		match(data)
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// Execute adds all child commands to the root command and sets flags
+// appropriately.  This is called by main.main(). It only needs to happen once
+// to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -88,7 +86,8 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gnmatcher.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "",
+		"config file (default is $HOME/.gnmatcher.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -155,4 +154,118 @@ func getOpts() []gnmatcher.Option {
 		opts = append(opts, gnmatcher.OptPgDB(cfg.PgDB))
 	}
 	return opts
+}
+
+func versionFlag(cmd *cobra.Command) {
+	version, err := cmd.Flags().GetBool("version")
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	if version {
+		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnmatcher.Version, gnmatcher.Build)
+		os.Exit(0)
+	}
+}
+
+func getInput(cmd *cobra.Command, args []string) string {
+	var data string
+	switch len(args) {
+	case 1:
+		data = args[0]
+	default:
+		_ = cmd.Help()
+		os.Exit(0)
+	}
+	return data
+}
+
+func match(data string) {
+	gnm := gnmatcher.NewGNmatcher(opts...)
+	err := gnm.CreateWorkDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	path := string(data)
+	if fileExists(path) {
+		f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+		matchFile(gnm, f)
+		f.Close()
+	} else {
+		matchString(gnm, data)
+	}
+}
+
+func processStdin(cmd *cobra.Command) {
+	if !checkStdin() {
+		_ = cmd.Help()
+		return
+	}
+	gnm := gnmatcher.NewGNmatcher(opts...)
+	matchFile(gnm, os.Stdin)
+}
+
+func checkStdin() bool {
+	stdInFile := os.Stdin
+	stat, err := stdInFile.Stat()
+	if err != nil {
+		log.Panic(err)
+	}
+	return (stat.Mode() & os.ModeCharDevice) == 0
+}
+
+func fileExists(path string) bool {
+	if fi, err := os.Stat(path); err == nil {
+		if fi.Mode().IsRegular() {
+			return true
+		}
+	}
+	return false
+}
+
+func matchFile(gnm gnmatcher.GNmatcher, f io.Reader) {
+	in := make(chan string)
+	out := make(chan gnmatcher.MatchResult)
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go gnm.MatchStream(in, out)
+	go processResults(gnm, out, &wg)
+	sc := bufio.NewScanner(f)
+	count := 0
+	for sc.Scan() {
+		count++
+		if count%50000 == 0 {
+			log.Printf("Matching %d-th line\n", count)
+		}
+		name := sc.Text()
+		in <- name
+	}
+	close(in)
+	wg.Wait()
+}
+
+func processResults(gnm gnmatcher.GNmatcher,
+	out <-chan gnmatcher.MatchResult, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for r := range out {
+		if r.Error != nil {
+			log.Println(r.Error)
+		}
+		fmt.Println(r.Output)
+	}
+}
+
+func matchString(gnm gnmatcher.GNmatcher, data string) {
+	res, err := gnm.MatchAndFormat(data)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	fmt.Println(res)
 }

@@ -1,15 +1,18 @@
 package gnmatcher
 
+import (
+	"path/filepath"
+
+	"github.com/gnames/gnmatcher/dbase"
+	"github.com/gnames/gnmatcher/sys"
+)
+
 // GNmatcher keeps most general configuration settings and high level
 // methods for scientific name matching.
 type GNmatcher struct {
 	WorkDir string
 	JobsNum int
-	PgHost  string
-	PgPort  int
-	PgUser  string
-	PgPass  string
-	PgDB    string
+	dbase.Dbase
 }
 
 // NewGNmatcher is a constructor for GNmatcher instance
@@ -17,16 +20,20 @@ func NewGNmatcher(opts ...Option) GNmatcher {
 	gnm := GNmatcher{
 		WorkDir: "/tmp/gnmatcher",
 		JobsNum: 4,
-		PgHost:  "0.0.0.0",
-		PgPort:  5432,
-		PgUser:  "postgres",
-		PgPass:  "",
-		PgDB:    "gnindex",
+		Dbase:   dbase.NewDbase(),
 	}
 	for _, opt := range opts {
 		opt(&gnm)
 	}
 	return gnm
+}
+
+func (gnm GNmatcher) FiltersDir() string {
+	return filepath.Join(gnm.WorkDir, "bloom")
+}
+
+func (gnm GNmatcher) CreateWorkDir() error {
+	return sys.MakeDir(gnm.FiltersDir())
 }
 
 // Option is a type of all options for GNmatcher.

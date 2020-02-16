@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package protob;
+
+message Void {}
+
+message Pong {
+  string value = 1;
+}
+
+message Version {
+  string version = 1;
+  string build = 2;
+}
+
+message Params {
+  string text = 1;
+  repeated int32 sources = 7;
+}
+
+message Output {
+  ResultData	best_result = 1;
+  repeated ResultData preferred_results = 2;
+  int32 data_sources_num = 3;
+  string data_source_quality = 4;
+  int32 retries = 5;
+  string error = 6;
+}
+
+message ResultData {
+  int32 data_source_id = 1;
+  string data_source_title = 2;
+  string rec_id = 3;
+  bool is_public_rec_id = 4;
+  string matched_name = 5;
+  string matched_canonical = 6;
+  string current_name = 7;
+  string current_canonical = 8;
+  string current_rec_id = 9;
+  bool synonym = 10;
+  string classification_path = 11;
+  string classification_rank = 12;
+  string classification_ids = 13;
+  int32 edit_distance = 14;
+  int32 stem_edit_distance = 15;
+  MatchType match_type = 16;
+  repeated Synonym synonyms = 17;
+}
+
+message Synonym {
+  string rec_id = 1;
+  bool currently_accepted = 2;
+  string name = 3;
+  string canonical = 4;
+}
+
+enum MatchType {
+  NONE = 0;
+  EXACT = 1;
+  FUZZY = 2;
+  PARTIAL_EXACT = 3;
+  PARTIAL_FUZZY = 4;
+}
+
+service GNFinder {
+  rpc Ping(Void) returns(Pong) {}
+  rpc Ver(Void) returns(Version) {}
+  rpc Verify(Params) returns(Output) {}
+}

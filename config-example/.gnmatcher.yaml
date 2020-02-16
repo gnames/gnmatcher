@@ -1,0 +1,19 @@
+---
+
+# Path to keep working data and key-value stores
+WorkDir: /tmp/gnmatcher
+
+# Postgresql host for gnindex database
+PgHost: localhost
+
+# Postgresql user
+PgUser: postgres
+
+# Postgresql password
+PgPass:
+
+# Postgresql database
+PgDB: gnindex
+
+# Number of jobs for parallel tasks
+JobsNum: 4

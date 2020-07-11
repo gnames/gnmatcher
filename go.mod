@@ -1,9 +1,11 @@
 module github.com/gnames/gnmatcher
 
-go 1.13
+go 1.14
 
 require (
+	github.com/Shugyousha/mafsa v0.2.0 // indirect
 	github.com/devopsfaith/bloomfilter v0.0.0-20190317200532-4687d0b9aa2a
+	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/golang/protobuf v1.3.2
 	github.com/jinzhu/gorm v1.9.12
 	github.com/mitchellh/go-homedir v1.0.0

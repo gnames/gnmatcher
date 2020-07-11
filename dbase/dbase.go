@@ -24,7 +24,7 @@ func NewDbase() Dbase {
 		PgPort: 5432,
 		PgUser: "postgres",
 		PgPass: "",
-		PgDB:   "gnindex",
+		PgDB:   "gnames",
 	}
 	return dbase
 }

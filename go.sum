@@ -16,6 +16,8 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/sarama v1.20.1/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
+github.com/Shugyousha/mafsa v0.2.0 h1:6HY6Me41PPIOIi5fPp8ZmNHoS9WaqoQMweqP2GrHOH0=
+github.com/Shugyousha/mafsa v0.2.0/go.mod h1:h6m5+MtPR+uLmA+cytwLTiBC/5/9S1mOojyFe3wk5S0=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYUyUczH0OGQWaF5ceTx0UBShxjsH6f8oGKYe2c=
@@ -36,6 +38,8 @@ github.com/denisenkom/go-mssqldb v0.0.0-20191124224453-732737034ffd/go.mod h1:xb
 github.com/devopsfaith/bloomfilter v0.0.0-20190317200532-4687d0b9aa2a h1:qkMmhLugQNFqVCX2dciZUOPShzadLJ+ntHKZsCptY3Q=
 github.com/devopsfaith/bloomfilter v0.0.0-20190317200532-4687d0b9aa2a/go.mod h1:tbSDll/pfEfe0SF8GkyT1z3jYyAtXw+wDFSQy7172gk=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
+github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8 h1:ZHXmu38XBR16nVGtbMr39LBLtLpyat9KxM/17jp+MSE=
+github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8/go.mod h1:XKAbRrNT11mKMvr8sixVFkHyaFbkh7ag+086d9pNEFg=
 github.com/eapache/go-resiliency v1.1.0/go.mod h1:kFI+JgMyC7bLPUVY133qvEBtVayf5mFgVsvEsIPBvNs=
 github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21/go.mod h1:+020luEh2TKB4/GOp8oxxtq0Daoen/Cii55CzbTV6DU=
 github.com/eapache/queue v1.1.0/go.mod h1:6eCeP0CKFpHLu8blIFXhExK/dRa7WDZfr6jVFPTqq+I=

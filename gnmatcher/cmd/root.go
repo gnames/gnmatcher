@@ -25,16 +25,38 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/gnames/gnmatcher"
+	"github.com/gnames/gnmatcher/sys"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
+
+const configText = `# Path to keep working data and key-value stores
+WorkDir: /tmp/gnmatcher
+
+# Postgresql host for gnames database
+PgHost: localhost
+
+# Postgresql user
+PgUser: postgres
+
+# Postgresql password
+PgPass:
+
+# Postgresql database
+PgDB: gnames
+
+# Number of jobs for parallel tasks
+JobsNum: 4
+`
 
 var (
 	cfgFile string
@@ -74,8 +96,7 @@ var rootCmd = &cobra.Command{
 // to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
@@ -96,20 +117,23 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	var home string
+	var err error
+	configFile := "gnmatcher"
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Find home directory.
-		home, err := homedir.Dir()
+		home, err = homedir.Dir()
+		home = filepath.Join(home, ".config")
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		// Search config in home directory with name ".gnmatcher" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".gnmatcher")
+		viper.SetConfigName(configFile)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -118,7 +142,9 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		log.Println("Using config file:", viper.ConfigFileUsed())
 	} else {
-		fmt.Println("Config file $HOME/.gnidump.yaml not found")
+		configPath := filepath.Join(home, fmt.Sprintf("%s.yaml", configFile))
+		fmt.Println("Creating config file:", configPath)
+		createConfig(configPath, configFile)
 	}
 	getOpts()
 }
@@ -159,8 +185,7 @@ func getOpts() []gnmatcher.Option {
 func versionFlag(cmd *cobra.Command) {
 	version, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 	if version {
 		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnmatcher.Version, gnmatcher.Build)
@@ -181,8 +206,7 @@ func getInput(cmd *cobra.Command, args []string) string {
 }
 
 func match(data string) {
-	gnm := gnmatcher.NewGNmatcher(opts...)
-	err := gnm.CreateWorkDir()
+	gnm, err := gnmatcher.NewGNmatcher(opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -192,7 +216,6 @@ func match(data string) {
 		f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
 		if err != nil {
 			log.Fatal(err)
-			os.Exit(1)
 		}
 		matchFile(gnm, f)
 		f.Close()
@@ -206,7 +229,10 @@ func processStdin(cmd *cobra.Command) {
 		_ = cmd.Help()
 		return
 	}
-	gnm := gnmatcher.NewGNmatcher(opts...)
+	gnm, err := gnmatcher.NewGNmatcher(opts...)
+	if err != nil {
+		log.Fatal(err)
+	}
 	matchFile(gnm, os.Stdin)
 }
 
@@ -214,7 +240,7 @@ func checkStdin() bool {
 	stdInFile := os.Stdin
 	stat, err := stdInFile.Stat()
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 	return (stat.Mode() & os.ModeCharDevice) == 0
 }
@@ -265,7 +291,18 @@ func matchString(gnm gnmatcher.GNmatcher, data string) {
 	res, err := gnm.MatchAndFormat(data)
 	if err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
 	fmt.Println(res)
+}
+
+func createConfig(path string, file string) {
+	err := sys.MakeDir(filepath.Dir(path))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile(path, []byte(configText), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -126,19 +126,19 @@ func createFilters(path string, d dbase.Dbase) error {
 	log.Println("Importing lookup data from remote database. " +
 		"It will take a while.")
 	db := d.NewDB()
-	log.Println("Importing lookup data1...")
+	log.Println("Importing lookup data part 1...")
 	cFilter, err := createCanonicalFilter(db)
 	if err != nil {
 		return err
 	}
-	log.Println("Lookup data1 are imported")
+	log.Println("Lookup data part 1 is imported")
 
-	log.Println("Importing lookup data2...")
+	log.Println("Importing lookup data part 2...")
 	cfFilter, err := createCanonicalFullFilter(db)
 	if err != nil {
 		return err
 	}
-	log.Println("Lookup data2 is imported")
+	log.Println("Lookup data part 2 is imported")
 	filters.Canonical = cFilter
 	filters.CanonicalFull = cfFilter
 	saveFilters(path, filters)

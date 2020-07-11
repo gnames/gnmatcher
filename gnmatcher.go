@@ -1,9 +1,13 @@
 package gnmatcher
 
 import (
+	"log"
 	"path/filepath"
 
+	"github.com/dvirsky/levenshtein"
+	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/dbase"
+	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/sys"
 )
 
@@ -13,10 +17,12 @@ type GNmatcher struct {
 	WorkDir string
 	JobsNum int
 	dbase.Dbase
+	Filters *bloom.Filters
+	Trie    *levenshtein.MinTree
 }
 
 // NewGNmatcher is a constructor for GNmatcher instance
-func NewGNmatcher(opts ...Option) GNmatcher {
+func NewGNmatcher(opts ...Option) (GNmatcher, error) {
 	gnm := GNmatcher{
 		WorkDir: "/tmp/gnmatcher",
 		JobsNum: 4,
@@ -25,15 +31,40 @@ func NewGNmatcher(opts ...Option) GNmatcher {
 	for _, opt := range opts {
 		opt(&gnm)
 	}
-	return gnm
+	err := gnm.CreateWorkDirs()
+	if err != nil {
+		return gnm, err
+	}
+
+	log.Println("Initializing bloom filters...")
+	filters, err := bloom.GetFilters(gnm.FiltersDir(), gnm.Dbase)
+	if err != nil {
+		return gnm, err
+	}
+	gnm.Filters = filters
+	log.Println("Initializing levenshtein trie...")
+	trie, err := fuzzy.GetTrie(gnm.TrieDir(), gnm.Dbase)
+	if err != nil {
+		return gnm, err
+	}
+	gnm.Trie = trie
+	return gnm, nil
+}
+
+func (gnm GNmatcher) TrieDir() string {
+	return filepath.Join(gnm.WorkDir, "levenshein")
 }
 
 func (gnm GNmatcher) FiltersDir() string {
 	return filepath.Join(gnm.WorkDir, "bloom")
 }
 
-func (gnm GNmatcher) CreateWorkDir() error {
-	return sys.MakeDir(gnm.FiltersDir())
+func (gnm GNmatcher) CreateWorkDirs() error {
+	err := sys.MakeDir(gnm.FiltersDir())
+	if err != nil {
+		return err
+	}
+	return sys.MakeDir(gnm.TrieDir())
 }
 
 // Option is a type of all options for GNmatcher.
@@ -53,35 +84,35 @@ func OptJobsNum(i int) Option {
 	}
 }
 
-// OptPgHost sets the host of gnindex database
+// OptPgHost sets the host of gnames database
 func OptPgHost(h string) Option {
 	return func(gnm *GNmatcher) {
 		gnm.PgHost = h
 	}
 }
 
-// OptPgUser sets the user of gnindex database
+// OptPgUser sets the user of gnnames database
 func OptPgUser(u string) Option {
 	return func(gnm *GNmatcher) {
 		gnm.PgUser = u
 	}
 }
 
-// OptPgPass sets the password to access gnindex database
+// OptPgPass sets the password to access gnnames database
 func OptPgPass(p string) Option {
 	return func(gnm *GNmatcher) {
 		gnm.PgPass = p
 	}
 }
 
-// OptPgPort sets the port for gnindex database
+// OptPgPort sets the port for gnames database
 func OptPgPort(p int) Option {
 	return func(gnm *GNmatcher) {
 		gnm.PgPort = p
 	}
 }
 
-// OptPgDB sets the name of gnindex database
+// OptPgDB sets the name of gnames database
 func OptPgDB(n string) Option {
 	return func(gnm *GNmatcher) {
 		gnm.PgDB = n

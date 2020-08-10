@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+
+  app:
+    env_file: ./.env
+    build:
+      context: .
+    depends_on:
+      - nats
+
+  nats:
+    image: nats:2
+    ports:
+      - "0.0.0.0:4222:4222"

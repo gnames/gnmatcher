@@ -22,17 +22,17 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
+	"runtime"
 
 	"github.com/gnames/gnmatcher"
 	"github.com/gnames/gnmatcher/sys"
+	"github.com/nats-io/nats.go"
+
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -40,7 +40,10 @@ import (
 )
 
 const configText = `# Path to keep working data and key-value stores
-WorkDir: /tmp/gnmatcher
+WorkDir: /var/gnmatcher
+
+# URI to NATS, a messaging system server
+NatsURI: nats:localhost:4222
 
 # Postgresql host for gnames database
 PgHost: localhost
@@ -59,14 +62,14 @@ JobsNum: 4
 `
 
 var (
-	cfgFile string
-	opts    []gnmatcher.Option
+	opts []gnmatcher.Option
 )
 
 // config purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type config struct {
 	WorkDir string
+	NatsURI string
 	PgHost  string
 	PgPort  int
 	PgUser  string
@@ -80,14 +83,10 @@ var rootCmd = &cobra.Command{
 	Use:   "gnmatcher",
 	Short: "Contains tools and algorithms to verify scientific names",
 	Run: func(cmd *cobra.Command, args []string) {
-		versionFlag(cmd)
-
-		if len(args) == 0 {
-			processStdin(cmd)
+		if showVersionFlag(cmd) {
 			os.Exit(0)
 		}
-		data := getInput(cmd, args)
-		match(data)
+		processNamesMessages()
 	},
 }
 
@@ -103,13 +102,6 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "",
-		"config file (default is $HOME/.gnmatcher.yaml)")
-
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("version", "V", false, "Return version")
@@ -120,31 +112,37 @@ func initConfig() {
 	var home string
 	var err error
 	configFile := "gnmatcher"
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err = homedir.Dir()
-		home = filepath.Join(home, ".config")
-		if err != nil {
-			log.Fatal(err)
-		}
 
-		// Search config in home directory with name ".gnmatcher" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(configFile)
+	// Find home directory.
+	home, err = homedir.Dir()
+	home = filepath.Join(home, ".config")
+	if err != nil {
+		log.Fatal(err)
 	}
 
+	// Search config in home directory with name ".gnmatcher" (without extension).
+	viper.AddConfigPath(home)
+	viper.SetConfigName(configFile)
+
+	// Set environment variables to override
+	// config file settings
+	viper.BindEnv("WorkDir", "GNM_WORK_DIR")
+	viper.BindEnv("NatsURI", "GNM_NATS_URI")
+	viper.BindEnv("PgHost", "GNM_PG_HOST")
+	viper.BindEnv("PgPort", "GNM_PG_PORT")
+	viper.BindEnv("PgUser", "GNM_PG_USER")
+	viper.BindEnv("PgPass", "GNM_PG_PASS")
+	viper.BindEnv("PgDB", "GNM_PG_DB")
+	viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
+
 	viper.AutomaticEnv() // read in environment variables that match
+
+	configPath := filepath.Join(home, fmt.Sprintf("%s.yaml", configFile))
+	touchConfigFile(configPath, configFile)
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		log.Println("Using config file:", viper.ConfigFileUsed())
-	} else {
-		configPath := filepath.Join(home, fmt.Sprintf("%s.yaml", configFile))
-		fmt.Println("Creating config file:", configPath)
-		createConfig(configPath, configFile)
 	}
 	getOpts()
 }
@@ -160,6 +158,9 @@ func getOpts() []gnmatcher.Option {
 
 	if cfg.WorkDir != "" {
 		opts = append(opts, gnmatcher.OptWorkDir(cfg.WorkDir))
+	}
+	if cfg.NatsURI != "" {
+		opts = append(opts, gnmatcher.OptNatsURI(cfg.NatsURI))
 	}
 	if cfg.JobsNum != 0 {
 		opts = append(opts, gnmatcher.OptJobsNum(cfg.JobsNum))
@@ -182,119 +183,31 @@ func getOpts() []gnmatcher.Option {
 	return opts
 }
 
-func versionFlag(cmd *cobra.Command) {
-	version, err := cmd.Flags().GetBool("version")
+// showVersionFlag provides version and the build timestamp. If it returns
+// true, it means that version flag was given.
+func showVersionFlag(cmd *cobra.Command) bool {
+	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if version {
+
+	if hasVersionFlag {
 		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnmatcher.Version, gnmatcher.Build)
-		os.Exit(0)
 	}
+	return hasVersionFlag
 }
 
-func getInput(cmd *cobra.Command, args []string) string {
-	var data string
-	switch len(args) {
-	case 1:
-		data = args[0]
-	default:
-		_ = cmd.Help()
-		os.Exit(0)
-	}
-	return data
-}
-
-func match(data string) {
-	gnm, err := gnmatcher.NewGNmatcher(opts...)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	path := string(data)
-	if fileExists(path) {
-		f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
-		if err != nil {
-			log.Fatal(err)
-		}
-		matchFile(gnm, f)
-		f.Close()
-	} else {
-		matchString(gnm, data)
-	}
-}
-
-func processStdin(cmd *cobra.Command) {
-	if !checkStdin() {
-		_ = cmd.Help()
+// touchConfigFile checks if config file exists, and if not, it gets created.
+func touchConfigFile(configPath string, configFile string) {
+	if sys.FileExists(configPath) {
 		return
 	}
-	gnm, err := gnmatcher.NewGNmatcher(opts...)
-	if err != nil {
-		log.Fatal(err)
-	}
-	matchFile(gnm, os.Stdin)
+
+	log.Println("Creating config file:", configPath)
+	createConfig(configPath, configFile)
 }
 
-func checkStdin() bool {
-	stdInFile := os.Stdin
-	stat, err := stdInFile.Stat()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return (stat.Mode() & os.ModeCharDevice) == 0
-}
-
-func fileExists(path string) bool {
-	if fi, err := os.Stat(path); err == nil {
-		if fi.Mode().IsRegular() {
-			return true
-		}
-	}
-	return false
-}
-
-func matchFile(gnm gnmatcher.GNmatcher, f io.Reader) {
-	in := make(chan string)
-	out := make(chan gnmatcher.MatchResult)
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go gnm.MatchStream(in, out)
-	go processResults(gnm, out, &wg)
-	sc := bufio.NewScanner(f)
-	count := 0
-	for sc.Scan() {
-		count++
-		if count%50000 == 0 {
-			log.Printf("Matching %d-th line\n", count)
-		}
-		name := sc.Text()
-		in <- name
-	}
-	close(in)
-	wg.Wait()
-}
-
-func processResults(gnm gnmatcher.GNmatcher,
-	out <-chan gnmatcher.MatchResult, wg *sync.WaitGroup) {
-	defer wg.Done()
-	for r := range out {
-		if r.Error != nil {
-			log.Println(r.Error)
-		}
-		fmt.Println(r.Output)
-	}
-}
-
-func matchString(gnm gnmatcher.GNmatcher, data string) {
-	res, err := gnm.MatchAndFormat(data)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(res)
-}
-
+// createConfig creates config file.
 func createConfig(path string, file string) {
 	err := sys.MakeDir(filepath.Dir(path))
 	if err != nil {
@@ -305,4 +218,26 @@ func createConfig(path string, file string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// processNamesMessages listens on a channel of a NATS server and
+// verifies name-strings supplied to the channel. It pusblishes results to
+// another channel.
+func processNamesMessages() {
+	gnm, err := gnmatcher.NewGNmatcher(opts...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Connecting to NATS messaging service at '%s'", gnm.NatsURI)
+	conn, err := nats.Connect(gnm.NatsURI)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Connected to NATS messaging service at '%s'", gnm.NatsURI)
+
+	conn.Subscribe("GNmatcher.Input", func(m *nats.Msg) {
+		log.Printf("Got here\n")
+		log.Printf("%s\n", string(m.Data))
+	})
+	runtime.Goexit()
 }

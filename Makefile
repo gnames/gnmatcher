@@ -30,7 +30,9 @@ deps:
 build: proto
 	cd gnmatcher; \
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
+	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
+	cd ..; \
+	docker-compose build;
 
 release: proto
 	cd gnmatcher; \

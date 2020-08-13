@@ -24,18 +24,16 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/gnames/gnmatcher"
 	"github.com/gnames/gnmatcher/sys"
-	"github.com/nats-io/nats.go"
 
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -86,7 +84,6 @@ var rootCmd = &cobra.Command{
 		if showVersionFlag(cmd) {
 			os.Exit(0)
 		}
-		processNamesMessages()
 	},
 }
 
@@ -218,26 +215,4 @@ func createConfig(path string, file string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-// processNamesMessages listens on a channel of a NATS server and
-// verifies name-strings supplied to the channel. It pusblishes results to
-// another channel.
-func processNamesMessages() {
-	gnm, err := gnmatcher.NewGNmatcher(opts...)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Connecting to NATS messaging service at '%s'", gnm.NatsURI)
-	conn, err := nats.Connect(gnm.NatsURI)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Connected to NATS messaging service at '%s'", gnm.NatsURI)
-
-	conn.Subscribe("GNmatcher.Input", func(m *nats.Msg) {
-		log.Printf("Got here\n")
-		log.Printf("%s\n", string(m.Data))
-	})
-	runtime.Goexit()
 }

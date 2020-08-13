@@ -6,10 +6,16 @@ services:
     env_file: ./.env
     build:
       context: .
-    depends_on:
-      - nats
-
-  nats:
-    image: nats:2
     ports:
-      - "0.0.0.0:4222:4222"
+      - 0.0.0.0:8778:8778
+    volumes:
+      - gnmatcher:/var/opt/gnmatcher
+    command:
+      - grpc
+      - -p
+      - "8778"
+      - -d
+
+volumes:
+  gnmatcher:
+

@@ -25,27 +25,24 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 type MatchType int32
 
 const (
-	MatchType_NONE          MatchType = 0
-	MatchType_EXACT         MatchType = 1
-	MatchType_FUZZY         MatchType = 2
-	MatchType_PARTIAL_EXACT MatchType = 3
-	MatchType_PARTIAL_FUZZY MatchType = 4
+	MatchType_NONE           MatchType = 0
+	MatchType_CANONICAL      MatchType = 1
+	MatchType_CANONICAL_FULL MatchType = 2
+	MatchType_FUZZY          MatchType = 3
 )
 
 var MatchType_name = map[int32]string{
 	0: "NONE",
-	1: "EXACT",
-	2: "FUZZY",
-	3: "PARTIAL_EXACT",
-	4: "PARTIAL_FUZZY",
+	1: "CANONICAL",
+	2: "CANONICAL_FULL",
+	3: "FUZZY",
 }
 
 var MatchType_value = map[string]int32{
-	"NONE":          0,
-	"EXACT":         1,
-	"FUZZY":         2,
-	"PARTIAL_EXACT": 3,
-	"PARTIAL_FUZZY": 4,
+	"NONE":           0,
+	"CANONICAL":      1,
+	"CANONICAL_FULL": 2,
+	"FUZZY":          3,
 }
 
 func (x MatchType) String() string {
@@ -173,70 +170,96 @@ func (m *Version) GetBuild() string {
 	return ""
 }
 
-type Params struct {
-	Text                 string   `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	Sources              []int32  `protobuf:"varint,7,rep,packed,name=sources,proto3" json:"sources,omitempty"`
+type Name struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Params) Reset()         { *m = Params{} }
-func (m *Params) String() string { return proto.CompactTextString(m) }
-func (*Params) ProtoMessage()    {}
-func (*Params) Descriptor() ([]byte, []int) {
+func (m *Name) Reset()         { *m = Name{} }
+func (m *Name) String() string { return proto.CompactTextString(m) }
+func (*Name) ProtoMessage()    {}
+func (*Name) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e471450a6e94b5eb, []int{3}
 }
 
-func (m *Params) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Params.Unmarshal(m, b)
+func (m *Name) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Name.Unmarshal(m, b)
 }
-func (m *Params) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Params.Marshal(b, m, deterministic)
+func (m *Name) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Name.Marshal(b, m, deterministic)
 }
-func (m *Params) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Params.Merge(m, src)
+func (m *Name) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Name.Merge(m, src)
 }
-func (m *Params) XXX_Size() int {
-	return xxx_messageInfo_Params.Size(m)
+func (m *Name) XXX_Size() int {
+	return xxx_messageInfo_Name.Size(m)
 }
-func (m *Params) XXX_DiscardUnknown() {
-	xxx_messageInfo_Params.DiscardUnknown(m)
+func (m *Name) XXX_DiscardUnknown() {
+	xxx_messageInfo_Name.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Params proto.InternalMessageInfo
+var xxx_messageInfo_Name proto.InternalMessageInfo
 
-func (m *Params) GetText() string {
+func (m *Name) GetName() string {
 	if m != nil {
-		return m.Text
+		return m.Name
 	}
 	return ""
 }
 
-func (m *Params) GetSources() []int32 {
+type Names struct {
+	Names                []string `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Names) Reset()         { *m = Names{} }
+func (m *Names) String() string { return proto.CompactTextString(m) }
+func (*Names) ProtoMessage()    {}
+func (*Names) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e471450a6e94b5eb, []int{4}
+}
+
+func (m *Names) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Names.Unmarshal(m, b)
+}
+func (m *Names) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Names.Marshal(b, m, deterministic)
+}
+func (m *Names) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Names.Merge(m, src)
+}
+func (m *Names) XXX_Size() int {
+	return xxx_messageInfo_Names.Size(m)
+}
+func (m *Names) XXX_DiscardUnknown() {
+	xxx_messageInfo_Names.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Names proto.InternalMessageInfo
+
+func (m *Names) GetNames() []string {
 	if m != nil {
-		return m.Sources
+		return m.Names
 	}
 	return nil
 }
 
 type Output struct {
-	BestResult           *ResultData   `protobuf:"bytes,1,opt,name=best_result,json=bestResult,proto3" json:"best_result,omitempty"`
-	PreferredResults     []*ResultData `protobuf:"bytes,2,rep,name=preferred_results,json=preferredResults,proto3" json:"preferred_results,omitempty"`
-	DataSourcesNum       int32         `protobuf:"varint,3,opt,name=data_sources_num,json=dataSourcesNum,proto3" json:"data_sources_num,omitempty"`
-	DataSourceQuality    string        `protobuf:"bytes,4,opt,name=data_source_quality,json=dataSourceQuality,proto3" json:"data_source_quality,omitempty"`
-	Retries              int32         `protobuf:"varint,5,opt,name=retries,proto3" json:"retries,omitempty"`
-	Error                string        `protobuf:"bytes,6,opt,name=error,proto3" json:"error,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
+	Results              []*Result `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *Output) Reset()         { *m = Output{} }
 func (m *Output) String() string { return proto.CompactTextString(m) }
 func (*Output) ProtoMessage()    {}
 func (*Output) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e471450a6e94b5eb, []int{4}
+	return fileDescriptor_e471450a6e94b5eb, []int{5}
 }
 
 func (m *Output) XXX_Unmarshal(b []byte) error {
@@ -257,276 +280,137 @@ func (m *Output) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Output proto.InternalMessageInfo
 
-func (m *Output) GetBestResult() *ResultData {
+func (m *Output) GetResults() []*Result {
 	if m != nil {
-		return m.BestResult
+		return m.Results
 	}
 	return nil
 }
 
-func (m *Output) GetPreferredResults() []*ResultData {
-	if m != nil {
-		return m.PreferredResults
-	}
-	return nil
+type Result struct {
+	Id                   string       `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string       `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	MatchType            MatchType    `protobuf:"varint,3,opt,name=match_type,json=matchType,proto3,enum=protob.MatchType" json:"match_type,omitempty"`
+	MatchData            []*MatchItem `protobuf:"bytes,4,rep,name=match_data,json=matchData,proto3" json:"match_data,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
-func (m *Output) GetDataSourcesNum() int32 {
-	if m != nil {
-		return m.DataSourcesNum
-	}
-	return 0
-}
-
-func (m *Output) GetDataSourceQuality() string {
-	if m != nil {
-		return m.DataSourceQuality
-	}
-	return ""
-}
-
-func (m *Output) GetRetries() int32 {
-	if m != nil {
-		return m.Retries
-	}
-	return 0
-}
-
-func (m *Output) GetError() string {
-	if m != nil {
-		return m.Error
-	}
-	return ""
-}
-
-type ResultData struct {
-	DataSourceId         int32      `protobuf:"varint,1,opt,name=data_source_id,json=dataSourceId,proto3" json:"data_source_id,omitempty"`
-	DataSourceTitle      string     `protobuf:"bytes,2,opt,name=data_source_title,json=dataSourceTitle,proto3" json:"data_source_title,omitempty"`
-	RecId                string     `protobuf:"bytes,3,opt,name=rec_id,json=recId,proto3" json:"rec_id,omitempty"`
-	IsPublicRecId        bool       `protobuf:"varint,4,opt,name=is_public_rec_id,json=isPublicRecId,proto3" json:"is_public_rec_id,omitempty"`
-	MatchedName          string     `protobuf:"bytes,5,opt,name=matched_name,json=matchedName,proto3" json:"matched_name,omitempty"`
-	MatchedCanonical     string     `protobuf:"bytes,6,opt,name=matched_canonical,json=matchedCanonical,proto3" json:"matched_canonical,omitempty"`
-	CurrentName          string     `protobuf:"bytes,7,opt,name=current_name,json=currentName,proto3" json:"current_name,omitempty"`
-	CurrentCanonical     string     `protobuf:"bytes,8,opt,name=current_canonical,json=currentCanonical,proto3" json:"current_canonical,omitempty"`
-	CurrentRecId         string     `protobuf:"bytes,9,opt,name=current_rec_id,json=currentRecId,proto3" json:"current_rec_id,omitempty"`
-	Synonym              bool       `protobuf:"varint,10,opt,name=synonym,proto3" json:"synonym,omitempty"`
-	ClassificationPath   string     `protobuf:"bytes,11,opt,name=classification_path,json=classificationPath,proto3" json:"classification_path,omitempty"`
-	ClassificationRank   string     `protobuf:"bytes,12,opt,name=classification_rank,json=classificationRank,proto3" json:"classification_rank,omitempty"`
-	ClassificationIds    string     `protobuf:"bytes,13,opt,name=classification_ids,json=classificationIds,proto3" json:"classification_ids,omitempty"`
-	EditDistance         int32      `protobuf:"varint,14,opt,name=edit_distance,json=editDistance,proto3" json:"edit_distance,omitempty"`
-	StemEditDistance     int32      `protobuf:"varint,15,opt,name=stem_edit_distance,json=stemEditDistance,proto3" json:"stem_edit_distance,omitempty"`
-	MatchType            MatchType  `protobuf:"varint,16,opt,name=match_type,json=matchType,proto3,enum=protob.MatchType" json:"match_type,omitempty"`
-	Synonyms             []*Synonym `protobuf:"bytes,17,rep,name=synonyms,proto3" json:"synonyms,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
-}
-
-func (m *ResultData) Reset()         { *m = ResultData{} }
-func (m *ResultData) String() string { return proto.CompactTextString(m) }
-func (*ResultData) ProtoMessage()    {}
-func (*ResultData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e471450a6e94b5eb, []int{5}
-}
-
-func (m *ResultData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ResultData.Unmarshal(m, b)
-}
-func (m *ResultData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ResultData.Marshal(b, m, deterministic)
-}
-func (m *ResultData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResultData.Merge(m, src)
-}
-func (m *ResultData) XXX_Size() int {
-	return xxx_messageInfo_ResultData.Size(m)
-}
-func (m *ResultData) XXX_DiscardUnknown() {
-	xxx_messageInfo_ResultData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ResultData proto.InternalMessageInfo
-
-func (m *ResultData) GetDataSourceId() int32 {
-	if m != nil {
-		return m.DataSourceId
-	}
-	return 0
-}
-
-func (m *ResultData) GetDataSourceTitle() string {
-	if m != nil {
-		return m.DataSourceTitle
-	}
-	return ""
-}
-
-func (m *ResultData) GetRecId() string {
-	if m != nil {
-		return m.RecId
-	}
-	return ""
-}
-
-func (m *ResultData) GetIsPublicRecId() bool {
-	if m != nil {
-		return m.IsPublicRecId
-	}
-	return false
-}
-
-func (m *ResultData) GetMatchedName() string {
-	if m != nil {
-		return m.MatchedName
-	}
-	return ""
-}
-
-func (m *ResultData) GetMatchedCanonical() string {
-	if m != nil {
-		return m.MatchedCanonical
-	}
-	return ""
-}
-
-func (m *ResultData) GetCurrentName() string {
-	if m != nil {
-		return m.CurrentName
-	}
-	return ""
-}
-
-func (m *ResultData) GetCurrentCanonical() string {
-	if m != nil {
-		return m.CurrentCanonical
-	}
-	return ""
-}
-
-func (m *ResultData) GetCurrentRecId() string {
-	if m != nil {
-		return m.CurrentRecId
-	}
-	return ""
-}
-
-func (m *ResultData) GetSynonym() bool {
-	if m != nil {
-		return m.Synonym
-	}
-	return false
-}
-
-func (m *ResultData) GetClassificationPath() string {
-	if m != nil {
-		return m.ClassificationPath
-	}
-	return ""
-}
-
-func (m *ResultData) GetClassificationRank() string {
-	if m != nil {
-		return m.ClassificationRank
-	}
-	return ""
-}
-
-func (m *ResultData) GetClassificationIds() string {
-	if m != nil {
-		return m.ClassificationIds
-	}
-	return ""
-}
-
-func (m *ResultData) GetEditDistance() int32 {
-	if m != nil {
-		return m.EditDistance
-	}
-	return 0
-}
-
-func (m *ResultData) GetStemEditDistance() int32 {
-	if m != nil {
-		return m.StemEditDistance
-	}
-	return 0
-}
-
-func (m *ResultData) GetMatchType() MatchType {
-	if m != nil {
-		return m.MatchType
-	}
-	return MatchType_NONE
-}
-
-func (m *ResultData) GetSynonyms() []*Synonym {
-	if m != nil {
-		return m.Synonyms
-	}
-	return nil
-}
-
-type Synonym struct {
-	RecId                string   `protobuf:"bytes,1,opt,name=rec_id,json=recId,proto3" json:"rec_id,omitempty"`
-	CurrentlyAccepted    bool     `protobuf:"varint,2,opt,name=currently_accepted,json=currentlyAccepted,proto3" json:"currently_accepted,omitempty"`
-	Name                 string   `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Canonical            string   `protobuf:"bytes,4,opt,name=canonical,proto3" json:"canonical,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Synonym) Reset()         { *m = Synonym{} }
-func (m *Synonym) String() string { return proto.CompactTextString(m) }
-func (*Synonym) ProtoMessage()    {}
-func (*Synonym) Descriptor() ([]byte, []int) {
+func (m *Result) Reset()         { *m = Result{} }
+func (m *Result) String() string { return proto.CompactTextString(m) }
+func (*Result) ProtoMessage()    {}
+func (*Result) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e471450a6e94b5eb, []int{6}
 }
 
-func (m *Synonym) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Synonym.Unmarshal(m, b)
+func (m *Result) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Result.Unmarshal(m, b)
 }
-func (m *Synonym) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Synonym.Marshal(b, m, deterministic)
+func (m *Result) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Result.Marshal(b, m, deterministic)
 }
-func (m *Synonym) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Synonym.Merge(m, src)
+func (m *Result) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Result.Merge(m, src)
 }
-func (m *Synonym) XXX_Size() int {
-	return xxx_messageInfo_Synonym.Size(m)
+func (m *Result) XXX_Size() int {
+	return xxx_messageInfo_Result.Size(m)
 }
-func (m *Synonym) XXX_DiscardUnknown() {
-	xxx_messageInfo_Synonym.DiscardUnknown(m)
+func (m *Result) XXX_DiscardUnknown() {
+	xxx_messageInfo_Result.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Synonym proto.InternalMessageInfo
+var xxx_messageInfo_Result proto.InternalMessageInfo
 
-func (m *Synonym) GetRecId() string {
+func (m *Result) GetId() string {
 	if m != nil {
-		return m.RecId
+		return m.Id
 	}
 	return ""
 }
 
-func (m *Synonym) GetCurrentlyAccepted() bool {
-	if m != nil {
-		return m.CurrentlyAccepted
-	}
-	return false
-}
-
-func (m *Synonym) GetName() string {
+func (m *Result) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-func (m *Synonym) GetCanonical() string {
+func (m *Result) GetMatchType() MatchType {
+	if m != nil {
+		return m.MatchType
+	}
+	return MatchType_NONE
+}
+
+func (m *Result) GetMatchData() []*MatchItem {
+	if m != nil {
+		return m.MatchData
+	}
+	return nil
+}
+
+type MatchItem struct {
+	CanonicalId          string   `protobuf:"bytes,1,opt,name=canonical_id,json=canonicalId,proto3" json:"canonical_id,omitempty"`
+	Canonical            string   `protobuf:"bytes,2,opt,name=canonical,proto3" json:"canonical,omitempty"`
+	EditDistance         int32    `protobuf:"varint,3,opt,name=edit_distance,json=editDistance,proto3" json:"edit_distance,omitempty"`
+	EditDistanceStem     int32    `protobuf:"varint,4,opt,name=edit_distance_stem,json=editDistanceStem,proto3" json:"edit_distance_stem,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MatchItem) Reset()         { *m = MatchItem{} }
+func (m *MatchItem) String() string { return proto.CompactTextString(m) }
+func (*MatchItem) ProtoMessage()    {}
+func (*MatchItem) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e471450a6e94b5eb, []int{7}
+}
+
+func (m *MatchItem) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MatchItem.Unmarshal(m, b)
+}
+func (m *MatchItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MatchItem.Marshal(b, m, deterministic)
+}
+func (m *MatchItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MatchItem.Merge(m, src)
+}
+func (m *MatchItem) XXX_Size() int {
+	return xxx_messageInfo_MatchItem.Size(m)
+}
+func (m *MatchItem) XXX_DiscardUnknown() {
+	xxx_messageInfo_MatchItem.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MatchItem proto.InternalMessageInfo
+
+func (m *MatchItem) GetCanonicalId() string {
+	if m != nil {
+		return m.CanonicalId
+	}
+	return ""
+}
+
+func (m *MatchItem) GetCanonical() string {
 	if m != nil {
 		return m.Canonical
 	}
 	return ""
+}
+
+func (m *MatchItem) GetEditDistance() int32 {
+	if m != nil {
+		return m.EditDistance
+	}
+	return 0
+}
+
+func (m *MatchItem) GetEditDistanceStem() int32 {
+	if m != nil {
+		return m.EditDistanceStem
+	}
+	return 0
 }
 
 func init() {
@@ -534,64 +418,46 @@ func init() {
 	proto.RegisterType((*Void)(nil), "protob.Void")
 	proto.RegisterType((*Pong)(nil), "protob.Pong")
 	proto.RegisterType((*Version)(nil), "protob.Version")
-	proto.RegisterType((*Params)(nil), "protob.Params")
+	proto.RegisterType((*Name)(nil), "protob.Name")
+	proto.RegisterType((*Names)(nil), "protob.Names")
 	proto.RegisterType((*Output)(nil), "protob.Output")
-	proto.RegisterType((*ResultData)(nil), "protob.ResultData")
-	proto.RegisterType((*Synonym)(nil), "protob.Synonym")
+	proto.RegisterType((*Result)(nil), "protob.Result")
+	proto.RegisterType((*MatchItem)(nil), "protob.MatchItem")
 }
 
 func init() { proto.RegisterFile("protob.proto", fileDescriptor_e471450a6e94b5eb) }
 
 var fileDescriptor_e471450a6e94b5eb = []byte{
-	// 761 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x54, 0x5b, 0x6f, 0xe3, 0x44,
-	0x14, 0x8e, 0x73, 0xcf, 0xc9, 0xa5, 0xf6, 0x2c, 0x48, 0xa3, 0xd5, 0x3e, 0x04, 0x53, 0x41, 0xd4,
-	0x85, 0x82, 0xba, 0x12, 0x12, 0x4f, 0x28, 0xda, 0xed, 0xa2, 0x48, 0x90, 0xcd, 0xba, 0x21, 0x82,
-	0xbe, 0x58, 0x13, 0x7b, 0xda, 0x8e, 0xea, 0x1b, 0x33, 0xe3, 0x8a, 0x3c, 0x22, 0xf1, 0xc0, 0xdf,
-	0xe2, 0x9f, 0xa1, 0xb9, 0xd8, 0x4e, 0xab, 0xee, 0x53, 0xe6, 0xfb, 0xce, 0x77, 0xbe, 0xc9, 0x39,
-	0x3e, 0x73, 0x60, 0x52, 0xf0, 0x5c, 0xe6, 0xfb, 0x73, 0xfd, 0x83, 0xfa, 0x06, 0xf9, 0x7d, 0xe8,
-	0xee, 0x72, 0x16, 0xfb, 0xaf, 0xa0, 0xbb, 0xc9, 0xb3, 0x5b, 0xf4, 0x19, 0xf4, 0x1e, 0x48, 0x52,
-	0x52, 0xec, 0xcc, 0x9d, 0xc5, 0x28, 0x30, 0xc0, 0xff, 0x11, 0x06, 0x3b, 0xca, 0x05, 0xcb, 0x33,
-	0x84, 0x61, 0xf0, 0x60, 0x8e, 0x56, 0x52, 0x41, 0x95, 0xba, 0x2f, 0x59, 0x12, 0xe3, 0xb6, 0x49,
-	0xd5, 0xc0, 0xff, 0x01, 0xfa, 0x1b, 0xc2, 0x49, 0x2a, 0x10, 0x82, 0xae, 0xa4, 0x7f, 0x49, 0x9b,
-	0xa6, 0xcf, 0xca, 0x4d, 0xe4, 0x25, 0x8f, 0xa8, 0xc0, 0x83, 0x79, 0x67, 0xd1, 0x0b, 0x2a, 0xe8,
-	0xff, 0xdb, 0x86, 0xfe, 0x87, 0x52, 0x16, 0xa5, 0x44, 0x6f, 0x60, 0xbc, 0xa7, 0x42, 0x86, 0x9c,
-	0x8a, 0x32, 0x31, 0xf9, 0xe3, 0x0b, 0x74, 0x6e, 0xeb, 0x09, 0x34, 0xfb, 0x8e, 0x48, 0x12, 0x80,
-	0x92, 0x19, 0x8c, 0x7e, 0x02, 0xaf, 0xe0, 0xf4, 0x86, 0x72, 0x4e, 0x63, 0x9b, 0x29, 0x70, 0x7b,
-	0xde, 0xf9, 0x44, 0xaa, 0x5b, 0x8b, 0x0d, 0x29, 0xd0, 0x02, 0xdc, 0x98, 0x48, 0x12, 0xda, 0x3f,
-	0x14, 0x66, 0x65, 0x8a, 0x3b, 0x73, 0x67, 0xd1, 0x0b, 0x66, 0x8a, 0xbf, 0x32, 0xf4, 0xba, 0x4c,
-	0xd1, 0x39, 0xbc, 0x38, 0x52, 0x86, 0x7f, 0x96, 0x24, 0x61, 0xf2, 0x80, 0xbb, 0xba, 0x4e, 0xaf,
-	0x11, 0x7f, 0x34, 0x01, 0x55, 0x34, 0xa7, 0x92, 0x33, 0x2a, 0x70, 0x4f, 0x1b, 0x56, 0x50, 0xb5,
-	0x90, 0x72, 0x9e, 0x73, 0xdc, 0x37, 0x2d, 0xd4, 0xc0, 0xff, 0xaf, 0x07, 0xd0, 0xfc, 0x55, 0x74,
-	0x0a, 0xb3, 0xe3, 0xeb, 0x58, 0xac, 0x3b, 0xd2, 0x0b, 0x26, 0xcd, 0x4d, 0xab, 0x18, 0x9d, 0x81,
-	0x77, 0xac, 0x92, 0x4c, 0x26, 0xd4, 0x7e, 0x99, 0x93, 0x46, 0xb8, 0x55, 0x34, 0xfa, 0x1c, 0xfa,
-	0x9c, 0x46, 0xca, 0xa9, 0x63, 0xee, 0xe5, 0x34, 0x5a, 0xc5, 0xe8, 0x6b, 0x70, 0x99, 0x08, 0x8b,
-	0x72, 0x9f, 0xb0, 0x28, 0xb4, 0x02, 0x55, 0xd4, 0x30, 0x98, 0x32, 0xb1, 0xd1, 0x74, 0xa0, 0x85,
-	0x5f, 0xc0, 0x24, 0x25, 0x32, 0xba, 0xa3, 0x71, 0x98, 0x91, 0x94, 0xea, 0xaa, 0x46, 0xc1, 0xd8,
-	0x72, 0x6b, 0x92, 0x52, 0xf4, 0x1a, 0xbc, 0x4a, 0x12, 0x91, 0x2c, 0xcf, 0x58, 0x44, 0x12, 0x5b,
-	0xa5, 0x6b, 0x03, 0x6f, 0x2b, 0x5e, 0xf9, 0x45, 0x25, 0xe7, 0x34, 0x93, 0xc6, 0x6f, 0x60, 0xfc,
-	0x2c, 0x57, 0xf9, 0x55, 0x92, 0xc6, 0x6f, 0x68, 0xfc, 0x6c, 0xa0, 0xf1, 0x3b, 0x85, 0x59, 0x25,
-	0xb6, 0x65, 0x8c, 0xb4, 0xb2, 0xba, 0xc5, 0x54, 0xa1, 0x66, 0xf1, 0x90, 0xe5, 0xd9, 0x21, 0xc5,
-	0xa0, 0xab, 0xac, 0x20, 0xfa, 0x0e, 0x5e, 0x44, 0x09, 0x11, 0x82, 0xdd, 0xb0, 0x88, 0x48, 0x96,
-	0x67, 0x61, 0x41, 0xe4, 0x1d, 0x1e, 0x6b, 0x13, 0xf4, 0x38, 0xb4, 0x21, 0xf2, 0xee, 0x99, 0x04,
-	0x4e, 0xb2, 0x7b, 0x3c, 0x79, 0x2e, 0x21, 0x20, 0xd9, 0x3d, 0xfa, 0x16, 0x9e, 0xb0, 0x21, 0x8b,
-	0x05, 0x9e, 0x9a, 0x09, 0x7a, 0x1c, 0x59, 0xc5, 0x02, 0x7d, 0x09, 0x53, 0x1a, 0x33, 0x19, 0xc6,
-	0x4c, 0x48, 0x92, 0x45, 0x14, 0xcf, 0xcc, 0x04, 0x28, 0xf2, 0x9d, 0xe5, 0xd0, 0x37, 0x80, 0x84,
-	0xa4, 0x69, 0xf8, 0x58, 0x79, 0xa2, 0x95, 0xae, 0x8a, 0x5c, 0x1e, 0xab, 0xbf, 0x07, 0xd0, 0xdf,
-	0x21, 0x94, 0x87, 0x82, 0x62, 0x77, 0xee, 0x2c, 0x66, 0x17, 0x5e, 0xf5, 0x50, 0x7e, 0x55, 0x91,
-	0xed, 0xa1, 0xa0, 0xc1, 0x28, 0xad, 0x8e, 0xe8, 0x35, 0x0c, 0x6d, 0x83, 0x04, 0xf6, 0xf4, 0xc3,
-	0x3a, 0xa9, 0xf4, 0x57, 0x86, 0x0f, 0x6a, 0x81, 0xff, 0xb7, 0x03, 0x03, 0xcb, 0x1e, 0x8d, 0x9b,
-	0x73, 0x3c, 0x6e, 0xaa, 0x07, 0xe6, 0x7b, 0x24, 0x87, 0x90, 0x44, 0x11, 0x2d, 0x24, 0x35, 0xcb,
-	0x64, 0x18, 0x78, 0x75, 0x64, 0x69, 0x03, 0x6a, 0x9d, 0xe8, 0xe1, 0x30, 0x23, 0xab, 0xcf, 0xe8,
-	0x15, 0x8c, 0x9a, 0x69, 0x30, 0xef, 0xaf, 0x21, 0xce, 0x3e, 0xc2, 0xa8, 0x2e, 0x04, 0x0d, 0xa1,
-	0xbb, 0xfe, 0xb0, 0xbe, 0x74, 0x5b, 0x68, 0x04, 0xbd, 0xcb, 0xdf, 0x97, 0x6f, 0xb7, 0xae, 0xa3,
-	0x8e, 0xef, 0x7f, 0xbb, 0xbe, 0xfe, 0xc3, 0x6d, 0x23, 0x0f, 0xa6, 0x9b, 0x65, 0xb0, 0x5d, 0x2d,
-	0x7f, 0x09, 0x4d, 0xb4, 0x73, 0x4c, 0x19, 0x55, 0xf7, 0xe2, 0x1f, 0x07, 0x86, 0x3f, 0xaf, 0xdf,
-	0xb3, 0x2c, 0xa6, 0x1c, 0x9d, 0x42, 0x77, 0xc3, 0xb2, 0x5b, 0x34, 0xa9, 0xda, 0xa0, 0x36, 0xeb,
-	0xcb, 0x1a, 0xa9, 0xfd, 0xea, 0xb7, 0xd0, 0x57, 0xd0, 0xd9, 0x51, 0xfe, 0x44, 0x54, 0x77, 0xce,
-	0xae, 0x59, 0xbf, 0x85, 0xce, 0xa0, 0xbf, 0xa3, 0x9c, 0xdd, 0x1c, 0xd0, 0xac, 0x76, 0xd0, 0x8b,
-	0xf4, 0x65, 0x8d, 0xcd, 0x7e, 0xf4, 0x5b, 0x7b, 0xb3, 0xcd, 0xdf, 0xfc, 0x1f, 0x00, 0x00, 0xff,
-	0xff, 0x81, 0xd1, 0x18, 0xef, 0xe4, 0x05, 0x00, 0x00,
+	// 464 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x53, 0xdd, 0x8a, 0xd3, 0x40,
+	0x18, 0xcd, 0xa4, 0x69, 0xbb, 0xf9, 0xfa, 0x63, 0xfc, 0xf0, 0x22, 0x94, 0x15, 0xea, 0x28, 0x52,
+	0x54, 0xd6, 0xa5, 0x5e, 0x79, 0x59, 0xba, 0xae, 0x14, 0x6a, 0xba, 0x64, 0xdd, 0x82, 0x7b, 0x13,
+	0xa6, 0xcd, 0xb0, 0x06, 0x9a, 0xa4, 0x24, 0x93, 0x42, 0xdf, 0xc2, 0x37, 0xf0, 0x31, 0x7c, 0x3d,
+	0x99, 0x99, 0x64, 0x6a, 0xbd, 0xca, 0x9c, 0xf3, 0x9d, 0xf3, 0xe5, 0x4c, 0x38, 0x81, 0xfe, 0xbe,
+	0xc8, 0x45, 0xbe, 0xb9, 0x52, 0x0f, 0xec, 0x68, 0x44, 0x3b, 0xe0, 0xac, 0xf3, 0x24, 0xa6, 0x97,
+	0xe0, 0xdc, 0xe5, 0xd9, 0x13, 0xbe, 0x80, 0xf6, 0x81, 0xed, 0x2a, 0xee, 0x93, 0x31, 0x99, 0xb8,
+	0xa1, 0x06, 0xf4, 0x33, 0x74, 0xd7, 0xbc, 0x28, 0x93, 0x3c, 0x43, 0x1f, 0xba, 0x07, 0x7d, 0xac,
+	0x25, 0x0d, 0x94, 0xd6, 0x4d, 0x95, 0xec, 0x62, 0xdf, 0xd6, 0x56, 0x05, 0xe8, 0x08, 0x9c, 0x80,
+	0xa5, 0x1c, 0x11, 0x9c, 0x8c, 0xa5, 0xcd, 0x5e, 0x75, 0xa6, 0x2f, 0xa1, 0x2d, 0x67, 0xa5, 0xb4,
+	0x4a, 0xa2, 0xf4, 0xc9, 0xb8, 0x25, 0xad, 0x0a, 0xd0, 0x29, 0x74, 0x56, 0x95, 0xd8, 0x57, 0x02,
+	0x27, 0xd0, 0x2d, 0x78, 0x59, 0xed, 0x84, 0x56, 0xf4, 0xa6, 0xc3, 0xab, 0xfa, 0x36, 0xa1, 0xa2,
+	0xc3, 0x66, 0x4c, 0x7f, 0x11, 0xe8, 0x68, 0x0e, 0x87, 0x60, 0x27, 0x71, 0xfd, 0x3e, 0x3b, 0x89,
+	0x4d, 0x02, 0xfb, 0x94, 0x00, 0xaf, 0x01, 0x52, 0x26, 0xb6, 0x3f, 0x23, 0x71, 0xdc, 0x73, 0xbf,
+	0x35, 0x26, 0x93, 0xe1, 0xf4, 0x79, 0xb3, 0xfb, 0x9b, 0x9c, 0x7c, 0x3f, 0xee, 0x79, 0xe8, 0xa6,
+	0xcd, 0xf1, 0xe4, 0x88, 0x99, 0x60, 0xbe, 0xa3, 0xd2, 0x9c, 0x3b, 0x16, 0x82, 0xa7, 0xb5, 0xe3,
+	0x86, 0x09, 0x46, 0x7f, 0x13, 0x70, 0xcd, 0x00, 0x5f, 0x41, 0x7f, 0xcb, 0xb2, 0x3c, 0x4b, 0xb6,
+	0x6c, 0x17, 0x99, 0x7c, 0x3d, 0xc3, 0x2d, 0x62, 0xbc, 0x04, 0xd7, 0xc0, 0x3a, 0xed, 0x89, 0xc0,
+	0xd7, 0x30, 0xe0, 0x71, 0x22, 0xa2, 0x38, 0x29, 0x05, 0xcb, 0xb6, 0x3a, 0x75, 0x3b, 0xec, 0x4b,
+	0xf2, 0xa6, 0xe6, 0xf0, 0x03, 0xe0, 0x99, 0x28, 0x2a, 0x05, 0x4f, 0x7d, 0x47, 0x29, 0xbd, 0x7f,
+	0x95, 0xf7, 0x82, 0xa7, 0xef, 0xe6, 0x75, 0x40, 0x75, 0xc1, 0x0b, 0x70, 0x82, 0x55, 0xf0, 0xc5,
+	0xb3, 0x70, 0x00, 0xee, 0x7c, 0x16, 0xac, 0x82, 0xc5, 0x7c, 0xb6, 0xf4, 0x08, 0x22, 0x0c, 0x0d,
+	0x8c, 0x6e, 0x1f, 0x96, 0x4b, 0xcf, 0x46, 0x17, 0xda, 0xb7, 0x0f, 0x8f, 0x8f, 0x3f, 0xbc, 0xd6,
+	0xf4, 0x0f, 0x01, 0xf7, 0x6b, 0xa0, 0xf6, 0xf0, 0x02, 0xdf, 0x80, 0x73, 0x97, 0x64, 0x4f, 0xd8,
+	0x6f, 0x3e, 0x8d, 0x6c, 0xd9, 0xc8, 0x20, 0xd9, 0x35, 0x6a, 0xe1, 0x5b, 0x68, 0xad, 0x79, 0xf1,
+	0x9f, 0xe8, 0x99, 0x41, 0xba, 0x58, 0xd4, 0xc2, 0xf7, 0x70, 0xa1, 0x16, 0xcf, 0x8a, 0x23, 0x0e,
+	0x9a, 0xb1, 0xaa, 0xce, 0xc8, 0x34, 0x41, 0x57, 0x85, 0x5a, 0xf8, 0x11, 0x7a, 0x4a, 0x7c, 0x2f,
+	0x0a, 0xce, 0xd2, 0xd3, 0x72, 0xa9, 0x1f, 0x9d, 0x21, 0x6a, 0x4d, 0xc8, 0x35, 0xd9, 0xe8, 0x7f,
+	0xe1, 0xd3, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xf3, 0x21, 0xfc, 0xb2, 0x22, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -602,132 +468,198 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// GNFinderClient is the client API for GNFinder service.
+// GNMatcherClient is the client API for GNMatcher service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type GNFinderClient interface {
+type GNMatcherClient interface {
 	Ping(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Pong, error)
 	Ver(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Version, error)
-	Verify(ctx context.Context, in *Params, opts ...grpc.CallOption) (*Output, error)
+	MatchAry(ctx context.Context, in *Names, opts ...grpc.CallOption) (*Output, error)
+	MatchStream(ctx context.Context, opts ...grpc.CallOption) (GNMatcher_MatchStreamClient, error)
 }
 
-type gNFinderClient struct {
+type gNMatcherClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewGNFinderClient(cc *grpc.ClientConn) GNFinderClient {
-	return &gNFinderClient{cc}
+func NewGNMatcherClient(cc *grpc.ClientConn) GNMatcherClient {
+	return &gNMatcherClient{cc}
 }
 
-func (c *gNFinderClient) Ping(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Pong, error) {
+func (c *gNMatcherClient) Ping(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Pong, error) {
 	out := new(Pong)
-	err := c.cc.Invoke(ctx, "/protob.GNFinder/Ping", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.GNMatcher/Ping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gNFinderClient) Ver(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Version, error) {
+func (c *gNMatcherClient) Ver(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Version, error) {
 	out := new(Version)
-	err := c.cc.Invoke(ctx, "/protob.GNFinder/Ver", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.GNMatcher/Ver", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *gNFinderClient) Verify(ctx context.Context, in *Params, opts ...grpc.CallOption) (*Output, error) {
+func (c *gNMatcherClient) MatchAry(ctx context.Context, in *Names, opts ...grpc.CallOption) (*Output, error) {
 	out := new(Output)
-	err := c.cc.Invoke(ctx, "/protob.GNFinder/Verify", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.GNMatcher/MatchAry", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GNFinderServer is the server API for GNFinder service.
-type GNFinderServer interface {
+func (c *gNMatcherClient) MatchStream(ctx context.Context, opts ...grpc.CallOption) (GNMatcher_MatchStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_GNMatcher_serviceDesc.Streams[0], "/protob.GNMatcher/MatchStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &gNMatcherMatchStreamClient{stream}
+	return x, nil
+}
+
+type GNMatcher_MatchStreamClient interface {
+	Send(*Name) error
+	Recv() (*Name, error)
+	grpc.ClientStream
+}
+
+type gNMatcherMatchStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *gNMatcherMatchStreamClient) Send(m *Name) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *gNMatcherMatchStreamClient) Recv() (*Name, error) {
+	m := new(Name)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// GNMatcherServer is the server API for GNMatcher service.
+type GNMatcherServer interface {
 	Ping(context.Context, *Void) (*Pong, error)
 	Ver(context.Context, *Void) (*Version, error)
-	Verify(context.Context, *Params) (*Output, error)
+	MatchAry(context.Context, *Names) (*Output, error)
+	MatchStream(GNMatcher_MatchStreamServer) error
 }
 
-func RegisterGNFinderServer(s *grpc.Server, srv GNFinderServer) {
-	s.RegisterService(&_GNFinder_serviceDesc, srv)
+func RegisterGNMatcherServer(s *grpc.Server, srv GNMatcherServer) {
+	s.RegisterService(&_GNMatcher_serviceDesc, srv)
 }
 
-func _GNFinder_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GNMatcher_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Void)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GNFinderServer).Ping(ctx, in)
+		return srv.(GNMatcherServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.GNFinder/Ping",
+		FullMethod: "/protob.GNMatcher/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GNFinderServer).Ping(ctx, req.(*Void))
+		return srv.(GNMatcherServer).Ping(ctx, req.(*Void))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GNFinder_Ver_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GNMatcher_Ver_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Void)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GNFinderServer).Ver(ctx, in)
+		return srv.(GNMatcherServer).Ver(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.GNFinder/Ver",
+		FullMethod: "/protob.GNMatcher/Ver",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GNFinderServer).Ver(ctx, req.(*Void))
+		return srv.(GNMatcherServer).Ver(ctx, req.(*Void))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GNFinder_Verify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Params)
+func _GNMatcher_MatchAry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Names)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GNFinderServer).Verify(ctx, in)
+		return srv.(GNMatcherServer).MatchAry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.GNFinder/Verify",
+		FullMethod: "/protob.GNMatcher/MatchAry",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GNFinderServer).Verify(ctx, req.(*Params))
+		return srv.(GNMatcherServer).MatchAry(ctx, req.(*Names))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _GNFinder_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "protob.GNFinder",
-	HandlerType: (*GNFinderServer)(nil),
+func _GNMatcher_MatchStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GNMatcherServer).MatchStream(&gNMatcherMatchStreamServer{stream})
+}
+
+type GNMatcher_MatchStreamServer interface {
+	Send(*Name) error
+	Recv() (*Name, error)
+	grpc.ServerStream
+}
+
+type gNMatcherMatchStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *gNMatcherMatchStreamServer) Send(m *Name) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *gNMatcherMatchStreamServer) Recv() (*Name, error) {
+	m := new(Name)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+var _GNMatcher_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "protob.GNMatcher",
+	HandlerType: (*GNMatcherServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Ping",
-			Handler:    _GNFinder_Ping_Handler,
+			Handler:    _GNMatcher_Ping_Handler,
 		},
 		{
 			MethodName: "Ver",
-			Handler:    _GNFinder_Ver_Handler,
+			Handler:    _GNMatcher_Ver_Handler,
 		},
 		{
-			MethodName: "Verify",
-			Handler:    _GNFinder_Verify_Handler,
+			MethodName: "MatchAry",
+			Handler:    _GNMatcher_MatchAry_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "MatchStream",
+			Handler:       _GNMatcher_MatchStream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "protob.proto",
 }

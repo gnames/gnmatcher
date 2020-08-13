@@ -1,37 +1,38 @@
 package gnmatcher
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/dvirsky/levenshtein"
 	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/dbase"
+	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
+
 	// "github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/sys"
 )
 
-// GNmatcher keeps most general configuration settings and high level
+// GNMatcher keeps most general configuration settings and high level
 // methods for scientific name matching.
-type GNmatcher struct {
-	WorkDir string
-	NatsURI string
-	JobsNum int
-	dbase.Dbase
-	Filters *bloom.Filters
-	Trie    *levenshtein.MinTree
+type GNMatcher struct {
+	WorkDir  string
+	NatsURI  string
+	JobsNum  int
+	GNUUID   uuid.UUID
+	GNamesDB dbase.Dbase
+	Filters  *bloom.Filters
+	Trie     *levenshtein.MinTree
 }
 
-// NewGNmatcher is a constructor for GNmatcher instance
-func NewGNmatcher(opts ...Option) (GNmatcher, error) {
-	gnm := GNmatcher{
-		WorkDir: "/tmp/gnmatcher",
-		NatsURI: "nats:localhost:4222",
-		JobsNum: 4,
-		Dbase:   dbase.NewDbase(),
-	}
-	for _, opt := range opts {
-		opt(&gnm)
+// NewGNMatcher is a constructor for GNMatcher instance
+func NewGNMatcher(cnf Config) (GNMatcher, error) {
+	gnm := GNMatcher{
+		WorkDir:  cnf.WorkDir,
+		NatsURI:  cnf.NatsURI,
+		JobsNum:  cnf.JobsNum,
+		GNamesDB: cnf.GNamesDB,
+		GNUUID:   uuid.NewV5(uuid.NamespaceDNS, "globalnames.org"),
 	}
 	err := gnm.CreateWorkDirs()
 	if err != nil {
@@ -39,7 +40,7 @@ func NewGNmatcher(opts ...Option) (GNmatcher, error) {
 	}
 
 	log.Println("Initializing bloom filters...")
-	filters, err := bloom.GetFilters(gnm.FiltersDir(), gnm.Dbase)
+	filters, err := bloom.GetFilters(gnm.FiltersDir(), gnm.GNamesDB)
 	if err != nil {
 		return gnm, err
 	}
@@ -53,77 +54,18 @@ func NewGNmatcher(opts ...Option) (GNmatcher, error) {
 	return gnm, nil
 }
 
-func (gnm GNmatcher) TrieDir() string {
+func (gnm GNMatcher) TrieDir() string {
 	return filepath.Join(gnm.WorkDir, "levenshein")
 }
 
-func (gnm GNmatcher) FiltersDir() string {
+func (gnm GNMatcher) FiltersDir() string {
 	return filepath.Join(gnm.WorkDir, "bloom")
 }
 
-func (gnm GNmatcher) CreateWorkDirs() error {
+func (gnm GNMatcher) CreateWorkDirs() error {
 	err := sys.MakeDir(gnm.FiltersDir())
 	if err != nil {
 		return err
 	}
 	return sys.MakeDir(gnm.TrieDir())
-}
-
-// Option is a type of all options for GNmatcher.
-type Option func(gnm *GNmatcher)
-
-// OptWorkDir sets a directory for key-value stores and temporary files.
-func OptWorkDir(s string) Option {
-	return func(gnm *GNmatcher) {
-		gnm.WorkDir = s
-	}
-}
-
-// OptNatsURI defines a URI to connect to NATS messaging service server.
-func OptNatsURI(s string) Option {
-	return func(gnm *GNmatcher) {
-		gnm.NatsURI = s
-	}
-}
-
-// OptJobsNum sets number of concurrent jobs to run for parallel tasks.
-func OptJobsNum(i int) Option {
-	return func(gnm *GNmatcher) {
-		gnm.JobsNum = i
-	}
-}
-
-// OptPgHost sets the host of gnames database
-func OptPgHost(s string) Option {
-	return func(gnm *GNmatcher) {
-		gnm.PgHost = s
-	}
-}
-
-// OptPgUser sets the user of gnnames database
-func OptPgUser(s string) Option {
-	return func(gnm *GNmatcher) {
-		gnm.PgUser = s
-	}
-}
-
-// OptPgPass sets the password to access gnnames database
-func OptPgPass(s string) Option {
-	return func(gnm *GNmatcher) {
-		gnm.PgPass = s
-	}
-}
-
-// OptPgPort sets the port for gnames database
-func OptPgPort(i int) Option {
-	return func(gnm *GNmatcher) {
-		gnm.PgPort = i
-	}
-}
-
-// OptPgDB sets the name of gnames database
-func OptPgDB(s string) Option {
-	return func(gnm *GNmatcher) {
-		gnm.PgDB = s
-	}
 }

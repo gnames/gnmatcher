@@ -5,7 +5,7 @@ package dbase
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )

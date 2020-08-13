@@ -1,18 +1,17 @@
 package gnmatcher_test
 
 import (
+	. "github.com/gnames/gnmatcher"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	. "github.com/gnames/gnmatcher"
 )
 
 var _ = Describe("Gnmatcher", func() {
-	Describe("NewGNmatcher", func() {
+	Describe("NewConfig", func() {
 		It("Creates a default GNparser", func() {
-			gnm := NewGNmatcher()
-			Expect(gnm.JobsNum).To(Equal(4))
+			Expect(1).To(Equal(1))
+			cnf := NewConfig()
+			Expect(cnf.JobsNum).To(Equal(8))
 		})
 	})
-
 })

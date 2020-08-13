@@ -19,14 +19,50 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
 import (
-	"github.com/gnames/gnmatcher/gnmatcher/cmd"
+	"os"
+
 	log "github.com/sirupsen/logrus"
+
+	"github.com/gnames/gnmatcher"
+	"github.com/gnames/gnmatcher/rpc"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	log.SetFormatter(&log.JSONFormatter{})
-	cmd.Execute()
+// grpcCmd represents the grpc command
+var grpcCmd = &cobra.Command{
+	Use:   "grpc",
+	Short: "A gRPC interface to name matching functionality.",
+	Long: `Runs a gRPC server that listens for packages of scientific names. It
+tries to match the names using exact and fuzzy matching algorithms and returns
+UUIDs of canonical forms that did match together with the edit distances to
+estimate differences between input and output names.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		port, err := cmd.Flags().GetInt("port")
+		if err != nil {
+			log.Print(err)
+			os.Exit(1)
+		}
+		cnf := gnmatcher.NewConfig(opts...)
+		gnm, err := gnmatcher.NewGNMatcher(cnf)
+		if err != nil {
+			log.Print(err)
+			os.Exit(1)
+		}
+		debug, _ := cmd.Flags().GetBool("debug")
+		if debug {
+			log.SetLevel(log.DebugLevel)
+		}
+		rpc.Run(port, &gnm)
+		os.Exit(0)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(grpcCmd)
+
+	grpcCmd.Flags().IntP("port", "p", 8778, "grpc's port")
+	grpcCmd.Flags().BoolP("debug", "d", false, "set logs level to DEBUG")
 }

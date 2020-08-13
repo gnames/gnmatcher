@@ -8,7 +8,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -17,6 +16,7 @@ import (
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 	"github.com/gnames/gnmatcher/dbase"
 	"github.com/gnames/gnmatcher/sys"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -27,13 +27,22 @@ const (
 
 var filters *Filters
 
+// Filters contain bloom filters data we use for matching.
 type Filters struct {
-	CanonicalSize     uint
+	// CanonicalSize is number of entries in 'simple' canonical filter. It is
+	// used as an option during Canonical filter creation.
+	CanonicalSize uint
+	// CanonicalFullSize is number of entries in 'full' canonical filter. It is
+	// used as an option during CanonicalFull filter creation.
 	CanonicalFullSize uint
-	Canonical         *baseBloomfilter.Bloomfilter
-	CanonicalFull     *baseBloomfilter.Bloomfilter
+	// Canonical is a filter for matching with canonical names.
+	Canonical *baseBloomfilter.Bloomfilter
+	// CanonicalFull is a filter for matching with full canonical names.
+	CanonicalFull *baseBloomfilter.Bloomfilter
 }
 
+// GetFilters creates filters from either database, or from cached files.
+// Creating filters from cache is significantly faster.
 func GetFilters(path string, d dbase.Dbase) (*Filters, error) {
 	var err error
 	if filters != nil {
@@ -46,6 +55,8 @@ func GetFilters(path string, d dbase.Dbase) (*Filters, error) {
 	return filters, createFilters(path, d)
 }
 
+// filtersFromcache unmarchals data from a file, and uses the data for the
+// filter creations.
 func filtersFromCache(path string) error {
 	cPath := filepath.Join(path, canonicalFile)
 	cfPath := filepath.Join(path, canonicalFullFile)
@@ -92,17 +103,17 @@ func restoreConfigs(path string) (bloomfilter.Config, bloomfilter.Config) {
 	var cCfg, cfCfg bloomfilter.Config
 	f, err := os.Open(path)
 	if err != nil {
-		log.Printf("WARNING: could not open file %s: %s \n", path, err)
+		log.Warning(fmt.Sprintf("Could not open file %s: %s \n", path, err))
 	}
 	r := csv.NewReader(f)
 	rows, err := r.ReadAll()
 	if err != nil {
-		log.Printf("WARNING: could not read data from file %s: %s \n", path, err)
+		log.Warning(fmt.Sprintf("Could not read data from file %s: %s \n", path, err))
 	}
 	for _, v := range rows {
 		size, err := strconv.Atoi(v[1])
 		if err != nil {
-			log.Printf("WARNING: could not convert data size to int: %s \n", err)
+			log.Warning(fmt.Sprintf("Could not convert data size to int: %s \n", err))
 		}
 		switch v[0] {
 		case "CanonicalSize":
@@ -126,14 +137,14 @@ func createFilters(path string, d dbase.Dbase) error {
 	log.Println("Importing lookup data from remote database. " +
 		"It will take a while.")
 	db := d.NewDB()
-	log.Println("Importing lookup data part 1...")
+	log.Println("Importing lookup data for simple canonicals.")
 	cFilter, err := createCanonicalFilter(db)
 	if err != nil {
 		return err
 	}
 	log.Println("Lookup data part 1 is imported")
 
-	log.Println("Importing lookup data part 2...")
+	log.Println("Importing lookup data for full canonicals.")
 	cfFilter, err := createCanonicalFullFilter(db)
 	if err != nil {
 		return err
@@ -151,41 +162,41 @@ func saveFilters(path string, filters *Filters) {
 	sizesPath := filepath.Join(path, canonicalSizeFile)
 	cFile, err := os.Create(cPath)
 	if err != nil {
-		log.Printf("WARNING: could not create file %s: %s \n", cPath, err)
+		log.Warning(fmt.Sprintf("Could not create file %s: %s \n", cPath, err))
 	}
 	cfFile, err := os.Create(cfPath)
 	if err != nil {
-		log.Printf("WARNING: could not create file %s: %s\n", cfPath, err)
+		log.Warning(fmt.Sprintf("Could not create file %s: %s\n", cfPath, err))
 	}
 	sizesFile, err := os.Create(sizesPath)
 	if err != nil {
-		log.Printf("WARNING: could not create file %s: %s\n", sizesPath, err)
+		log.Warning(fmt.Sprintf("Could not create file %s: %s\n", sizesPath, err))
 	}
 	cBin, err := filters.Canonical.MarshalBinary()
 	if err != nil {
-		log.Printf("WARNING: could serialize lookup cache data1: %s\n", err)
+		log.Warning(fmt.Sprintf("Could serialize lookup cache data1: %s\n", err))
 	}
 	cfBin, err := filters.CanonicalFull.MarshalBinary()
 	if err != nil {
-		log.Printf("WARNING: could serialize lookup cache data2 filter: %s\n", err)
+		log.Warning(fmt.Sprintf("Could serialize lookup cache data2 filter: %s\n", err))
 	}
 	_, err = cFile.Write(cBin)
 	if err != nil {
-		log.Printf("WARNING: could not save lookup cache data to disk: %s\n", err)
+		log.Warning(fmt.Sprintf("Could not save lookup cache data to disk: %s\n", err))
 	}
 	_, err = cfFile.Write(cfBin)
 	if err != nil {
-		log.Printf("WARNING: could not save lookup cache data2 to disk: %s\n", err)
+		log.Warning(fmt.Sprintf("Could not save lookup cache data2 to disk: %s\n", err))
 	}
 	sizes := fmt.Sprintf("CanonicalSize,%d\nCanonicalFullSize,%d\n",
 		filters.CanonicalSize, filters.CanonicalFullSize)
 	if _, err := sizesFile.WriteString(sizes); err != nil {
-		log.Printf("WARNING: could not save sizes of data1 and data2 on disk: %s\n", err)
+		log.Warning(fmt.Sprintf("Could not save sizes of data1 and data2 on disk: %s\n", err))
 	}
 	if err != nil {
-		log.Printf("Failed to safe lookup data to disk")
+		log.Warning("Failed to safe lookup data to disk")
 	} else {
-		log.Println("Lookup cache data are saved to disk")
+		log.Warning("Lookup cache data are saved to disk")
 	}
 }
 
@@ -213,7 +224,7 @@ func createCanonicalFullFilter(db *sql.DB) (*baseBloomfilter.Bloomfilter, error)
 }
 
 func getFilterSize(db *sql.DB, table string) (uint, error) {
-	q := fmt.Sprintf("SELECT count(*) from %s", table)
+	q := fmt.Sprintf("SELECT COUNT(*) FROM %s", table)
 	var num uint
 	row := db.QueryRow(q)
 	if err := row.Scan(&num); err != nil {

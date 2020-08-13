@@ -3,12 +3,12 @@ package fuzzy
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/dvirsky/levenshtein"
 	"github.com/gnames/gnmatcher/dbase"
+	log "github.com/sirupsen/logrus"
 )
 
 const trieFile = "stem.trie"

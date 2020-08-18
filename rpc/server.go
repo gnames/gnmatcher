@@ -17,7 +17,7 @@ type gnmatcherServer struct {
 }
 
 func Run(port int, gnm *gnmatcher.GNMatcher) {
-	log.Info(fmt.Sprintf("Starting gnmatcher gRPC server on port %d", port))
+	log.Info(fmt.Sprintf("Starting gnmatcher gRPC server on port %d.", port))
 	gnms := gnmatcherServer{
 		matcher: gnm,
 	}
@@ -26,7 +26,7 @@ func Run(port int, gnm *gnmatcher.GNMatcher) {
 	portVal := fmt.Sprintf(":%d", port)
 	l, err := net.Listen("tcp", portVal)
 	if err != nil {
-		log.Fatalf("could not listen to %s: %v", portVal, err)
+		log.Fatalf("Could not listen on port %s: %s.", portVal, err)
 	}
 	log.Fatal(srv.Serve(l))
 }

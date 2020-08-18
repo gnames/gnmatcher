@@ -17,7 +17,7 @@ func GetTrie(triePath string, d dbase.Dbase) (*levenshtein.MinTree, error) {
 	var trie *levenshtein.MinTree
 	trie, err := getCachedTrie(triePath)
 	if err == nil {
-		log.Println("Trie data is rebuilt from cache")
+		log.Println("Trie data is rebuilt from cache.")
 		return trie, nil
 	}
 
@@ -50,7 +50,7 @@ func getCachedTrie(triePath string) (*levenshtein.MinTree, error) {
 }
 
 func populateTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, error) {
-	log.Println("Getting data from database")
+	log.Println("Getting trie data from database.")
 	var trie *levenshtein.MinTree
 	size, err := getTrieSize(db)
 	if err != nil {
@@ -71,7 +71,7 @@ func populateTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, error) {
 		}
 		names = append(names, name)
 	}
-	log.Println("Building trie and saving it to disk")
+	log.Println("Building trie and saving it to disk.")
 	path := filepath.Join(triePath, trieFile)
 	w, err := os.Create(path)
 	if err != nil {
@@ -81,6 +81,6 @@ func populateTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, error) {
 	if err != nil {
 		return trie, err
 	}
-	log.Println("Trie is created")
+	log.Println("Trie is created.")
 	return trie, nil
 }

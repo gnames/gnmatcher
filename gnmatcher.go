@@ -39,13 +39,13 @@ func NewGNMatcher(cnf Config) (GNMatcher, error) {
 		return gnm, err
 	}
 
-	log.Println("Initializing bloom filters...")
+	log.Println("Initializing bloom filters.")
 	filters, err := bloom.GetFilters(gnm.FiltersDir(), gnm.GNamesDB)
 	if err != nil {
 		return gnm, err
 	}
 	gnm.Filters = filters
-	// log.Println("Initializing levenshtein trie...")
+	// log.Println("Initializing levenshtein trie.")
 	// trie, err := fuzzy.GetTrie(gnm.TrieDir(), gnm.Dbase)
 	// if err != nil {
 	// 	return gnm, err

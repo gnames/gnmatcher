@@ -24,7 +24,7 @@ func FileExists(f string) bool {
 	}
 	if !path.Mode().IsRegular() {
 		log.Fatal(fmt.Errorf("'%s' is not a regular file, "+
-			"delete or move it and try again", f))
+			"delete or move it and try again.", f))
 	}
 	return true
 }

@@ -92,7 +92,7 @@ var rootCmd = &cobra.Command{
 // to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Cannot start gnmatcher: %s.", err)
 	}
 }
 
@@ -112,10 +112,10 @@ func initConfig() {
 
 	// Find home directory.
 	home, err = homedir.Dir()
-	home = filepath.Join(home, ".config")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Cannot find home directory: %s.", err)
 	}
+	home = filepath.Join(home, ".config")
 
 	// Search config in home directory with name ".gnmatcher" (without extension).
 	viper.AddConfigPath(home)
@@ -139,7 +139,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Println("Using config file:", viper.ConfigFileUsed())
+		log.Printf("Using config file: %s.", viper.ConfigFileUsed())
 	}
 	getOpts()
 }
@@ -150,7 +150,7 @@ func getOpts() []gnmatcher.Option {
 	cfg := &config{}
 	err := viper.Unmarshal(cfg)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Cannot deserialize config data: %s.", err)
 	}
 
 	if cfg.WorkDir != "" {
@@ -185,7 +185,7 @@ func getOpts() []gnmatcher.Option {
 func showVersionFlag(cmd *cobra.Command) bool {
 	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Cannot get version flag: %s.", err)
 	}
 
 	if hasVersionFlag {
@@ -200,7 +200,7 @@ func touchConfigFile(configPath string, configFile string) {
 		return
 	}
 
-	log.Println("Creating config file:", configPath)
+	log.Printf("Creating config file: %s.", configPath)
 	createConfig(configPath, configFile)
 }
 
@@ -208,11 +208,11 @@ func touchConfigFile(configPath string, configFile string) {
 func createConfig(path string, file string) {
 	err := sys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Cannot create dir %s: %s.", path, err)
 	}
 
 	err = ioutil.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Cannot write to file %s: %s", path, err)
 	}
 }

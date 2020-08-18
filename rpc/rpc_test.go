@@ -39,11 +39,13 @@ var _ = Describe("Rpc", func() {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
 			names := protob.Names{
-				Names: []string{"Not name", "Bubo bubo", "Pomatomus", "Pardosa moesta", "Plantago major var major"},
+				Names: []string{"Not name", "Bubo bubo", "Pomatomus",
+					"Pardosa moesta", "Plantago major var major",
+					"Cytospora ribis mitovirus 2"},
 			}
 			response, err := client.MatchAry(ctx, &names)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(len(response.Results)).To(Equal(5))
+			Expect(len(response.Results)).To(Equal(6))
 
 			bad := response.Results[0]
 			Expect(bad.Name).To(Equal("Not name"))
@@ -53,11 +55,17 @@ var _ = Describe("Rpc", func() {
 			good := response.Results[1]
 			Expect(good.Name).To(Equal("Bubo bubo"))
 			Expect(good.MatchType).To(Equal(protob.MatchType_CANONICAL))
-			Expect(good.MatchData[0].Canonical).To(Equal("Bubo bubo"))
+			Expect(good.MatchData[0].MatchStr).To(Equal("Bubo bubo"))
 
 			full := response.Results[4]
 			Expect(full.Name).To(Equal("Plantago major var major"))
 			Expect(full.MatchType).To(Equal(protob.MatchType_CANONICAL_FULL))
-			Expect(full.MatchData[0].Canonical).To(Equal("Plantago major var. major"))
+			Expect(full.MatchData[0].MatchStr).To(Equal("Plantago major var. major"))
+
+			virus := response.Results[5]
+			Expect(virus.Name).To(Equal("Cytospora ribis mitovirus 2"))
+			Expect(virus.MatchType).To(Equal(protob.MatchType_VIRUS))
+			Expect(virus.MatchData[0].MatchStr).To(Equal("Cytospora ribis mitovirus 2"))
+		})
 	})
 })

@@ -32,7 +32,7 @@ func NewDbase() Dbase {
 func (d Dbase) NewDB() *sql.DB {
 	db, err := sql.Open("postgres", d.opts())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Cannot create PostgreSQL connection: %s.", err)
 	}
 	return db
 }

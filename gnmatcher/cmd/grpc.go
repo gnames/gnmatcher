@@ -42,13 +42,12 @@ estimate differences between input and output names.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		port, err := cmd.Flags().GetInt("port")
 		if err != nil {
-			log.Print(err)
-			os.Exit(1)
+			log.Fatalf("Cannot get port flag: %s", err)
 		}
 		cnf := gnmatcher.NewConfig(opts...)
 		gnm, err := gnmatcher.NewGNMatcher(cnf)
 		if err != nil {
-			log.Print(err)
+			log.Print("Cannot create an instance of GNMatcher: %s", err)
 			os.Exit(1)
 		}
 		debug, _ := cmd.Flags().GetBool("debug")

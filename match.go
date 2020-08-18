@@ -37,21 +37,21 @@ func (gnm GNMatcher) NewNameString(parser gnparser.GNparser, name string) (NameS
 func (gnm GNMatcher) MatchNames(names []string) []*protob.Result {
 	res := make([]*protob.Result, len(names))
 	parser := gnparser.NewGNparser()
-	log.Printf("Processing %d names", len(names))
+	log.Printf("Processing %d names.", len(names))
 	for i, name := range names {
 		ns, parsed := gnm.NewNameString(parser, name)
 		if parsed {
 			match := gnm.Match(ns)
 			res[i] = &match
 		} else {
-			res[i] = &protob.Result{Name: name}
+			match := gnm.MatchVirus(ns)
+			res[i] = &match
 		}
 	}
 	return res
 }
 
 func (gnm GNMatcher) Match(ns NameString) protob.Result {
-	log.Debug(ns)
 	if gnm.Filters.CanonicalFull.Check([]byte(ns.CanonicalFullID)) {
 		return protob.Result{
 			Id:        ns.ID,
@@ -59,8 +59,8 @@ func (gnm GNMatcher) Match(ns NameString) protob.Result {
 			MatchType: protob.MatchType_CANONICAL_FULL,
 			MatchData: []*protob.MatchItem{
 				{
-					CanonicalId: ns.CanonicalFullID,
-					Canonical:   ns.CanonicalFull,
+					Id:       ns.CanonicalFullID,
+					MatchStr: ns.CanonicalFull,
 				},
 			},
 		}
@@ -73,8 +73,30 @@ func (gnm GNMatcher) Match(ns NameString) protob.Result {
 			MatchType: protob.MatchType_CANONICAL,
 			MatchData: []*protob.MatchItem{
 				{
-					CanonicalId: ns.CanonicalID,
-					Canonical:   ns.Canonical,
+					Id:       ns.CanonicalID,
+					MatchStr: ns.Canonical,
+				},
+			},
+		}
+	}
+
+	return protob.Result{
+		Id:        ns.ID,
+		Name:      ns.Name,
+		MatchType: protob.MatchType_NONE,
+	}
+}
+
+func (gnm GNMatcher) MatchVirus(ns NameString) protob.Result {
+	if gnm.Filters.Virus.Check([]byte(ns.ID)) {
+		return protob.Result{
+			Id:        ns.ID,
+			Name:      ns.Name,
+			MatchType: protob.MatchType_VIRUS,
+			MatchData: []*protob.MatchItem{
+				{
+					Id:       ns.ID,
+					MatchStr: ns.Name,
 				},
 			},
 		}

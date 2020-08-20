@@ -52,6 +52,6 @@ func GetFilters(path string, d dbase.Dbase) (*Filters, error) {
 		return filters, err
 	}
 
-	err = createFilters(path, d)
+	err = filtersFromDB(path, d)
 	return filters, err
 }

@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/Shugyousha/mafsa v0.2.0 // indirect
 	github.com/devopsfaith/bloomfilter v0.0.0-20190317200532-4687d0b9aa2a
+	github.com/dgraph-io/badger/v2 v2.2007.1
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/gnames/gnfinder v0.11.1
 	github.com/golang/protobuf v1.4.1

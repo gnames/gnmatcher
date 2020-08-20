@@ -22,7 +22,7 @@ func GetTrie(triePath string, d dbase.Dbase) (*levenshtein.MinTree, error) {
 	}
 
 	db := d.NewDB()
-	trie, err = populateTrie(db, triePath)
+	trie, err = populateAndSaveTrie(db, triePath)
 	if err != nil {
 		return trie, err
 	}
@@ -49,7 +49,7 @@ func getCachedTrie(triePath string) (*levenshtein.MinTree, error) {
 	return levenshtein.LoadMinTree(trieFile)
 }
 
-func populateTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, error) {
+func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, error) {
 	log.Println("Getting trie data from database.")
 	var trie *levenshtein.MinTree
 	size, err := getTrieSize(db)

@@ -34,7 +34,7 @@ var _ = Describe("Rpc", func() {
 	})
 
 	Describe("MatchAry()", func() {
-		It("Finds matches for entered names", func() {
+		It("Finds exact matches for entered names", func() {
 			client := protob.NewGNMatcherClient(conn)
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
@@ -66,6 +66,49 @@ var _ = Describe("Rpc", func() {
 			Expect(virus.Name).To(Equal("Cytospora ribis mitovirus 2"))
 			Expect(virus.MatchType).To(Equal(protob.MatchType_VIRUS))
 			Expect(virus.MatchData[0].MatchStr).To(Equal("Cytospora ribis mitovirus 2"))
+		})
+
+		It("Finds fuzzy matches for entered names", func() {
+			client := protob.NewGNMatcherClient(conn)
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			defer cancel()
+			names := protob.Names{
+				Names: []string{"Not name", "Pomatomusi",
+					"Pardosa moeste", "Pardosamoestus", "Accanthurus glaucopareus"},
+			}
+			out, err := client.MatchAry(ctx, &names)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(out.Results)).To(Equal(5))
+
+			bad := out.Results[0]
+			Expect(bad.Name).To(Equal("Not name"))
+			Expect(bad.MatchType).To(Equal(protob.MatchType_NONE))
+			Expect(bad.MatchData).To(BeNil())
+
+			uni := out.Results[1]
+			Expect(uni.Name).To(Equal("Pomatomusi"))
+			Expect(uni.MatchType).To(Equal(protob.MatchType_NONE))
+			Expect(uni.MatchData).To(BeNil())
+
+			suffix := out.Results[2]
+			Expect(suffix.Name).To(Equal("Pardosa moeste"))
+			Expect(suffix.MatchType).To(Equal(protob.MatchType_FUZZY))
+			Expect(len(suffix.MatchData)).To(Equal(1))
+			Expect(suffix.MatchData[0].EditDistance).To(Equal(int32(1)))
+			Expect(suffix.MatchData[0].EditDistanceStem).To(Equal(int32(0)))
+
+			space := out.Results[3]
+			Expect(space.Name).To(Equal("Pardosamoestus"))
+			Expect(space.MatchType).To(Equal(protob.MatchType_FUZZY))
+			Expect(len(space.MatchData)).To(Equal(1))
+			Expect(space.MatchData[0].EditDistance).To(Equal(int32(3)))
+			Expect(space.MatchData[0].EditDistanceStem).To(Equal(int32(1)))
+
+			multi := out.Results[4]
+			Expect(multi.Name).To(Equal("Accanthurus glaucopareus"))
+			Expect(multi.MatchType).To(Equal(protob.MatchType_FUZZY))
+			Expect(len(multi.MatchData)).To(Equal(3))
+			Expect(multi.MatchData[0].EditDistanceStem).To(Equal(int32(1)))
 		})
 	})
 })

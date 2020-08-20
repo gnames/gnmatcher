@@ -6,11 +6,11 @@ import (
 	"github.com/dvirsky/levenshtein"
 	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/dbase"
+	"github.com/gnames/gnmatcher/fuzzy"
+	"github.com/gnames/gnmatcher/stemskv"
+	"github.com/gnames/gnmatcher/sys"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
-
-	// "github.com/gnames/gnmatcher/fuzzy"
-	"github.com/gnames/gnmatcher/sys"
 )
 
 // GNMatcher keeps most general configuration settings and high level
@@ -45,12 +45,16 @@ func NewGNMatcher(cnf Config) (GNMatcher, error) {
 		return gnm, err
 	}
 	gnm.Filters = filters
-	// log.Println("Initializing levenshtein trie.")
-	// trie, err := fuzzy.GetTrie(gnm.TrieDir(), gnm.Dbase)
-	// if err != nil {
-	// 	return gnm, err
-	// }
-	// gnm.Trie = trie
+	log.Println("Initializing levenshtein trie.")
+	trie, err := fuzzy.GetTrie(gnm.TrieDir(), gnm.GNamesDB)
+	if err != nil {
+		return gnm, err
+	}
+	gnm.Trie = trie
+
+	log.Println("Initializing key-value store for stems.")
+	stemskv.NewStemsKV(gnm.StemsDir(), gnm.GNamesDB)
+
 	return gnm, nil
 }
 
@@ -60,6 +64,10 @@ func (gnm GNMatcher) TrieDir() string {
 
 func (gnm GNMatcher) FiltersDir() string {
 	return filepath.Join(gnm.WorkDir, "bloom")
+}
+
+func (gnm GNMatcher) StemsDir() string {
+	return filepath.Join(gnm.WorkDir, "stems-kv")
 }
 
 func (gnm GNMatcher) CreateWorkDirs() error {

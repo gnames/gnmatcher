@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func createFilters(path string, d dbase.Dbase) error {
+func filtersFromDB(path string, d dbase.Dbase) error {
 	db := d.NewDB()
 	log.Println("Importing lookup data for simple canonicals.")
 	cFilter, cSize, err := createFilter(db, "canonicals")

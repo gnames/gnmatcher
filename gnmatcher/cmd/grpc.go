@@ -40,6 +40,11 @@ tries to match the names using exact and fuzzy matching algorithms and returns
 UUIDs of canonical forms that did match together with the edit distances to
 estimate differences between input and output names.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		debug, _ := cmd.Flags().GetBool("debug")
+		if debug {
+			log.SetLevel(log.DebugLevel)
+			log.Printf("Log level is set to '%s'.", log.Level.String(log.GetLevel()))
+		}
 		port, err := cmd.Flags().GetInt("port")
 		if err != nil {
 			log.Fatalf("Cannot get port flag: %s", err)
@@ -47,12 +52,8 @@ estimate differences between input and output names.`,
 		cnf := gnmatcher.NewConfig(opts...)
 		gnm, err := gnmatcher.NewGNMatcher(cnf)
 		if err != nil {
-			log.Print("Cannot create an instance of GNMatcher: %s", err)
+			log.Printf("Cannot create an instance of GNMatcher: %s.", err)
 			os.Exit(1)
-		}
-		debug, _ := cmd.Flags().GetBool("debug")
-		if debug {
-			log.SetLevel(log.DebugLevel)
 		}
 		rpc.Run(port, &gnm)
 		os.Exit(0)

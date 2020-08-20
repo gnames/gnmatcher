@@ -66,7 +66,6 @@ func getFiltersFromCache(cPath, cfPath, vPath, sizesPath string) error {
 		CanonicalFull: cfFilter,
 		Virus:         vFilter,
 	}
-	log.Println("Lookup data is restored.")
 	return nil
 }
 

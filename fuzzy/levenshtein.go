@@ -1,19 +1,20 @@
 // Package fuzzy includes a Levenshtein automaton as well as
 // a traditional implementation to calculate Levenshtein Distance.
 // Some code is borrowed from
-// https://raw.githubusercontent.com/agnivade/levenshtein
+// https://github.com/agnivade/levenshtein
 package fuzzy
 
-import "unicode/utf8"
+import (
+	"unicode/utf8"
+)
 
 // ComputeDistance computes the levenshtein distance between the two
-// strings passed as an argument. It also takes a max edit distance, aborting
-// after the number is reached. The return value is the levenshtein distance
+// strings passed as an argument. The return value is the levenshtein distance
 //
 // Works on runes (Unicode code points) but does not normalize
 // the input strings. See https://blog.golang.org/normalization
 // and the golang.org/x/text/unicode/norm pacage.
-func ComputeDistance(a, b string, max_distance uint16) int {
+func ComputeDistance(a, b string) int {
 	if len(a) == 0 {
 		return utf8.RuneCountInString(b)
 	}
@@ -41,10 +42,10 @@ func ComputeDistance(a, b string, max_distance uint16) int {
 	lenS2 := len(s2)
 
 	// init the row
-	x := make([]uint16, lenS1+1)
+	x := make([]uint8, lenS1+1)
 	// we start from 1 because index 0 is already 0.
 	for i := 1; i < len(x); i++ {
-		x[i] = uint16(i)
+		x[i] = uint8(i)
 	}
 
 	// make a dummy bounds check to prevent the 2 bounds check down below.
@@ -52,28 +53,32 @@ func ComputeDistance(a, b string, max_distance uint16) int {
 	_ = x[lenS1]
 	// fill in the rest
 	for i := 1; i <= lenS2; i++ {
-		prev := uint16(i)
-		var current uint16
+		prev := uint8(i)
 		for j := 1; j <= lenS1; j++ {
-			if s2[i-1] == s1[j-1] {
-				current = x[j-1] // match
-			} else {
-				current = min(min(x[j-1]+1, prev+1), x[j]+1)
-			}
-			if current >= max_distance {
-				return int(current)
+			current := x[j-1] // match
+			if s2[i-1] != s1[j-1] {
+				current =
+					min(
+						min(x[j-1]+1, // substitution
+							prev+1), // insertion
+						x[j]+1) // deletion
 			}
 			x[j-1] = prev
 			prev = current
 		}
+
 		x[lenS1] = prev
 	}
 	return int(x[lenS1])
 }
 
-func min(a, b uint16) uint16 {
+func min(a, b uint8) uint8 {
 	if a < b {
 		return a
 	}
 	return b
+}
+
+func ComputeNameDistance(n1, n2 string) int {
+	return ComputeDistance(n1, n2)
 }

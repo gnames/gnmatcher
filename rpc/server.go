@@ -49,7 +49,6 @@ func (gnms gnmatcherServer) MatchAry(ctx context.Context,
 	output := &protob.Output{
 		Results: res,
 	}
-
 	return output, nil
 }
 

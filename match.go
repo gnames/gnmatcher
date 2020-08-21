@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"strings"
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/gnames/gnmatcher/fuzzy"
@@ -12,6 +13,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"gitlab.com/gogna/gnparser"
+	"gitlab.com/gogna/gnparser/pb"
 	"gitlab.com/gogna/gnparser/stemmer"
 )
 
@@ -29,7 +31,8 @@ type NameString struct {
 	CanonicalStem   string
 }
 
-func (gnm GNMatcher) NewNameString(parser gnparser.GNparser, name string) (NameString, bool) {
+func (gnm GNMatcher) NewNameString(parser gnparser.GNparser,
+	name string) (NameString, *pb.Parsed) {
 	parsed := parser.ParseToObject(name)
 	if parsed.Parsed {
 		ns := NameString{
@@ -42,7 +45,7 @@ func (gnm GNMatcher) NewNameString(parser gnparser.GNparser, name string) (NameS
 			CanonicalStem:   parsed.Canonical.Stem,
 		}
 
-		// We do not fuzzy matching uninomials, however there might be cases when
+		// We do not fuzzy-match uninomials, however there are cases when
 		// a binomial lost empty space during OCR. We increase probability to
 		// match such binomials, if we stem them. It happens because we use trie
 		// of stemmed canonicals.
@@ -50,10 +53,10 @@ func (gnm GNMatcher) NewNameString(parser gnparser.GNparser, name string) (NameS
 		if parsed.Cardinality == 1 {
 			ns.CanonicalStem = stemmer.Stem(ns.Canonical).Stem
 		}
-		return ns, parsed.Parsed
+		return ns, parsed
 	}
 
-	return NameString{ID: parsed.Id, Name: name}, parsed.Parsed
+	return NameString{ID: parsed.Id, Name: name}, parsed
 }
 
 func (gnm GNMatcher) MatchNames(names []string) []*protob.Result {
@@ -72,7 +75,11 @@ func (gnm GNMatcher) MatchNames(names []string) []*protob.Result {
 
 	for i, name := range names {
 		ns, parsed := gnm.NewNameString(parser, name)
-		if parsed {
+		if parsed.Parsed {
+			if abbreviated, matchResult := detectAbbreviated(parsed); abbreviated {
+				res[i] = matchResult
+				continue
+			}
 			matchResult = gnm.Match(ns)
 		} else {
 			matchResult = gnm.MatchVirus(ns)
@@ -83,6 +90,22 @@ func (gnm GNMatcher) MatchNames(names []string) []*protob.Result {
 		res[i] = matchResult
 	}
 	return res
+}
+
+func detectAbbreviated(parsed *pb.Parsed) (bool, *protob.Result) {
+	if parsed.Quality != int32(3) {
+		return false, nilResult
+	}
+	for _, v := range parsed.QualityWarning {
+		if strings.HasPrefix(v.Message, "Abbreviated") {
+			return true, &protob.Result{
+				Id:        parsed.Id,
+				Name:      parsed.Verbatim,
+				MatchType: protob.MatchType_NONE,
+			}
+		}
+	}
+	return false, nilResult
 }
 
 func (gnm GNMatcher) Match(ns NameString) *protob.Result {
@@ -135,7 +158,7 @@ func (gnm GNMatcher) MatchVirus(ns NameString) *protob.Result {
 }
 
 func (gnm GNMatcher) MatchFuzzy(ns NameString, kv *badger.DB) *protob.Result {
-	stems := gnm.Trie.FuzzyMatches(ns.CanonicalStem, 1)
+	stems := gnm.Trie.FuzzyMatches(ns.CanonicalStem, gnm.MaxEditDist)
 	if len(stems) == 0 {
 		return &protob.Result{
 			Id:        ns.ID,
@@ -167,7 +190,6 @@ func (gnm GNMatcher) MatchFuzzy(ns NameString, kv *badger.DB) *protob.Result {
 		}
 	}
 	res = calculateEditDistance(res)
-	log.Debug(fmt.Sprintf("%+v", res))
 	return res
 }
 

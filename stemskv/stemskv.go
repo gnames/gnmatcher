@@ -113,7 +113,6 @@ func GetValue(kv *badger.DB, key string) []byte {
 
 	val, err := txn.Get([]byte(key))
 	if err == badger.ErrKeyNotFound {
-		log.Printf("'%s' not found.", key)
 		return []byte("")
 	} else if err != nil {
 		log.Fatal(err)

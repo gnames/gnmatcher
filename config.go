@@ -1,23 +1,29 @@
 package gnmatcher
 
-import "github.com/gnames/gnmatcher/dbase"
+import (
+  "fmt"
+  "github.com/gnames/gnmatcher/dbase"
+	log "github.com/sirupsen/logrus"
+)
 
 // Config collects and stores external configuration data.
 type Config struct {
-	WorkDir  string
-	NatsURI  string
-	JobsNum  int
-	GNamesDB dbase.Dbase
+	WorkDir     string
+	NatsURI     string
+	JobsNum     int
+	MaxEditDist int
+	GNamesDB    dbase.Dbase
 }
 
 // NewConfig is a Config constructor that takes external options to
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
 	cnf := Config{
-		WorkDir:  "/tmp/gnmatcher",
-		NatsURI:  "nats:localhost:4222",
-		JobsNum:  8,
-		GNamesDB: dbase.NewDbase(),
+		WorkDir:     "/tmp/gnmatcher",
+		NatsURI:     "nats:localhost:4222",
+		JobsNum:     8,
+		MaxEditDist: 1,
+		GNamesDB:    dbase.NewDbase(),
 	}
 	for _, opt := range opts {
 		opt(&cnf)
@@ -46,6 +52,18 @@ func OptNatsURI(s string) Option {
 func OptJobsNum(i int) Option {
 	return func(cnf *Config) {
 		cnf.JobsNum = i
+	}
+}
+
+// OptMaxEditDist sets maximal possible edit distance for fuzzy matching of
+// stemmed canonical forms.
+func OptMaxEditDist(i int) Option {
+	return func(cnf *Config) {
+  if i < 1 || i > 2 {
+    log.Warn(fmt.Sprintf("MaxEditDist can only be 1 or 2, leaving it at %d.",
+    cnf.MaxEditDist))
+  }
+		cnf.MaxEditDist = i
 	}
 }
 

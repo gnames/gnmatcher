@@ -57,6 +57,10 @@ PgDB: gnames
 
 # Number of jobs for parallel tasks
 JobsNum: 4
+
+# MaxEditDist is the maximal edit distance for fuzzy matching of
+# stemmed canonical forms. Can be 1 or 2, 2 is significantly slower.
+MaxEditDist: 1
 `
 
 var (
@@ -74,6 +78,7 @@ type config struct {
 	PgPass  string
 	PgDB    string
 	JobsNum int
+  MaxEditDist int
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -131,6 +136,7 @@ func initConfig() {
 	viper.BindEnv("PgPass", "GNM_PG_PASS")
 	viper.BindEnv("PgDB", "GNM_PG_DB")
 	viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
+	viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -161,6 +167,9 @@ func getOpts() []gnmatcher.Option {
 	}
 	if cfg.JobsNum != 0 {
 		opts = append(opts, gnmatcher.OptJobsNum(cfg.JobsNum))
+	}
+	if cfg.MaxEditDist != 0 {
+		opts = append(opts, gnmatcher.OptMaxEditDist(cfg.MaxEditDist))
 	}
 	if cfg.PgHost != "" {
 		opts = append(opts, gnmatcher.OptPgHost(cfg.PgHost))

@@ -16,23 +16,25 @@ import (
 // GNMatcher keeps most general configuration settings and high level
 // methods for scientific name matching.
 type GNMatcher struct {
-	WorkDir  string
-	NatsURI  string
-	JobsNum  int
-	GNUUID   uuid.UUID
-	GNamesDB dbase.Dbase
-	Filters  *bloom.Filters
-	Trie     *levenshtein.MinTree
+	WorkDir     string
+	NatsURI     string
+	JobsNum     int
+	MaxEditDist int
+	GNUUID      uuid.UUID
+	GNamesDB    dbase.Dbase
+	Filters     *bloom.Filters
+	Trie        *levenshtein.MinTree
 }
 
 // NewGNMatcher is a constructor for GNMatcher instance
 func NewGNMatcher(cnf Config) (GNMatcher, error) {
 	gnm := GNMatcher{
-		WorkDir:  cnf.WorkDir,
-		NatsURI:  cnf.NatsURI,
-		JobsNum:  cnf.JobsNum,
-		GNamesDB: cnf.GNamesDB,
-		GNUUID:   uuid.NewV5(uuid.NamespaceDNS, "globalnames.org"),
+		WorkDir:     cnf.WorkDir,
+		NatsURI:     cnf.NatsURI,
+		JobsNum:     cnf.JobsNum,
+		MaxEditDist: cnf.MaxEditDist,
+		GNamesDB:    cnf.GNamesDB,
+		GNUUID:      uuid.NewV5(uuid.NamespaceDNS, "globalnames.org"),
 	}
 	err := gnm.CreateWorkDirs()
 	if err != nil {

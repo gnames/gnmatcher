@@ -69,7 +69,7 @@ func NewStemsKV(path string, d dbase.Dbase) {
 			if err = kvTxn.Set(key, val); err != nil {
 				log.Fatalf("Transaction failed to set key: %s.", err)
 			}
-			if count > 100_000 {
+			if count > 10_000 {
 				err = kvTxn.Commit()
 				if err != nil {
 					log.Fatalf("Transaction commit faied: %s.", err)

@@ -9,7 +9,6 @@ import (
 	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"
 	"github.com/gnames/gnmatcher/sys"
-	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,7 +19,6 @@ type GNMatcher struct {
 	NatsURI     string
 	JobsNum     int
 	MaxEditDist int
-	GNUUID      uuid.UUID
 	GNamesDB    dbase.Dbase
 	Filters     *bloom.Filters
 	Trie        *levenshtein.MinTree
@@ -34,7 +32,6 @@ func NewGNMatcher(cnf Config) (GNMatcher, error) {
 		JobsNum:     cnf.JobsNum,
 		MaxEditDist: cnf.MaxEditDist,
 		GNamesDB:    cnf.GNamesDB,
-		GNUUID:      uuid.NewV5(uuid.NamespaceDNS, "globalnames.org"),
 	}
 	err := gnm.CreateWorkDirs()
 	if err != nil {

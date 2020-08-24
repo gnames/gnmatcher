@@ -45,6 +45,8 @@ enum MatchType {
   CANONICAL_FULL = 2;
   VIRUS = 3;
   FUZZY = 4;
+  PARTIAL = 5;
+  PARTIAL_FUZZY = 6;
 }
 
 service GNMatcher { rpc Ping(Void) returns(Pong) {}

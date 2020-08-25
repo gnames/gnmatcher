@@ -1,78 +1,72 @@
 package gnmatcher
 
 import (
-	"path/filepath"
+	"fmt"
 
-	"github.com/dvirsky/levenshtein"
-	"github.com/gnames/gnmatcher/bloom"
-	"github.com/gnames/gnmatcher/dbase"
-	"github.com/gnames/gnmatcher/fuzzy"
+	"github.com/gnames/gnmatcher/matcher"
+	"github.com/gnames/gnmatcher/protob"
 	"github.com/gnames/gnmatcher/stemskv"
-	"github.com/gnames/gnmatcher/sys"
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/gogna/gnparser"
 )
 
-// GNMatcher keeps most general configuration settings and high level
-// methods for scientific name matching.
+// MaxMaxNamesNumber is the upper limit of the number of name-strings the
+// MatchNames function can process. If the number is higher, the list of
+// name-strings will be truncated.
+const MaxNamesNumber = 10_000
+
+// GNMatcher contains high level methods for scientific name matching.
 type GNMatcher struct {
-	WorkDir     string
-	NatsURI     string
-	JobsNum     int
-	MaxEditDist int
-	GNamesDB    dbase.Dbase
-	Filters     *bloom.Filters
-	Trie        *levenshtein.MinTree
+	Matcher matcher.Matcher
 }
 
 // NewGNMatcher is a constructor for GNMatcher instance
-func NewGNMatcher(cnf Config) (GNMatcher, error) {
-	gnm := GNMatcher{
-		WorkDir:     cnf.WorkDir,
-		NatsURI:     cnf.NatsURI,
-		JobsNum:     cnf.JobsNum,
-		MaxEditDist: cnf.MaxEditDist,
-		GNamesDB:    cnf.GNamesDB,
-	}
-	err := gnm.CreateWorkDirs()
-	if err != nil {
-		return gnm, err
-	}
-
-	log.Println("Initializing bloom filters.")
-	filters, err := bloom.GetFilters(gnm.FiltersDir(), gnm.GNamesDB)
-	if err != nil {
-		return gnm, err
-	}
-	gnm.Filters = filters
-	log.Println("Initializing levenshtein trie.")
-	trie, err := fuzzy.GetTrie(gnm.TrieDir(), gnm.GNamesDB)
-	if err != nil {
-		return gnm, err
-	}
-	gnm.Trie = trie
-
-	log.Println("Initializing key-value store for stems.")
-	stemskv.NewStemsKV(gnm.StemsDir(), gnm.GNamesDB)
-
-	return gnm, nil
+func NewGNMatcher(m matcher.Matcher) GNMatcher {
+	return GNMatcher{Matcher: m}
 }
 
-func (gnm GNMatcher) TrieDir() string {
-	return filepath.Join(gnm.WorkDir, "levenshein")
-}
+// MatchNames takes a list of name-strings and matches them against known
+// by names aggregated in gnames database.
+func (gnm GNMatcher) MatchNames(names []string) []*protob.Result {
+	m := gnm.Matcher
+	cnf := m.Config
+	kv := stemskv.ConnectKeyVal(cnf.StemsDir())
+	defer kv.Close()
 
-func (gnm GNMatcher) FiltersDir() string {
-	return filepath.Join(gnm.WorkDir, "bloom")
-}
+	res := make([]*protob.Result, len(names))
+	var matchResult *protob.Result
+	parser := gnparser.NewGNparser()
 
-func (gnm GNMatcher) StemsDir() string {
-	return filepath.Join(gnm.WorkDir, "stems-kv")
-}
+	names = truncateNamesToMaxNumber(names)
 
-func (gnm GNMatcher) CreateWorkDirs() error {
-	err := sys.MakeDir(gnm.FiltersDir())
-	if err != nil {
-		return err
+	log.Printf("Processing %d names.", len(names))
+	for i, name := range names {
+		ns, parsed := matcher.NewNameString(parser, name)
+		if parsed.Parsed {
+			if abbrResult := matcher.DetectAbbreviated(parsed); abbrResult != nil {
+				res[i] = abbrResult
+				continue
+			}
+			matchResult = m.Match(ns)
+		} else {
+			matchResult = m.MatchVirus(ns)
+		}
+		if matchResult == nil {
+			matchResult = m.MatchFuzzy(ns.Canonical, ns.CanonicalStem, ns, kv)
+		}
+		if matchResult == nil {
+			matchResult = m.MatchPartial(ns, kv)
+		}
+		res[i] = matchResult
 	}
-	return sys.MakeDir(gnm.TrieDir())
+	return res
+}
+
+func truncateNamesToMaxNumber(names []string) []string {
+	if len(names) > MaxNamesNumber {
+		log.Warn(fmt.Sprintf("Too many names, truncating list to %d entries.",
+			MaxNamesNumber))
+		names = names[0:MaxNamesNumber]
+	}
+	return names
 }

@@ -1,6 +1,8 @@
 package gnmatcher
 
 var (
-	Version = "v0.0.0"
-	Build   = "n/a"
+	// Version of the gnmatcher
+	Version = "v0.2.0"
+	// Build timestamp
+	Build = "n/a"
 )

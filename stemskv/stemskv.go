@@ -5,11 +5,11 @@ package stemskv
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/gob"
 	"io/ioutil"
 
 	"github.com/dgraph-io/badger/v2"
-	"github.com/gnames/gnmatcher/dbase"
 	"github.com/gnames/gnmatcher/sys"
 	log "github.com/sirupsen/logrus"
 )
@@ -20,9 +20,8 @@ type CanonicalKV struct {
 }
 
 // NewStemsKV creates key-value store for stems and their canonical forms.
-func NewStemsKV(path string, d dbase.Dbase) {
+func NewStemsKV(path string, db *sql.DB) {
 	var err error
-	db := d.NewDB()
 	err = sys.MakeDir(path)
 	if err != nil {
 		log.Fatalf("Cannot create %s: %s", path, err)

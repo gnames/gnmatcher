@@ -1,4 +1,4 @@
-package gnmatcher_test
+package matcher_test
 
 import (
 	"testing"
@@ -12,9 +12,9 @@ var (
 	parser gnparser.GNparser
 )
 
-func TestGnmatcher(t *testing.T) {
+func TestMatcher(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Gnmatcher Suite")
+	RunSpecs(t, "Matcher Suite")
 }
 
 var _ = BeforeSuite(func() {

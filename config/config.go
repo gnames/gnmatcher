@@ -1,8 +1,9 @@
-package gnmatcher
+package config
 
 import (
-  "fmt"
-  "github.com/gnames/gnmatcher/dbase"
+	"fmt"
+	"path/filepath"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -12,7 +13,11 @@ type Config struct {
 	NatsURI     string
 	JobsNum     int
 	MaxEditDist int
-	GNamesDB    dbase.Dbase
+	PgHost      string
+	PgPort      int
+	PgUser      string
+	PgPass      string
+	PgDB        string
 }
 
 // NewConfig is a Config constructor that takes external options to
@@ -20,15 +25,36 @@ type Config struct {
 func NewConfig(opts ...Option) Config {
 	cnf := Config{
 		WorkDir:     "/tmp/gnmatcher",
-		NatsURI:     "nats:localhost:4222",
 		JobsNum:     8,
 		MaxEditDist: 1,
-		GNamesDB:    dbase.NewDbase(),
+		PgHost:      "localhost",
+		PgPort:      5432,
+		PgUser:      "postgres",
+		PgPass:      "",
+		PgDB:        "gnames",
 	}
 	for _, opt := range opts {
 		opt(&cnf)
 	}
 	return cnf
+}
+
+// TrieDir returns path where to dump/restore
+// serialized trie.
+func (cnf Config) TrieDir() string {
+	return filepath.Join(cnf.WorkDir, "levenshein")
+}
+
+// FiltersDir returns path where to dump/restore
+// serialized bloom filters.
+func (cnf Config) FiltersDir() string {
+	return filepath.Join(cnf.WorkDir, "bloom")
+}
+
+// StemsDir returns path where stems key-value store
+// is located
+func (cnf Config) StemsDir() string {
+	return filepath.Join(cnf.WorkDir, "stems-kv")
 }
 
 // Option is a type of all options for Config.
@@ -38,13 +64,6 @@ type Option func(cnf *Config)
 func OptWorkDir(s string) Option {
 	return func(cnf *Config) {
 		cnf.WorkDir = s
-	}
-}
-
-// OptNatsURI defines a URI to connect to NATS messaging service server.
-func OptNatsURI(s string) Option {
-	return func(cnf *Config) {
-		cnf.NatsURI = s
 	}
 }
 
@@ -59,45 +78,46 @@ func OptJobsNum(i int) Option {
 // stemmed canonical forms.
 func OptMaxEditDist(i int) Option {
 	return func(cnf *Config) {
-  if i < 1 || i > 2 {
-    log.Warn(fmt.Sprintf("MaxEditDist can only be 1 or 2, leaving it at %d.",
-    cnf.MaxEditDist))
-  }
-		cnf.MaxEditDist = i
+		if i < 1 || i > 2 {
+			log.Warn(fmt.Sprintf("MaxEditDist can only be 1 or 2, leaving it at %d.",
+				cnf.MaxEditDist))
+		} else {
+			cnf.MaxEditDist = i
+		}
 	}
 }
 
 // OptPgHost sets the host of gnames database
 func OptPgHost(s string) Option {
 	return func(cnf *Config) {
-		cnf.GNamesDB.PgHost = s
+		cnf.PgHost = s
 	}
 }
 
 // OptPgUser sets the user of gnnames database
 func OptPgUser(s string) Option {
 	return func(cnf *Config) {
-		cnf.GNamesDB.PgUser = s
+		cnf.PgUser = s
 	}
 }
 
 // OptPgPass sets the password to access gnnames database
 func OptPgPass(s string) Option {
 	return func(cnf *Config) {
-		cnf.GNamesDB.PgPass = s
+		cnf.PgPass = s
 	}
 }
 
 // OptPgPort sets the port for gnames database
 func OptPgPort(i int) Option {
 	return func(cnf *Config) {
-		cnf.GNamesDB.PgPort = i
+		cnf.PgPort = i
 	}
 }
 
 // OptPgDB sets the name of gnames database
 func OptPgDB(s string) Option {
 	return func(cnf *Config) {
-		cnf.GNamesDB.PgDB = s
+		cnf.PgDB = s
 	}
 }

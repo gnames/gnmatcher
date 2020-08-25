@@ -27,6 +27,8 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gnames/gnmatcher"
+	gnmcnf "github.com/gnames/gnmatcher/config"
+	"github.com/gnames/gnmatcher/matcher"
 	"github.com/gnames/gnmatcher/rpc"
 	"github.com/spf13/cobra"
 )
@@ -49,8 +51,9 @@ estimate differences between input and output names.`,
 		if err != nil {
 			log.Fatalf("Cannot get port flag: %s", err)
 		}
-		cnf := gnmatcher.NewConfig(opts...)
-		gnm, err := gnmatcher.NewGNMatcher(cnf)
+		cnf := gnmcnf.NewConfig(opts...)
+		m := matcher.NewMatcher(cnf)
+		gnm := gnmatcher.NewGNMatcher(m)
 		if err != nil {
 			log.Printf("Cannot create an instance of GNMatcher: %s.", err)
 			os.Exit(1)

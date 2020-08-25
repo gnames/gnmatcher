@@ -41,16 +41,22 @@ var _ = Describe("Rpc", func() {
 			names := protob.Names{
 				Names: []string{"Not name", "Bubo bubo", "Pomatomus",
 					"Pardosa moesta", "Plantago major var major",
-					"Cytospora ribis mitovirus 2"},
+					"Cytospora ribis mitovirus 2",
+					"A-shaped rods"},
 			}
 			response, err := client.MatchAry(ctx, &names)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(len(response.Results)).To(Equal(6))
+			Expect(len(response.Results)).To(Equal(7))
 
 			bad := response.Results[0]
 			Expect(bad.Name).To(Equal("Not name"))
 			Expect(bad.MatchType).To(Equal(protob.MatchType_NONE))
 			Expect(bad.MatchData).To(BeNil())
+
+			noParse := response.Results[6]
+			Expect(noParse.Name).To(Equal("A-shaped rods"))
+			Expect(noParse.MatchType).To(Equal(protob.MatchType_NONE))
+			Expect(noParse.MatchData).To(BeNil())
 
 			good := response.Results[1]
 			Expect(good.Name).To(Equal("Bubo bubo"))

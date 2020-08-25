@@ -127,5 +127,6 @@ func namesToChannel(chNames chan<- protob.Names) {
 			names = make([]string, 0, Batch)
 		}
 	}
+	chNames <- protob.Names{Names: names}
 	close(chNames)
 }

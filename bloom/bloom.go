@@ -4,8 +4,10 @@
 package bloom
 
 import (
+	"database/sql"
+	"log"
+
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/gnames/gnmatcher/dbase"
 )
 
 // Names of the files to create cache of bloom filters.
@@ -41,17 +43,26 @@ type Filters struct {
 // If filters had been already created before, it just returns them.
 // Otherwise it creates filters from either database, or from cached files.
 // Creating filters from cache is significantly faster.
-func GetFilters(path string, d dbase.Dbase) (*Filters, error) {
+func GetFilters(path string, db *sql.DB) *Filters {
 	var err error
 
 	if filters != nil {
-		return filters, nil
+		return filters
 	}
 
-	if err = filtersFromCache(path); filters != nil {
-		return filters, err
+	err = filtersFromCache(path)
+	if err != nil {
+		log.Fatalf("Cannot create filters at %s from cache: %s.", path, err)
 	}
 
-	err = filtersFromDB(path, d)
-	return filters, err
+	if filters != nil {
+		return filters
+	}
+
+	err = filtersFromDB(path, db)
+	if err != nil {
+		log.Fatalf("Cannot create filters at %s from database: %s.", path, err)
+	}
+
+	return filters
 }

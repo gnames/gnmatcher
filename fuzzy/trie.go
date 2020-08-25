@@ -7,26 +7,24 @@ import (
 	"path/filepath"
 
 	"github.com/dvirsky/levenshtein"
-	"github.com/gnames/gnmatcher/dbase"
 	log "github.com/sirupsen/logrus"
 )
 
 const trieFile = "stem.trie"
 
-func GetTrie(triePath string, d dbase.Dbase) (*levenshtein.MinTree, error) {
+func GetTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
 	var trie *levenshtein.MinTree
 	trie, err := getCachedTrie(triePath)
 	if err == nil {
 		log.Println("Trie data is rebuilt from cache.")
-		return trie, nil
+		return trie
 	}
 
-	db := d.NewDB()
 	trie, err = populateAndSaveTrie(db, triePath)
 	if err != nil {
-		return trie, err
+		log.Fatalf("Cannot build trie from db: %s", err)
 	}
-	return trie, nil
+	return trie
 }
 
 func getTrieSize(db *sql.DB) (int, error) {

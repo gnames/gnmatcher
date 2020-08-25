@@ -6,12 +6,10 @@ import (
 
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/gnames/gnmatcher/dbase"
 	log "github.com/sirupsen/logrus"
 )
 
-func filtersFromDB(path string, d dbase.Dbase) error {
-	db := d.NewDB()
+func filtersFromDB(path string, db *sql.DB) error {
 	log.Println("Importing lookup data for simple canonicals.")
 	cFilter, cSize, err := createFilter(db, "canonicals")
 	if err != nil {

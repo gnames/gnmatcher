@@ -4,9 +4,9 @@
 
 ##[v0.2.0]
 
+- Add [#11] create matcher and config parckages for better architecture.
 - Add [#10] profiling tool for typical verification of names from OCRed texts.
 - Add [#9] partial matches for names that did not match fully.
-- Add [#8] optimization/parallelizaton of matching algorithms.
 
 ## [v0.1.0]
 
@@ -27,6 +27,10 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#14]: https://github.com/gnames/gnmatcher/issues/14
+[#13]: https://github.com/gnames/gnmatcher/issues/13
+[#12]: https://github.com/gnames/gnmatcher/issues/12
+[#11]: https://github.com/gnames/gnmatcher/issues/11
 [#10]: https://github.com/gnames/gnmatcher/issues/10
 [#9]: https://github.com/gnames/gnmatcher/issues/9
 [#8]: https://github.com/gnames/gnmatcher/issues/8

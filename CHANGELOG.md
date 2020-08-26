@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-##[v0.3.0]
+## [v0.3.0]
 
+- Add [#12] add more documentation.
 - Add [#8] parallelize name matching.
+- Fix [#13] make bloom filters thread safe.
 
-##[v0.2.0]
+## [v0.2.0]
 
 - Add [#11] create matcher and config parckages for better architecture.
 - Add [#10] profiling tool for typical verification of names from OCRed texts.

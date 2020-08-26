@@ -79,6 +79,3 @@ func min(a, b uint8) uint8 {
 	return b
 }
 
-func ComputeNameDistance(n1, n2 string) int {
-	return ComputeDistance(n1, n2)
-}

@@ -47,6 +47,8 @@ type Partial struct {
 	Multinomials []Multinomial
 }
 
+// Multinomial contains multinomial names that were constructed from
+// an 'infraspecific' name-string.
 type Multinomial struct {
 	// Tail is genus + the last epithet.
 	Tail string

@@ -2,6 +2,8 @@ package matcher
 
 import "github.com/gnames/gnmatcher/protob"
 
+// Match tries to match a canonical form of a name-string exactly to canonical
+// from from gnames database.
 func (m Matcher) Match(ns NameString) *protob.Result {
 	var isIn bool
 	m.Filters.Mux.Lock()
@@ -39,6 +41,8 @@ func (m Matcher) Match(ns NameString) *protob.Result {
 	return nilResult
 }
 
+// MatchVirus tries to match a name-string exactly to a virus name from the
+// gnames database.
 func (m Matcher) MatchVirus(ns NameString) *protob.Result {
 	var isIn bool
 	m.Filters.Mux.Lock()

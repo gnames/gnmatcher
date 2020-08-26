@@ -12,6 +12,9 @@ import (
 
 const trieFile = "stem.trie"
 
+// GetTrie generates an in-memory trie for levenshtein automata. Such tree
+// can either be constructed from database or from a dump file. The tree
+// consists stemmed canonical forms of _gnames_ database.
 func GetTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
 	var trie *levenshtein.MinTree
 	trie, err := getCachedTrie(triePath)

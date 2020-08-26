@@ -12,6 +12,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
+// NewDB creates a new instance of sql.DB using configuration data.
 func NewDB(cnf config.Config) *sql.DB {
 	db, err := sql.Open("postgres", opts(cnf))
 	if err != nil {

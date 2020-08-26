@@ -12,10 +12,12 @@ import (
 	"google.golang.org/grpc"
 )
 
+// gnmatcherServer implements gRPC server out of protob package.
 type gnmatcherServer struct {
 	matcher *gnmatcher.GNMatcher
 }
 
+// Run starts the gRPC service.
 func Run(port int, gnm *gnmatcher.GNMatcher) {
 	defer gnm.KV.Close()
 	log.Info(fmt.Sprintf("Starting gnmatcher gRPC server on port %d.", port))
@@ -33,18 +35,22 @@ func Run(port int, gnm *gnmatcher.GNMatcher) {
 	log.Fatal(srv.Serve(l))
 }
 
+// Ping checks if connection to gRPC service is working.
 func (gnmatcherServer) Ping(ctx context.Context,
 	void *protob.Void) (*protob.Pong, error) {
 	pong := protob.Pong{Value: "pong"}
 	return &pong, nil
 }
 
+// Ver sends back the version of the _gnmatcher_.
 func (gnmatcherServer) Ver(ctx context.Context,
 	void *protob.Void) (*protob.Version, error) {
 	ver := protob.Version{Version: gnfinder.Version}
 	return &ver, nil
 }
 
+// MatchAry is the main function of the service. It takes a list of
+// name-strings and returns back matched canonical forms for each name-string.
 func (gnms gnmatcherServer) MatchAry(ctx context.Context,
 	names *protob.Names) (*protob.Output, error) {
 	res := gnms.matcher.MatchNames(names.Names)
@@ -52,8 +58,4 @@ func (gnms gnmatcherServer) MatchAry(ctx context.Context,
 		Results: res,
 	}
 	return output, nil
-}
-
-func (gnmatcherServer) MatchStream(stream protob.GNMatcher_MatchStreamServer) error {
-	return nil
 }

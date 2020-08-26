@@ -7,6 +7,8 @@ import (
 	"gitlab.com/gogna/gnparser/stemmer"
 )
 
+// MatchPartial tries to match all patial variants of a name-string. The
+// process stops as soon as a match was found.
 func (m Matcher) MatchPartial(ns NameString, kv *badger.DB) *protob.Result {
 	if ns.Partial == nil {
 		return emptyResult(ns)

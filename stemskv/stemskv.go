@@ -123,6 +123,7 @@ func GetValue(kv *badger.DB, key string) []byte {
 	return res
 }
 
+// keyValExists checks if key-value store is set.
 func keyValExists(path string) bool {
 	files, err := ioutil.ReadDir(path)
 	return (err == nil && len(files) > 0)

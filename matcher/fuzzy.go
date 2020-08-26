@@ -10,6 +10,8 @@ import (
 	"github.com/gnames/gnmatcher/stemskv"
 )
 
+// MatchFuzzy tries to do fuzzy matchin of a stemmed name-string to canonical
+// forms from the gnames database.
 func (m Matcher) MatchFuzzy(name, stem string,
 	ns NameString, kv *badger.DB) *protob.Result {
 	cnf := m.Config
@@ -45,9 +47,11 @@ func (m Matcher) MatchFuzzy(name, stem string,
 	return res
 }
 
+// calculateEditDistance finds the difference between the canonical form of
+// a name-string and canonical forms that fuzzy-matched its stemed version.
 func calculateEditDistance(name string, res *protob.Result) *protob.Result {
 	for _, v := range res.MatchData {
-		v.EditDistance = int32(fuzzy.ComputeNameDistance(name, v.MatchStr))
+		v.EditDistance = int32(fuzzy.ComputeDistance(name, v.MatchStr))
 	}
 	return res
 }

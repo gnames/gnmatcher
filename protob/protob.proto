@@ -52,5 +52,4 @@ enum MatchType {
 service GNMatcher { rpc Ping(Void) returns(Pong) {}
   rpc Ver(Void) returns(Version) {}
   rpc MatchAry(Names) returns(Output) {}
-  rpc MatchStream(stream Name) returns(stream Name) {}
 }

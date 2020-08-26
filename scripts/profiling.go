@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-const Batch = 1000
+const Batch = 10_000
 
 const HostRPC = ":8778"
 

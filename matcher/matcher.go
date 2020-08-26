@@ -2,7 +2,9 @@ package matcher
 
 import (
 	"strings"
+	"sync"
 
+	"github.com/dgraph-io/badger/v2"
 	"github.com/dvirsky/levenshtein"
 	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/config"
@@ -13,20 +15,38 @@ import (
 	"github.com/gnames/gnmatcher/sys"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/gogna/gnparser"
 	"gitlab.com/gogna/gnparser/pb"
 )
 
 var (
+	// GNUUID is a UUID seed made from 'globalnames.org' domain to generate
+	// UUIDv5 identifiers.
 	GNUUID    = uuid.NewV5(uuid.NamespaceDNS, "globalnames.org")
 	nilResult *protob.Result
 )
 
+// Matcher contains data and functions necessary for exact, fuzzy and partial
+// matching of scientific names.
 type Matcher struct {
 	Config  config.Config
 	Filters *bloom.Filters
 	Trie    *levenshtein.MinTree
 }
 
+// MatchTask contains a name to be matched and an index where it should be
+// located in an array.
+type MatchTask struct {
+	Index int
+	Name  string
+}
+
+type MatchResult struct {
+	Index  int
+	Result *protob.Result
+}
+
+// NewMatcher creates a new instance of Matcher struct.
 func NewMatcher(cnf config.Config) Matcher {
 	m := Matcher{Config: cnf}
 
@@ -48,6 +68,35 @@ func NewMatcher(cnf config.Config) Matcher {
 	stemskv.NewStemsKV(cnf.StemsDir(), db)
 
 	return m
+}
+
+// MatchWorker takes name-strings from chIn channel, matches them
+// and sends results to chOut channel.
+func (m Matcher) MatchWorker(chIn <-chan MatchTask,
+	chOut chan<- MatchResult, wg *sync.WaitGroup, kv *badger.DB) {
+	parser := gnparser.NewGNparser()
+	defer wg.Done()
+	var matchResult *protob.Result
+
+	for tsk := range chIn {
+		ns, parsed := NewNameString(parser, tsk.Name)
+		if parsed.Parsed {
+			if abbrResult := DetectAbbreviated(parsed); abbrResult != nil {
+				chOut <- MatchResult{Index: tsk.Index, Result: abbrResult}
+				continue
+			}
+			matchResult = m.Match(ns)
+		} else {
+			matchResult = m.MatchVirus(ns)
+		}
+		if matchResult == nil {
+			matchResult = m.MatchFuzzy(ns.Canonical, ns.CanonicalStem, ns, kv)
+		}
+		if matchResult == nil {
+			matchResult = m.MatchPartial(ns, kv)
+		}
+		chOut <- MatchResult{Index: tsk.Index, Result: matchResult}
+	}
 }
 
 // DetectAbbreviated checks if parsed name is abbreviated. If name is not

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+##[v0.3.0]
+
+- Add [#8] parallelize name matching.
+
 ##[v0.2.0]
 
 - Add [#11] create matcher and config parckages for better architecture.
@@ -23,6 +27,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.0]: https://github.com/gnames/gnmatcher/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/gnames/gnmatcher/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0

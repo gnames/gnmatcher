@@ -90,10 +90,11 @@ func NewStemsKV(path string, db *sql.DB) {
 // ConnectKeyVal connects to a key-value store
 func ConnectKeyVal(path string) *badger.DB {
 	options := badger.DefaultOptions(path)
+	// running in mem: options := badger.DefaultOptions("").WithInMemory(true)
 	options.Logger = nil
 	bdb, err := badger.Open(options)
 	if err != nil {
-		log.Fatal("Cannot connect to key-value store: %s.", err)
+		log.Fatalf("Cannot connect to key-value store: %s.", err)
 	}
 	return bdb
 }
@@ -102,22 +103,20 @@ func ConnectKeyVal(path string) *badger.DB {
 // there is such stem key. It returns a list of canonicals that correspond to
 // that key.
 func GetValue(kv *badger.DB, key string) []byte {
-	txn := kv.NewTransaction(false)
-	defer func() {
-		err := txn.Commit()
-		if err != nil {
+	var res []byte
+	err := kv.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(key))
+		if err == badger.ErrKeyNotFound {
+			return nil
+		} else if err != nil {
 			log.Fatal(err)
 		}
-	}()
 
-	val, err := txn.Get([]byte(key))
-	if err == badger.ErrKeyNotFound {
-		return []byte("")
-	} else if err != nil {
-		log.Fatal(err)
-	}
-	var res []byte
-	res, err = val.ValueCopy(res)
+		return item.Value(func(val []byte) error {
+			res = append([]byte{}, val...)
+			return nil
+		})
+	})
 	if err != nil {
 		log.Fatal(err)
 	}

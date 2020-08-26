@@ -187,7 +187,7 @@ func getOpts() []gnmcnf.Option {
 func showVersionFlag(cmd *cobra.Command) bool {
 	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatal("Cannot get version flag: %s.", err)
+		log.Fatalf("Cannot get version flag: %s.", err)
 	}
 
 	if hasVersionFlag {
@@ -210,11 +210,11 @@ func touchConfigFile(configPath string, configFile string) {
 func createConfig(path string, file string) {
 	err := sys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Fatal("Cannot create dir %s: %s.", path, err)
+		log.Fatalf("Cannot create dir %s: %s.", path, err)
 	}
 
 	err = ioutil.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Fatal("Cannot write to file %s: %s", path, err)
+		log.Fatalf("Cannot write to file %s: %s", path, err)
 	}
 }

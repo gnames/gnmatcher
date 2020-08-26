@@ -67,6 +67,13 @@ func OptWorkDir(s string) Option {
 	}
 }
 
+// OptNatsURI defines a URI to connect to NATS messaging service server.
+func OptNatsURI(s string) Option {
+	return func(cnf *Config) {
+		cnf.NatsURI = s
+	}
+}
+
 // OptJobsNum sets number of concurrent jobs to run for parallel tasks.
 func OptJobsNum(i int) Option {
 	return func(cnf *Config) {

@@ -6,6 +6,7 @@ package bloom
 import (
 	"database/sql"
 	"log"
+	"sync"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 )
@@ -37,6 +38,8 @@ type Filters struct {
 	Virus *baseBloomfilter.Bloomfilter
 	// VirusesSize is a number of entries if 'viruses' filter.
 	VirusSize uint
+	// Mux is a mutex for thread-safe operations
+	Mux sync.Mutex
 }
 
 // GetFilters returns bloom filters for name-string matching.

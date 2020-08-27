@@ -22,8 +22,12 @@ func (m Matcher) MatchPartial(ns NameString, kv *badger.DB) *protob.Result {
 }
 
 func (m Matcher) processPartialGenus(ns NameString) *protob.Result {
+	var isIn bool
 	gID := uuid.NewV5(GNUUID, ns.Partial.Genus).String()
-	if m.Filters.Canonical.Check([]byte(gID)) {
+	m.Filters.Mux.Lock()
+	isIn = m.Filters.Canonical.Check([]byte(gID))
+	m.Filters.Mux.Unlock()
+	if isIn {
 		return &protob.Result{
 			Id:        ns.ID,
 			Name:      ns.Name,
@@ -39,7 +43,10 @@ func (m Matcher) processPartial(p Multinomial, ns NameString,
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
 		id := uuid.NewV5(GNUUID, name).String()
-		if m.Filters.Canonical.Check([]byte(id)) {
+		m.Filters.Mux.Lock()
+		isIn := m.Filters.Canonical.Check([]byte(id))
+		m.Filters.Mux.Unlock()
+		if isIn {
 			return &protob.Result{
 				Id:        ns.ID,
 				Name:      ns.Name,

@@ -3,7 +3,11 @@ package matcher
 import "github.com/gnames/gnmatcher/protob"
 
 func (m Matcher) Match(ns NameString) *protob.Result {
-	if m.Filters.CanonicalFull.Check([]byte(ns.CanonicalFullID)) {
+	var isIn bool
+	m.Filters.Mux.Lock()
+	isIn = m.Filters.CanonicalFull.Check([]byte(ns.CanonicalFullID))
+	m.Filters.Mux.Unlock()
+	if isIn {
 		return &protob.Result{
 			Id:        ns.ID,
 			Name:      ns.Name,
@@ -16,8 +20,10 @@ func (m Matcher) Match(ns NameString) *protob.Result {
 			},
 		}
 	}
-
-	if m.Filters.Canonical.Check([]byte(ns.CanonicalID)) {
+	m.Filters.Mux.Lock()
+	isIn = m.Filters.Canonical.Check([]byte(ns.CanonicalID))
+	m.Filters.Mux.Unlock()
+	if isIn {
 		return &protob.Result{
 			Id:        ns.ID,
 			Name:      ns.Name,
@@ -34,7 +40,11 @@ func (m Matcher) Match(ns NameString) *protob.Result {
 }
 
 func (m Matcher) MatchVirus(ns NameString) *protob.Result {
-	if m.Filters.Virus.Check([]byte(ns.ID)) {
+	var isIn bool
+	m.Filters.Mux.Lock()
+	isIn = m.Filters.Virus.Check([]byte(ns.ID))
+	m.Filters.Mux.Unlock()
+	if isIn {
 		return &protob.Result{
 			Id:        ns.ID,
 			Name:      ns.Name,
@@ -49,4 +59,3 @@ func (m Matcher) MatchVirus(ns NameString) *protob.Result {
 	}
 	return emptyResult(ns)
 }
-

@@ -4,6 +4,7 @@
 
 ## [v0.3.0]
 
+- Add [#14] prepare for binary release.
 - Add [#12] add more documentation.
 - Add [#8] parallelize name matching.
 - Fix [#13] make bloom filters thread safe.

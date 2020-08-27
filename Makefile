@@ -30,21 +30,14 @@ deps:
 build: proto
 	cd gnmatcher; \
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
-	cd ..; \
+	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
+
+dc: build
 	docker-compose build;
 
-release: proto
+release: build dockerhub
 	cd gnmatcher; \
-	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=linux $(GOBUILD); \
 	tar zcvf /tmp/gnmatcher-${VER}-linux.tar.gz gnmatcher; \
-	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=darwin $(GOBUILD); \
-	tar zcvf /tmp/gnmatcher-${VER}-mac.tar.gz gnmatcher; \
-	$(GOCLEAN); \
-	$(FLAGS_WIN) $(NO_C) $(GOBUILD); \
-	zip -9 /tmp/gnmatcher-$(VER)-win-64.zip gnmatcher.exe; \
 	$(GOCLEAN);
 
 install: proto
@@ -54,3 +47,12 @@ install: proto
 proto:
 	cd protob && \
 	protoc -I . ./protob.proto --go_out=plugins=grpc:.
+
+docker: build
+	docker build -t gnames/gnmatcher:latest -t gnames/gnmatcher:${VERSION} .; \
+	cd gnmatcher; \
+
+dockerhub: docker
+	docker push gnames/gnmatcher; \
+	docker push gnames/gnmatcher:${VERSION}
+

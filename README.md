@@ -48,14 +48,16 @@ For performance measurement we took [100,000 name-strings][testdata] where only
 about 8,000 name-strings per second. For 'clean' data where most of the names
 are "real", you should see an even higher performance.
 
-## Usage ### Prerequisites
+## Prerequisites
 
 * You will need PostgreSQL with a restored dump of
    [`gnames` database][gnames dump].
 
 * Docker service
 
-### Installation
+## Usage
+
+### Usage with docker
 
 * Install docker `gnmatcher` image: ``docker pull gnames/gnmatcher``.
 
@@ -72,6 +74,20 @@ are "real", you should see an even higher performance.
   This command will set the service on port 8080 and will make it available
   through port 8080 on a local machine.
 
+### Usage from command line
+
+* Download the [latest verion] of `gnmatcher` binary, untar and put somewhere
+  in `PATH`.
+
+* Run `gnmatcher -V` to generate configuration at
+  `~/.config/gnmatcher.yaml`
+
+* Edit `~/.config/gnmatcher.yaml` accordingly.
+
+* Run ``gnmatcher grpc -p 1234``
+
+The service will run on the given port.
+
 ## Client
 
 A user can find an example of a client for the service in this
@@ -87,7 +103,7 @@ it to the following:
 1. Copy `.env.example` file to the `.env` file in the project's root directory,
    change the settings accordingly.
 
-2. Build the `gnmatcher` binary and docker image using ``make build`` command.
+2. Build the `gnmatcher` binary and docker image using ``make dc`` command.
 
 3. Run docker-compose command ``docker compose``
 

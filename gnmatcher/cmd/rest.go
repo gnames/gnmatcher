@@ -24,23 +24,22 @@ package cmd
 import (
 	"os"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/gnames/gnmatcher"
 	gnmcnf "github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/matcher"
-	"github.com/gnames/gnmatcher/rpc"
+	"github.com/gnames/gnmatcher/rest"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 )
 
-// grpcCmd represents the grpc command
-var grpcCmd = &cobra.Command{
-	Use:   "grpc",
-	Short: "A gRPC interface to name matching functionality.",
-	Long: `Runs a gRPC server that listens for packages of scientific names. It
-tries to match the names using exact and fuzzy matching algorithms and returns
-UUIDs of canonical forms that did match together with the edit distances to
-estimate differences between input and output names.`,
+// restCmd represents the rest command
+var restCmd = &cobra.Command{
+	Use:   "rest",
+	Short: "RESTful interface to scientific names matching.",
+	Long: `Runs a RESTful HTTP/1 server that takes a list of scientific names
+in binary protobuf-based format and returns output in protobuf format
+as well.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		debug, _ := cmd.Flags().GetBool("debug")
 		if debug {
@@ -58,14 +57,15 @@ estimate differences between input and output names.`,
 			log.Printf("Cannot create an instance of GNMatcher: %s.", err)
 			os.Exit(1)
 		}
-		rpc.Run(port, &gnm)
+		service := rest.NewMatcherREST(&gnm, port)
+		rest.Run(service)
 		os.Exit(0)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(grpcCmd)
+	rootCmd.AddCommand(restCmd)
 
-	grpcCmd.Flags().IntP("port", "p", 8778, "grpc's port")
-	grpcCmd.Flags().BoolP("debug", "d", false, "set logs level to DEBUG")
+	restCmd.Flags().IntP("port", "p", 8080, "REST port")
+	restCmd.Flags().BoolP("debug", "d", false, "set logs level to DEBUG")
 }

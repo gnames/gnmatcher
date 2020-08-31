@@ -10,7 +10,7 @@ import (
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/dbase"
 	"github.com/gnames/gnmatcher/fuzzy"
-	"github.com/gnames/gnmatcher/protob"
+	"github.com/gnames/gnmatcher/model"
 	"github.com/gnames/gnmatcher/stemskv"
 	"github.com/gnames/gnmatcher/sys"
 	uuid "github.com/satori/go.uuid"
@@ -23,7 +23,7 @@ var (
 	// GNUUID is a UUID seed made from 'globalnames.org' domain to generate
 	// UUIDv5 identifiers.
 	GNUUID    = uuid.NewV5(uuid.NamespaceDNS, "globalnames.org")
-	nilResult *protob.Result
+	nilResult *model.Match
 )
 
 // Matcher contains data and functions necessary for exact, fuzzy and partial
@@ -42,8 +42,8 @@ type MatchTask struct {
 }
 
 type MatchResult struct {
-	Index  int
-	Result *protob.Result
+	Index int
+	Match *model.Match
 }
 
 // NewMatcher creates a new instance of Matcher struct.
@@ -76,13 +76,13 @@ func (m Matcher) MatchWorker(chIn <-chan MatchTask,
 	chOut chan<- MatchResult, wg *sync.WaitGroup, kv *badger.DB) {
 	parser := gnparser.NewGNparser()
 	defer wg.Done()
-	var matchResult *protob.Result
+	var matchResult *model.Match
 
 	for tsk := range chIn {
 		ns, parsed := NewNameString(parser, tsk.Name)
 		if parsed.Parsed {
 			if abbrResult := DetectAbbreviated(parsed); abbrResult != nil {
-				chOut <- MatchResult{Index: tsk.Index, Result: abbrResult}
+				chOut <- MatchResult{Index: tsk.Index, Match: abbrResult}
 				continue
 			}
 			matchResult = m.Match(ns)
@@ -95,23 +95,23 @@ func (m Matcher) MatchWorker(chIn <-chan MatchTask,
 		if matchResult == nil {
 			matchResult = m.MatchPartial(ns, kv)
 		}
-		chOut <- MatchResult{Index: tsk.Index, Result: matchResult}
+		chOut <- MatchResult{Index: tsk.Index, Match: matchResult}
 	}
 }
 
 // DetectAbbreviated checks if parsed name is abbreviated. If name is not
 // abbreviated the function returns nil. If it is abbreviated, it returns
 // result with the MatchType 'NONE'.
-func DetectAbbreviated(parsed *pb.Parsed) *protob.Result {
+func DetectAbbreviated(parsed *pb.Parsed) *model.Match {
 	if parsed.Quality != int32(3) {
 		return nilResult
 	}
 	for _, v := range parsed.QualityWarning {
 		if strings.HasPrefix(v.Message, "Abbreviated") {
-			return &protob.Result{
-				Id:        parsed.Id,
+			return &model.Match{
+				ID:        parsed.Id,
 				Name:      parsed.Verbatim,
-				MatchType: protob.MatchType_NONE,
+				MatchType: model.None,
 			}
 		}
 	}
@@ -129,10 +129,10 @@ func (m Matcher) prepareWorkDirs() {
 	}
 }
 
-func emptyResult(ns NameString) *protob.Result {
-	return &protob.Result{
-		Id:        ns.ID,
+func emptyResult(ns NameString) *model.Match {
+	return &model.Match{
+		ID:        ns.ID,
 		Name:      ns.Name,
-		MatchType: protob.MatchType_NONE,
+		MatchType: model.None,
 	}
 }

@@ -27,13 +27,13 @@ Resolution is a determination of how a nomenclaturally registered name can be
 interpreted from the point of taxonomy. For example, a name can be an accepted
 name for species, a synonym, or a discarded one.
 
-The `gnmatcher` app functions as a gRPC service. An app can access it using
-gRPC client libraries.  The API of the gRPC service is described in its
-[protobuf] file.
+The `gnmatcher` app functions as an HTTP service. An app can access it using
+HTTP client libraries.  The API's methods and structures are described in
+the [model] dir.
 
 ## Input and Output
 
-A user calls gRPC method `MatchAry` sending an array of name-strings to the
+A user calls HTTP resource `/match` sending an array of name-strings to the
 service and gets back canonical forms, the match type, as well as other
 metadata described as an `Output` message in the [protobuf] file.
 
@@ -68,7 +68,7 @@ are "real", you should see an even higher performance.
 
     ```bash
     docker run -p 8080:8080 -d --env-file your-env-file \
-    gnames/gnmatcher -- grpc 8080`
+    gnames/gnmatcher -- rest -p 8080`
     ```
 
   This command will set the service on port 8080 and will make it available
@@ -84,20 +84,20 @@ are "real", you should see an even higher performance.
 
 * Edit `~/.config/gnmatcher.yaml` accordingly.
 
-* Run ``gnmatcher grpc -p 1234``
+* Run ``gnmatcher rest -p 1234``
 
 The service will run on the given port.
 
 ## Client
 
 A user can find an example of a client for the service in this
-[test file][grpc-client]
+[test file][rest-client]
 
 ## Development
 
 To run tests a developer needs to install [BDD] binary [ginkgo]
 
-There is a docker-compose file that sets up gRPC service to run tests. To run
+There is a docker-compose file that sets up HTTP service to run tests. To run
 it to the following:
 
 1. Copy `.env.example` file to the `.env` file in the project's root directory,
@@ -111,9 +111,9 @@ it to the following:
 
 [gnames]: https://github.com/gnames/gnames
 [gnames dump]: https://opendata.globalnames.org/dumps/gnames-latest.sql.gz
-[protobuf]: https://raw.githubusercontent.com/gnames/gnmatcher/master/protob/protob.proto
+[model]: https://github.com/gnames/gnmatcher/tree/master/model
 [.env.example]: https://raw.githubusercontent.com/gnames/gnmatcher/master/.env.example
 [testdata]: https://github.com/gnames/gnmatcher/blob/master/testdata/testdata.csv
-[grpc-client]: https://github.com/gnames/gnmatcher/blob/master/rpc/rpc_test.go
+[rest-client]: https://github.com/gnames/gnmatcher/blob/master/rest/rest_test.go
 [BDD]: https://en.wikipedia.org/wiki/Behavior-driven_development
 [ginkgo]: https://github.com/onsi/ginkgo

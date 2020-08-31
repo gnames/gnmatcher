@@ -27,11 +27,10 @@ deps:
 	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@505cc35; \
 	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@ce690c5; \
 
-build: proto
+build:
 	cd gnmatcher; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
-
 dc: build
 	docker-compose build;
 
@@ -40,13 +39,9 @@ release: build dockerhub
 	tar zcvf /tmp/gnmatcher-${VER}-linux.tar.gz gnmatcher; \
 	$(GOCLEAN);
 
-install: proto
+install:
 	cd gnmatcher; \
 	$(FLAGS_SHARED) $(GOINSTALL);
-
-proto:
-	cd protob && \
-	protoc -I . ./protob.proto --go_out=plugins=grpc:.
 
 docker: build
 	docker build -t gnames/gnmatcher:latest -t gnames/gnmatcher:${VERSION} .; \

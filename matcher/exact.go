@@ -1,22 +1,22 @@
 package matcher
 
-import "github.com/gnames/gnmatcher/protob"
+import "github.com/gnames/gnmatcher/model"
 
 // Match tries to match a canonical form of a name-string exactly to canonical
 // from from gnames database.
-func (m Matcher) Match(ns NameString) *protob.Result {
+func (m Matcher) Match(ns NameString) *model.Match {
 	var isIn bool
 	m.Filters.Mux.Lock()
 	isIn = m.Filters.CanonicalFull.Check([]byte(ns.CanonicalFullID))
 	m.Filters.Mux.Unlock()
 	if isIn {
-		return &protob.Result{
-			Id:        ns.ID,
+		return &model.Match{
+			ID:        ns.ID,
 			Name:      ns.Name,
-			MatchType: protob.MatchType_CANONICAL_FULL,
-			MatchData: []*protob.MatchItem{
+			MatchType: model.CanonicalFull,
+			MatchItems: []model.MatchItem{
 				{
-					Id:       ns.CanonicalFullID,
+					ID:       ns.CanonicalFullID,
 					MatchStr: ns.CanonicalFull,
 				},
 			},
@@ -26,13 +26,13 @@ func (m Matcher) Match(ns NameString) *protob.Result {
 	isIn = m.Filters.Canonical.Check([]byte(ns.CanonicalID))
 	m.Filters.Mux.Unlock()
 	if isIn {
-		return &protob.Result{
-			Id:        ns.ID,
+		return &model.Match{
+			ID:        ns.ID,
 			Name:      ns.Name,
-			MatchType: protob.MatchType_CANONICAL,
-			MatchData: []*protob.MatchItem{
+			MatchType: model.Canonical,
+			MatchItems: []model.MatchItem{
 				{
-					Id:       ns.CanonicalID,
+					ID:       ns.CanonicalID,
 					MatchStr: ns.Canonical,
 				},
 			},
@@ -43,19 +43,19 @@ func (m Matcher) Match(ns NameString) *protob.Result {
 
 // MatchVirus tries to match a name-string exactly to a virus name from the
 // gnames database.
-func (m Matcher) MatchVirus(ns NameString) *protob.Result {
+func (m Matcher) MatchVirus(ns NameString) *model.Match {
 	var isIn bool
 	m.Filters.Mux.Lock()
 	isIn = m.Filters.Virus.Check([]byte(ns.ID))
 	m.Filters.Mux.Unlock()
 	if isIn {
-		return &protob.Result{
-			Id:        ns.ID,
+		return &model.Match{
+			ID:        ns.ID,
 			Name:      ns.Name,
-			MatchType: protob.MatchType_VIRUS,
-			MatchData: []*protob.MatchItem{
+			MatchType: model.Virus,
+			MatchItems: []model.MatchItem{
 				{
-					Id:       ns.ID,
+					ID:       ns.ID,
 					MatchStr: ns.Name,
 				},
 			},

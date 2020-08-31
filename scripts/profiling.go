@@ -3,10 +3,12 @@
 package main
 
 import (
-	"context"
+	"bytes"
 	"encoding/csv"
 	"io"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -14,68 +16,61 @@ import (
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
-	"github.com/gnames/gnmatcher/protob"
-	"google.golang.org/grpc"
+	"github.com/gnames/gnmatcher/binary"
+	"github.com/gnames/gnmatcher/model"
 )
 
 const Batch = 10_000
 
-const HostRPC = ":8778"
-
-var (
-	conn *grpc.ClientConn
-)
+const url = "http://:8080/"
 
 func main() {
 	var wgRes sync.WaitGroup
-	chNames := make(chan protob.Names)
+	chNames := make(chan []string)
 	go namesToChannel(chNames)
 	wgRes.Add(1)
-	go grpcData(chNames, &wgRes)
+	go processData(chNames, &wgRes)
 	wgRes.Wait()
 }
 
-func grpcData(chNames <-chan protob.Names, wg *sync.WaitGroup) {
+func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var err error
-	path := filepath.Join("..", "testdata", "profiling-res.csv")
-	file, err := os.Create(path)
-	if err != nil {
-		log.Fatalf("Cannot create %s: %s", path, err)
-	}
-	w := csv.NewWriter(file)
+	w := csv.NewWriter(os.Stdout)
 	defer func() {
 		w.Flush()
-		file.Sync()
-		file.Close()
 	}()
-	conn, err = grpc.Dial(HostRPC, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("Cannot connect to gRPC: %s", err)
-	}
-	client := protob.NewGNMatcherClient(conn)
 	count := 0
 	timeStart := time.Now().UnixNano()
-	for names := range chNames {
+	for request := range chNames {
 		count += 1
 		total := count * Batch
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-		out, err := client.MatchAry(ctx, &names)
+		req, err := binary.Encode(&request)
 		if err != nil {
-			log.Fatalf("Cannot match data: %s", err)
+			log.Fatalf("Cannot marshall input: %v", err)
 		}
+		resp, err := http.Post(url+"match", "application/x-binary", bytes.NewReader(req))
+		if err != nil {
+			log.Fatalf("Cannot send request: %v", err)
+		}
+		respBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalf("Cannot get data: %v", err)
+		}
+		var response []model.Match
+		binary.Decode(respBytes, &response)
+
 		var name, match, matchType string
 		var editDist, editDistStem int
-		for _, res := range out.Results {
+		for _, res := range response {
 			name = res.Name
 			matchType = res.MatchType.String()
-			if len(res.MatchData) == 0 {
+			if len(res.MatchItems) == 0 {
 				err = w.Write([]string{name, matchType, "", "", ""})
 				if err != nil {
-					log.Fatalf("Cannot write to CSV file %s: %s", path, err)
+					log.Fatalf("Cannot write CSV file: %s", err)
 				}
 			}
-			for _, v := range res.MatchData {
+			for _, v := range res.MatchItems {
 				match = v.MatchStr
 				editDist = int(v.EditDistance)
 				editDistStem = int(v.EditDistanceStem)
@@ -83,7 +78,7 @@ func grpcData(chNames <-chan protob.Names, wg *sync.WaitGroup) {
 					name, matchType, match,
 					strconv.Itoa(editDist), strconv.Itoa(editDistStem)})
 				if err != nil {
-					log.Fatalf("Cannot write to CSV file %s: %s", path, err)
+					log.Fatalf("Cannot write CSV file: %s", err)
 				}
 			}
 		}
@@ -94,11 +89,10 @@ func grpcData(chNames <-chan protob.Names, wg *sync.WaitGroup) {
 			log.Printf("Verified %s names, %s names/sec",
 				humanize.Comma(int64(total)), humanize.Comma(speed))
 		}
-		cancel()
 	}
 }
 
-func namesToChannel(chNames chan<- protob.Names) {
+func namesToChannel(chNames chan<- []string) {
 	path := filepath.Join("..", "testdata", "testdata.csv")
 	names := make([]string, 0, Batch)
 	f, err := os.Open(path)
@@ -123,10 +117,10 @@ func namesToChannel(chNames chan<- protob.Names) {
 		}
 		names = append(names, row[0])
 		if len(names) > Batch-1 {
-			chNames <- protob.Names{Names: names}
+			chNames <- names
 			names = make([]string, 0, Batch)
 		}
 	}
-	chNames <- protob.Names{Names: names}
+	chNames <- names
 	close(chNames)
 }

@@ -10,4 +10,4 @@ COPY ./gnmatcher/gnmatcher /bin
 
 ENTRYPOINT [ "gnmatcher" ]
 
-CMD ["grpc", "-p", "8778"]
+CMD ["rest", "-p", "8080"]

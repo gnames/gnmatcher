@@ -6,7 +6,7 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/gnames/gnmatcher/matcher"
-	"github.com/gnames/gnmatcher/protob"
+	"github.com/gnames/gnmatcher/model"
 	"github.com/gnames/gnmatcher/stemskv"
 	log "github.com/sirupsen/logrus"
 )
@@ -31,7 +31,7 @@ func NewGNMatcher(m matcher.Matcher) GNMatcher {
 
 // MatchNames takes a list of name-strings and matches them against known
 // by names aggregated in gnames database.
-func (gnm GNMatcher) MatchNames(names []string) []*protob.Result {
+func (gnm GNMatcher) MatchNames(names []string) []*model.Match {
 	m := gnm.Matcher
 	cnf := m.Config
 	kv := gnm.KV
@@ -39,22 +39,29 @@ func (gnm GNMatcher) MatchNames(names []string) []*protob.Result {
 	chIn := make(chan matcher.MatchTask)
 	chOut := make(chan matcher.MatchResult)
 	var wgIn sync.WaitGroup
+	var wgOut sync.WaitGroup
 	wgIn.Add(cnf.JobsNum)
+	wgOut.Add(1)
 
 	names = truncateNamesToMaxNumber(names)
 	log.Printf("Processing %d names.", len(names))
-	res := make([]*protob.Result, len(names))
+	res := make([]*model.Match, len(names))
 
 	go loadNames(chIn, names)
 	for i := 0; i < cnf.JobsNum; i++ {
 		go m.MatchWorker(chIn, chOut, &wgIn, kv)
 	}
+
 	go func() {
+		defer wgOut.Done()
 		for r := range chOut {
-			res[r.Index] = r.Result
+			res[r.Index] = r.Match
 		}
 	}()
+
 	wgIn.Wait()
+	close(chOut)
+	wgOut.Wait()
 	return res
 }
 

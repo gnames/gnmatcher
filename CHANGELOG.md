@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.3.1]
+
+- Add [#15] switch from gRPC to HTTP service.
+
 ## [v0.3.0]
 
 - Add [#14] prepare for binary release.

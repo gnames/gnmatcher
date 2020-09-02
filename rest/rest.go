@@ -50,7 +50,7 @@ func Run(m model.MatcherService) {
 }
 
 func rootHTTP(resp http.ResponseWriter, _ *http.Request) {
-	log.Print("Pong from root")
+	log.Debug("Pong from root")
 	resp.Write([]byte("OK"))
 }
 

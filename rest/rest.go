@@ -17,6 +17,11 @@ func Run(m model.MatcherService) {
 	log.Printf("Starting the HTTP API server on port %d.", m.GetPort())
 	r := mux.NewRouter()
 
+	r.HandleFunc("/",
+		func(resp http.ResponseWriter, req *http.Request) {
+			rootHTTP(resp, req)
+		}).Methods("GET")
+
 	r.HandleFunc("/ping",
 		func(resp http.ResponseWriter, req *http.Request) {
 			pingHTTP(resp, req, m)
@@ -42,6 +47,11 @@ func Run(m model.MatcherService) {
 	}
 
 	log.Fatal(server.ListenAndServe())
+}
+
+func rootHTTP(resp http.ResponseWriter, _ *http.Request) {
+	log.Print("Pong from root")
+	resp.Write([]byte("OK"))
 }
 
 func pingHTTP(resp http.ResponseWriter, _ *http.Request,

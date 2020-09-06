@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 
 	"github.com/dgraph-io/badger/v2"
+	gn "github.com/gnames/gnames/model"
 	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/model"
 	"github.com/gnames/gnmatcher/stemskv"
@@ -23,7 +24,7 @@ func (m Matcher) MatchFuzzy(name, stem string,
 	res := &model.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
-		MatchType:  model.Fuzzy,
+		MatchType:  gn.Fuzzy,
 		MatchItems: make([]model.MatchItem, 0, len(stems)*2),
 	}
 	for _, v := range stems {

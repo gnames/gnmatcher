@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.3.2]
+
+- Add [#16] migrate to MatchType from gnames project.
+
 ## [v0.3.1]
 
 - Add [#15] switch from gRPC to HTTP service.

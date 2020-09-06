@@ -3,6 +3,10 @@ output and methods that provide functionality for gnmatcher service.
 */
 package model
 
+import (
+	gn "github.com/gnames/gnames/model"
+)
+
 // Pong is output from Ping method. Suppose to return "pong".
 type Pong string
 
@@ -20,8 +24,13 @@ type Match struct {
 	ID string
 	// Name is verbatim input name-string.
 	Name string
+	// VirusMatch is true if matching
+	VirusMatch bool
+	// RankMatch is true if there was a match by full canonical form for
+	// ranked infraspecies.
+	RankMatch bool
 	// MatchType describe what kind of match happened.
-	MatchType
+	MatchType gn.MatchType
 	// MatchItems provide all matched data. It will be empty if no matches
 	// occured.
 	MatchItems []MatchItem

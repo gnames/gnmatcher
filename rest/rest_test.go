@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	gn "github.com/gnames/gnames/model"
 	"github.com/gnames/gnmatcher/binary"
 	"github.com/gnames/gnmatcher/model"
 	. "github.com/onsi/ginkgo"
@@ -65,32 +66,36 @@ var _ = Describe("Rest", func() {
 
 			bad := response[0]
 			Expect(bad.Name).To(Equal("Not name"))
-			Expect(bad.MatchType).To(Equal(model.None))
+			Expect(bad.MatchType).To(Equal(gn.NoMatch))
 			Expect(bad.MatchItems).To(BeNil())
 
 			good := response[1]
 			Expect(good.Name).To(Equal("Bubo bubo"))
-			Expect(good.MatchType).To(Equal(model.Canonical))
+			Expect(good.MatchType).To(Equal(gn.Exact))
 			Expect(good.MatchItems[0].MatchStr).To(Equal("Bubo bubo"))
 
 			full := response[4]
 			Expect(full.Name).To(Equal("Plantago major var major"))
-			Expect(full.MatchType).To(Equal(model.CanonicalFull))
+			Expect(full.MatchType).To(Equal(gn.Exact))
+			Expect(full.RankMatch).To(BeTrue())
+			Expect(full.VirusMatch).To(BeFalse())
 			Expect(full.MatchItems[0].MatchStr).To(Equal("Plantago major var. major"))
 
 			virus := response[5]
 			Expect(virus.Name).To(Equal("Cytospora ribis mitovirus 2"))
-			Expect(virus.MatchType).To(Equal(model.Virus))
+			Expect(virus.MatchType).To(Equal(gn.Exact))
+			Expect(virus.RankMatch).To(BeFalse())
+			Expect(virus.VirusMatch).To(BeTrue())
 			Expect(virus.MatchItems[0].MatchStr).To(Equal("Cytospora ribis mitovirus 2"))
 
 			noParse := response[6]
 			Expect(noParse.Name).To(Equal("A-shaped rods"))
-			Expect(noParse.MatchType).To(Equal(model.None))
+			Expect(noParse.MatchType).To(Equal(gn.NoMatch))
 			Expect(noParse.MatchItems).To(BeNil())
 
 			abbr := response[7]
 			Expect(abbr.Name).To(Equal("Alb. alba"))
-			Expect(abbr.MatchType).To(Equal(model.None))
+			Expect(abbr.MatchType).To(Equal(gn.NoMatch))
 			Expect(abbr.MatchItems).To(BeNil())
 		})
 
@@ -113,31 +118,31 @@ var _ = Describe("Rest", func() {
 			Expect(len(response)).To(Equal(5))
 			bad := response[0]
 			Expect(bad.Name).To(Equal("Not name"))
-			Expect(bad.MatchType).To(Equal(model.None))
+			Expect(bad.MatchType).To(Equal(gn.NoMatch))
 			Expect(bad.MatchItems).To(BeNil())
 
 			uni := response[1]
 			Expect(uni.Name).To(Equal("Pomatomusi"))
-			Expect(uni.MatchType).To(Equal(model.None))
+			Expect(uni.MatchType).To(Equal(gn.NoMatch))
 			Expect(uni.MatchItems).To(BeNil())
 
 			suffix := response[2]
 			Expect(suffix.Name).To(Equal("Pardosa moeste"))
-			Expect(suffix.MatchType).To(Equal(model.Fuzzy))
+			Expect(suffix.MatchType).To(Equal(gn.Fuzzy))
 			Expect(len(suffix.MatchItems)).To(Equal(1))
 			Expect(suffix.MatchItems[0].EditDistance).To(Equal(1))
 			Expect(suffix.MatchItems[0].EditDistanceStem).To(Equal(0))
 
 			space := response[3]
 			Expect(space.Name).To(Equal("Pardosamoestus"))
-			Expect(space.MatchType).To(Equal(model.Fuzzy))
+			Expect(space.MatchType).To(Equal(gn.Fuzzy))
 			Expect(len(space.MatchItems)).To(Equal(1))
 			Expect(space.MatchItems[0].EditDistance).To(Equal(3))
 			Expect(space.MatchItems[0].EditDistanceStem).To(Equal(1))
 
 			multi := response[4]
 			Expect(multi.Name).To(Equal("Accanthurus glaucopareus"))
-			Expect(multi.MatchType).To(Equal(model.Fuzzy))
+			Expect(multi.MatchType).To(Equal(gn.Fuzzy))
 			Expect(len(multi.MatchItems)).To(Equal(3))
 			Expect(multi.MatchItems[0].EditDistanceStem).To(Equal(1))
 		})

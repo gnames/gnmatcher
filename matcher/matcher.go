@@ -6,6 +6,7 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/dvirsky/levenshtein"
+	gn "github.com/gnames/gnames/model"
 	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/dbase"
@@ -111,7 +112,7 @@ func DetectAbbreviated(parsed *pb.Parsed) *model.Match {
 			return &model.Match{
 				ID:        parsed.Id,
 				Name:      parsed.Verbatim,
-				MatchType: model.None,
+				MatchType: gn.NoMatch,
 			}
 		}
 	}
@@ -133,6 +134,6 @@ func emptyResult(ns NameString) *model.Match {
 	return &model.Match{
 		ID:        ns.ID,
 		Name:      ns.Name,
-		MatchType: model.None,
+		MatchType: gn.NoMatch,
 	}
 }

@@ -2,6 +2,7 @@ package matcher
 
 import (
 	"github.com/dgraph-io/badger/v2"
+	gn "github.com/gnames/gnames/model"
 	"github.com/gnames/gnmatcher/model"
 	uuid "github.com/satori/go.uuid"
 	"gitlab.com/gogna/gnparser/stemmer"
@@ -33,7 +34,7 @@ func (m Matcher) processPartialGenus(ns NameString) *model.Match {
 		return &model.Match{
 			ID:         ns.ID,
 			Name:       ns.Name,
-			MatchType:  model.Partial,
+			MatchType:  gn.PartialExact,
 			MatchItems: []model.MatchItem{{ID: gID, MatchStr: ns.Partial.Genus}},
 		}
 	}
@@ -52,14 +53,14 @@ func (m Matcher) processPartial(p Multinomial, ns NameString,
 			return &model.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
-				MatchType:  model.Partial,
+				MatchType:  gn.PartialExact,
 				MatchItems: []model.MatchItem{{ID: id, MatchStr: ns.Partial.Genus}},
 			}
 		}
 
 		stem := stemmer.Stem(name).Stem
 		if res := m.MatchFuzzy(name, stem, ns, kv); res != nil {
-			res.MatchType = model.PartialFuzzy
+			res.MatchType = gn.PartialFuzzy
 			return res
 		}
 	}

@@ -1,6 +1,7 @@
 package matcher
 
 import "github.com/gnames/gnmatcher/model"
+import gn "github.com/gnames/gnames/model"
 
 // Match tries to match a canonical form of a name-string exactly to canonical
 // from from gnames database.
@@ -13,7 +14,8 @@ func (m Matcher) Match(ns NameString) *model.Match {
 		return &model.Match{
 			ID:        ns.ID,
 			Name:      ns.Name,
-			MatchType: model.CanonicalFull,
+			RankMatch: true,
+			MatchType: gn.Exact,
 			MatchItems: []model.MatchItem{
 				{
 					ID:       ns.CanonicalFullID,
@@ -29,7 +31,7 @@ func (m Matcher) Match(ns NameString) *model.Match {
 		return &model.Match{
 			ID:        ns.ID,
 			Name:      ns.Name,
-			MatchType: model.Canonical,
+			MatchType: gn.Exact,
 			MatchItems: []model.MatchItem{
 				{
 					ID:       ns.CanonicalID,
@@ -50,9 +52,10 @@ func (m Matcher) MatchVirus(ns NameString) *model.Match {
 	m.Filters.Mux.Unlock()
 	if isIn {
 		return &model.Match{
-			ID:        ns.ID,
-			Name:      ns.Name,
-			MatchType: model.Virus,
+			ID:         ns.ID,
+			Name:       ns.Name,
+			VirusMatch: true,
+			MatchType:  gn.Exact,
 			MatchItems: []model.MatchItem{
 				{
 					ID:       ns.ID,

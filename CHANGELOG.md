@@ -38,11 +38,15 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.0]: https://github.com/gnames/gnmatcher/compare/v0.3.1...v0.3.2
+[v0.3.1]: https://github.com/gnames/gnmatcher/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/gnames/gnmatcher/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/gnames/gnmatcher/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#16]: https://github.com/gnames/gnmatcher/issues/16
+[#15]: https://github.com/gnames/gnmatcher/issues/15
 [#14]: https://github.com/gnames/gnmatcher/issues/14
 [#13]: https://github.com/gnames/gnmatcher/issues/13
 [#12]: https://github.com/gnames/gnmatcher/issues/12

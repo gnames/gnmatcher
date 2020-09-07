@@ -16,12 +16,6 @@ func filtersFromDB(path string, db *sql.DB) error {
 		return err
 	}
 
-	log.Println("Importing lookup data for full canonicals.")
-	cfFilter, cfSize, err := createFilter(db, "canonical_fulls")
-	if err != nil {
-		return err
-	}
-
 	log.Println("Importing lookup data for viruses.")
 	vFilter, vSize, err := createFilter(db, "name_strings")
 	if err != nil {
@@ -29,12 +23,10 @@ func filtersFromDB(path string, db *sql.DB) error {
 	}
 
 	filters = &Filters{
-		Canonical:         cFilter,
-		CanonicalSize:     cSize,
-		CanonicalFull:     cfFilter,
-		CanonicalFullSize: cfSize,
-		Virus:             vFilter,
-		VirusSize:         vSize,
+		Canonical:     cFilter,
+		CanonicalSize: cSize,
+		Virus:         vFilter,
+		VirusSize:     vSize,
 	}
 	saveFilters(path)
 	return nil

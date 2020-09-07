@@ -18,30 +18,23 @@ import (
 // filter creations.
 func filtersFromCache(path string) error {
 	cPath := filepath.Join(path, canonicalFile)
-	cfPath := filepath.Join(path, canonicalFullFile)
 	vPath := filepath.Join(path, virusFile)
 	sizesPath := filepath.Join(path, sizesFile)
-	if sys.FileExists(cPath) && sys.FileExists(cfPath) {
-		if err := getFiltersFromCache(cPath, cfPath, vPath, sizesPath); err != nil {
+	if sys.FileExists(cPath) && sys.FileExists(vPath) {
+		if err := getFiltersFromCache(cPath, vPath, sizesPath); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func getFiltersFromCache(cPath, cfPath, vPath, sizesPath string) error {
+func getFiltersFromCache(cPath, vPath, sizesPath string) error {
 	log.Println("Geting lookup data from a cache on disk.")
-	cCfg, cfCfg, vCfg := restoreConfigs(sizesPath)
+	cCfg, vCfg := restoreConfigs(sizesPath)
 	cFilter := baseBloomfilter.New(cCfg)
-	cfFilter := baseBloomfilter.New(cfCfg)
 	vFilter := baseBloomfilter.New(vCfg)
 
 	cBytes, err := ioutil.ReadFile(cPath)
-	if err != nil {
-		return err
-	}
-
-	cfBytes, err := ioutil.ReadFile(cfPath)
 	if err != nil {
 		return err
 	}
@@ -54,24 +47,19 @@ func getFiltersFromCache(cPath, cfPath, vPath, sizesPath string) error {
 	if err = cFilter.UnmarshalBinary(cBytes); err != nil {
 		return err
 	}
-	if err = cfFilter.UnmarshalBinary(cfBytes); err != nil {
-		return err
-	}
 	if err = vFilter.UnmarshalBinary(vBytes); err != nil {
 		return err
 	}
 
 	filters = &Filters{
-		Canonical:     cFilter,
-		CanonicalFull: cfFilter,
-		Virus:         vFilter,
+		Canonical: cFilter,
+		Virus:     vFilter,
 	}
 	return nil
 }
 
-func restoreConfigs(sizeFile string) (bloomfilter.Config, bloomfilter.Config,
-	bloomfilter.Config) {
-	var cCfg, cfCfg, vCfg bloomfilter.Config
+func restoreConfigs(sizeFile string) (bloomfilter.Config, bloomfilter.Config) {
+	var cCfg, vCfg bloomfilter.Config
 	f, err := os.Open(sizeFile)
 	if err != nil {
 		log.Warning(fmt.Sprintf("Could not open file %s: %s.", sizeFile, err))
@@ -93,12 +81,6 @@ func restoreConfigs(sizeFile string) (bloomfilter.Config, bloomfilter.Config,
 				P:        0.00001,
 				HashName: bloomfilter.HASHER_OPTIMAL,
 			}
-		case "CanonicalFullSize":
-			cfCfg = bloomfilter.Config{
-				N:        uint(size),
-				P:        0.00001,
-				HashName: bloomfilter.HASHER_OPTIMAL,
-			}
 		case "VirusSize":
 			vCfg = bloomfilter.Config{
 				N:        uint(size),
@@ -107,5 +89,5 @@ func restoreConfigs(sizeFile string) (bloomfilter.Config, bloomfilter.Config,
 			}
 		}
 	}
-	return cCfg, cfCfg, vCfg
+	return cCfg, vCfg
 }

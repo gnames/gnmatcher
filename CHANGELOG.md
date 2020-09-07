@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#17] do not match full canonical forms.
+
 ## [v0.3.2]
 
 - Add [#16] migrate to MatchType from gnames project.
@@ -45,6 +47,7 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#17]: https://github.com/gnames/gnmatcher/issues/17
 [#16]: https://github.com/gnames/gnmatcher/issues/16
 [#15]: https://github.com/gnames/gnmatcher/issues/15
 [#14]: https://github.com/gnames/gnmatcher/issues/14

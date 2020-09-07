@@ -13,10 +13,9 @@ import (
 
 // Names of the files to create cache of bloom filters.
 const (
-	canonicalFile     = "canonicals.bf"
-	canonicalFullFile = "canonical_fulls.bf"
-	virusFile         = "viruses.bf"
-	sizesFile         = "canonical_sizes.csv"
+	canonicalFile = "canonicals.bf"
+	virusFile     = "viruses.bf"
+	sizesFile     = "canonical_sizes.csv"
 )
 
 // filters is a package variable and once it is created it is reused.
@@ -29,11 +28,6 @@ type Filters struct {
 	// CanonicalSize is number of entries in 'simple' canonical filter. It is
 	// used as an option during Canonical filter creation.
 	CanonicalSize uint
-	// CanonicalFull is a filter for matching with full canonical names.
-	CanonicalFull *baseBloomfilter.Bloomfilter
-	// CanonicalFullSize is number of entries in 'full' canonical filter. It is
-	// used as an option during CanonicalFull filter creation.
-	CanonicalFullSize uint
 	// Virus is a filter for matching with viruses names.
 	Virus *baseBloomfilter.Bloomfilter
 	// VirusesSize is a number of entries if 'viruses' filter.

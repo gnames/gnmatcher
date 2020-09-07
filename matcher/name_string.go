@@ -25,11 +25,6 @@ type NameString struct {
 	Canonical string
 	// CanonicalID is UUID v5 generated from the Canonical field.
 	CanonicalID string
-	// CanonicalFull is a canonical form that also contains infraspecific ranks
-	// and hybrid signes for named hybrids names.
-	CanonicalFull string
-	// CanonicalFullID is UUID v5 generated from the CanonicalFullID field.
-	CanonicalFullID string
 	// Canonical Stem is version of the Canonical field with suffixes removed
 	// and characters substituted according to rules of Latin grammar.
 	CanonicalStem string
@@ -62,14 +57,12 @@ func NewNameString(parser gnparser.GNparser,
 	parsed := parser.ParseToObject(name)
 	if parsed.Parsed {
 		ns := NameString{
-			ID:              parsed.Id,
-			Name:            name,
-			Cardinality:     int(parsed.Cardinality),
-			Canonical:       parsed.Canonical.Simple,
-			CanonicalID:     uuid.NewV5(GNUUID, parsed.Canonical.Simple).String(),
-			CanonicalFull:   parsed.Canonical.Full,
-			CanonicalFullID: uuid.NewV5(GNUUID, parsed.Canonical.Full).String(),
-			CanonicalStem:   parsed.Canonical.Stem,
+			ID:            parsed.Id,
+			Name:          name,
+			Cardinality:   int(parsed.Cardinality),
+			Canonical:     parsed.Canonical.Simple,
+			CanonicalID:   uuid.NewV5(GNUUID, parsed.Canonical.Simple).String(),
+			CanonicalStem: parsed.Canonical.Stem,
 		}
 
 		ns.newPartial(parsed)

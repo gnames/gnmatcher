@@ -8,23 +8,6 @@ import gn "github.com/gnames/gnames/model"
 func (m Matcher) Match(ns NameString) *model.Match {
 	var isIn bool
 	m.Filters.Mux.Lock()
-	isIn = m.Filters.CanonicalFull.Check([]byte(ns.CanonicalFullID))
-	m.Filters.Mux.Unlock()
-	if isIn {
-		return &model.Match{
-			ID:        ns.ID,
-			Name:      ns.Name,
-			RankMatch: true,
-			MatchType: gn.Exact,
-			MatchItems: []model.MatchItem{
-				{
-					ID:       ns.CanonicalFullID,
-					MatchStr: ns.CanonicalFull,
-				},
-			},
-		}
-	}
-	m.Filters.Mux.Lock()
 	isIn = m.Filters.Canonical.Check([]byte(ns.CanonicalID))
 	m.Filters.Mux.Unlock()
 	if isIn {

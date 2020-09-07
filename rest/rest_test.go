@@ -77,14 +77,12 @@ var _ = Describe("Rest", func() {
 			full := response[4]
 			Expect(full.Name).To(Equal("Plantago major var major"))
 			Expect(full.MatchType).To(Equal(gn.Exact))
-			Expect(full.RankMatch).To(BeTrue())
 			Expect(full.VirusMatch).To(BeFalse())
-			Expect(full.MatchItems[0].MatchStr).To(Equal("Plantago major var. major"))
+			Expect(full.MatchItems[0].MatchStr).To(Equal("Plantago major major"))
 
 			virus := response[5]
 			Expect(virus.Name).To(Equal("Cytospora ribis mitovirus 2"))
 			Expect(virus.MatchType).To(Equal(gn.Exact))
-			Expect(virus.RankMatch).To(BeFalse())
 			Expect(virus.VirusMatch).To(BeTrue())
 			Expect(virus.MatchItems[0].MatchStr).To(Equal("Cytospora ribis mitovirus 2"))
 

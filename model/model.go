@@ -26,9 +26,6 @@ type Match struct {
 	Name string
 	// VirusMatch is true if matching
 	VirusMatch bool
-	// RankMatch is true if there was a match by full canonical form for
-	// ranked infraspecies.
-	RankMatch bool
 	// MatchType describe what kind of match happened.
 	MatchType gn.MatchType
 	// MatchItems provide all matched data. It will be empty if no matches
@@ -41,8 +38,7 @@ type MatchItem struct {
 	// ID is a UUIDv5 generated out of MatchStr.
 	ID string
 	// MatchStr is the string that matched a particular input. More often than
-	// not it is a canonical form of a name. However for ranked infraspecies it
-	// might be a 'full' canonical form that includes rank, and for viruses it
+	// not it is a canonical form of a name. However for viruses it
 	// can be matched string from the database.
 	MatchStr string
 	// EditDistance is a Levenshtein edit distance between normalized

@@ -16,8 +16,8 @@ import (
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
-	"github.com/gnames/gnmatcher/binary"
-	"github.com/gnames/gnmatcher/model"
+	"github.com/gnames/gnames/lib/encode"
+	"github.com/gnames/gnmatcher/domain/entity"
 )
 
 const Batch = 10_000
@@ -34,6 +34,7 @@ func main() {
 }
 
 func processData(chNames <-chan []string, wg *sync.WaitGroup) {
+	enc := encode.GNgob{}
 	defer wg.Done()
 	w := csv.NewWriter(os.Stdout)
 	defer func() {
@@ -44,7 +45,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 	for request := range chNames {
 		count += 1
 		total := count * Batch
-		req, err := binary.Encode(&request)
+		req, err := enc.Encode(&request)
 		if err != nil {
 			log.Fatalf("Cannot marshall input: %v", err)
 		}
@@ -56,8 +57,8 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if err != nil {
 			log.Fatalf("Cannot get data: %v", err)
 		}
-		var response []model.Match
-		binary.Decode(respBytes, &response)
+		var response []entity.Match
+		enc.Decode(respBytes, &response)
 
 		var name, match, matchType string
 		var editDist, editDistStem int

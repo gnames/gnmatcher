@@ -6,15 +6,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gnames/gnmatcher/binary"
-	"github.com/gnames/gnmatcher/model"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
 // Run creates and runs the HTTP API service of gnmatcher.
-func Run(m model.MatcherService) {
-	log.Printf("Starting the HTTP API server on port %d.", m.GetPort())
+func Run(m MatcherService) {
+	log.Printf("Starting the HTTP API server on port %d.", m.Port())
 	r := mux.NewRouter()
 
 	r.HandleFunc("/",
@@ -37,7 +35,7 @@ func Run(m model.MatcherService) {
 			matchAryHTTP(resp, req, m)
 		}).Methods("POST")
 
-	addr := fmt.Sprintf(":%d", m.GetPort())
+	addr := fmt.Sprintf(":%d", m.Port())
 
 	server := &http.Server{
 		Handler:      r,
@@ -55,9 +53,9 @@ func rootHTTP(resp http.ResponseWriter, _ *http.Request) {
 }
 
 func pingHTTP(resp http.ResponseWriter, _ *http.Request,
-	m model.MatcherService) {
+	m MatcherService) {
 	result := m.Ping()
-	if response, err := binary.Encode(result); err == nil {
+	if response, err := m.Encode(result); err == nil {
 		resp.Write(response)
 	} else {
 		log.Warnf("pingHTTP: cannot encode response : %v", err)
@@ -65,9 +63,9 @@ func pingHTTP(resp http.ResponseWriter, _ *http.Request,
 }
 
 func getVersionHTTP(resp http.ResponseWriter, _ *http.Request,
-	m model.MatcherService) {
-	result := m.GetVersion()
-	if out, err := binary.Encode(result); err == nil {
+	m MatcherService) {
+	result := m.Version()
+	if out, err := m.Encode(result); err == nil {
 		resp.Write(out)
 	} else {
 		log.Warnf("getVersionHTTP: cannot encode response : %v", err)
@@ -75,18 +73,22 @@ func getVersionHTTP(resp http.ResponseWriter, _ *http.Request,
 }
 
 func matchAryHTTP(resp http.ResponseWriter, req *http.Request,
-	m model.MatcherService) {
+	m MatcherService) {
 	var names []string
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		log.Warnf("matchAryHTTP: cannot read message from request : %v", err)
 		return
 	}
-	binary.Decode(body, &names)
+	err = m.Decode(body, &names)
+	if err != nil {
+		log.Warnf("matchAryHTTP: cannot decode request : %v", err)
+		return
+	}
 
 	matches := m.MatchAry(names)
 
-	if out, err := binary.Encode(matches); err == nil {
+	if out, err := m.Encode(matches); err == nil {
 		resp.Write(out)
 	} else {
 		log.Warnf("MatchAry: Cannot encode response : %v", err)

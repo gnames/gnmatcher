@@ -10,7 +10,7 @@ import (
 
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/gnames/gnmatcher/sys"
+	"github.com/gnames/gnames/lib/sys"
 	log "github.com/sirupsen/logrus"
 )
 

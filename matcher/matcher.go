@@ -6,14 +6,14 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/dvirsky/levenshtein"
-	gn "github.com/gnames/gnames/model"
+	gn "github.com/gnames/gnames/domain/entity"
+	"github.com/gnames/gnames/lib/sys"
 	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/dbase"
+	"github.com/gnames/gnmatcher/domain/entity"
 	"github.com/gnames/gnmatcher/fuzzy"
-	"github.com/gnames/gnmatcher/model"
 	"github.com/gnames/gnmatcher/stemskv"
-	"github.com/gnames/gnmatcher/sys"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"gitlab.com/gogna/gnparser"
@@ -24,7 +24,7 @@ var (
 	// GNUUID is a UUID seed made from 'globalnames.org' domain to generate
 	// UUIDv5 identifiers.
 	GNUUID    = uuid.NewV5(uuid.NamespaceDNS, "globalnames.org")
-	nilResult *model.Match
+	nilResult *entity.Match
 )
 
 // Matcher contains data and functions necessary for exact, fuzzy and partial
@@ -44,7 +44,7 @@ type MatchTask struct {
 
 type MatchResult struct {
 	Index int
-	Match *model.Match
+	Match *entity.Match
 }
 
 // NewMatcher creates a new instance of Matcher struct.
@@ -77,7 +77,7 @@ func (m Matcher) MatchWorker(chIn <-chan MatchTask,
 	chOut chan<- MatchResult, wg *sync.WaitGroup, kv *badger.DB) {
 	parser := gnparser.NewGNparser()
 	defer wg.Done()
-	var matchResult *model.Match
+	var matchResult *entity.Match
 
 	for tsk := range chIn {
 		ns, parsed := NewNameString(parser, tsk.Name)
@@ -103,13 +103,13 @@ func (m Matcher) MatchWorker(chIn <-chan MatchTask,
 // DetectAbbreviated checks if parsed name is abbreviated. If name is not
 // abbreviated the function returns nil. If it is abbreviated, it returns
 // result with the MatchType 'NONE'.
-func DetectAbbreviated(parsed *pb.Parsed) *model.Match {
+func DetectAbbreviated(parsed *pb.Parsed) *entity.Match {
 	if parsed.Quality != int32(3) {
 		return nilResult
 	}
 	for _, v := range parsed.QualityWarning {
 		if strings.HasPrefix(v.Message, "Abbreviated") {
-			return &model.Match{
+			return &entity.Match{
 				ID:        parsed.Id,
 				Name:      parsed.Verbatim,
 				MatchType: gn.NoMatch,
@@ -130,8 +130,8 @@ func (m Matcher) prepareWorkDirs() {
 	}
 }
 
-func emptyResult(ns NameString) *model.Match {
-	return &model.Match{
+func emptyResult(ns NameString) *entity.Match {
+	return &entity.Match{
 		ID:        ns.ID,
 		Name:      ns.Name,
 		MatchType: gn.NoMatch,

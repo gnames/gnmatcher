@@ -5,27 +5,27 @@ import (
 	"encoding/gob"
 
 	"github.com/dgraph-io/badger/v2"
-	gn "github.com/gnames/gnames/model"
+	gn "github.com/gnames/gnames/domain/entity"
+	"github.com/gnames/gnmatcher/domain/entity"
 	"github.com/gnames/gnmatcher/fuzzy"
-	"github.com/gnames/gnmatcher/model"
 	"github.com/gnames/gnmatcher/stemskv"
 )
 
 // MatchFuzzy tries to do fuzzy matchin of a stemmed name-string to canonical
 // forms from the gnames database.
 func (m Matcher) MatchFuzzy(name, stem string,
-	ns NameString, kv *badger.DB) *model.Match {
+	ns NameString, kv *badger.DB) *entity.Match {
 	cnf := m.Config
 	stems := m.Trie.FuzzyMatches(stem, cnf.MaxEditDist)
 	if len(stems) == 0 {
 		return nilResult
 	}
 
-	res := &model.Match{
+	res := &entity.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  gn.Fuzzy,
-		MatchItems: make([]model.MatchItem, 0, len(stems)*2),
+		MatchItems: make([]entity.MatchItem, 0, len(stems)*2),
 	}
 	for _, v := range stems {
 
@@ -37,7 +37,7 @@ func (m Matcher) MatchFuzzy(name, stem string,
 		for _, v := range cans {
 			res.MatchItems = append(
 				res.MatchItems,
-				model.MatchItem{
+				entity.MatchItem{
 					ID:               v.ID,
 					MatchStr:         v.Name,
 					EditDistanceStem: editDistanceStem,
@@ -50,7 +50,7 @@ func (m Matcher) MatchFuzzy(name, stem string,
 
 // calculateEditDistance finds the difference between the canonical form of
 // a name-string and canonical forms that fuzzy-matched its stemed version.
-func calculateEditDistance(name string, res *model.Match) {
+func calculateEditDistance(name string, res *entity.Match) {
 	for i, v := range res.MatchItems {
 		res.MatchItems[i].EditDistance = fuzzy.ComputeDistance(name, v.MatchStr)
 	}

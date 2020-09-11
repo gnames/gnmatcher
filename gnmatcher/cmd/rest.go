@@ -24,6 +24,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/gnames/gnames/lib/encode"
 	"github.com/gnames/gnmatcher"
 	gnmcnf "github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/matcher"
@@ -57,7 +58,17 @@ as well.`,
 			log.Printf("Cannot create an instance of GNMatcher: %s.", err)
 			os.Exit(1)
 		}
-		service := rest.NewMatcherREST(&gnm, port)
+
+		var enc encode.Encoder = encode.GNjson{}
+		gob, _ := cmd.Flags().GetBool("gob")
+		if gob {
+			enc = encode.GNgob{}
+			log.Print("Serialization with Gob.")
+		} else {
+			log.Print("Serialization with JSON.")
+		}
+
+		service := rest.NewMatcherREST(&gnm, port, enc)
 		rest.Run(service)
 		os.Exit(0)
 	},
@@ -68,4 +79,5 @@ func init() {
 
 	restCmd.Flags().IntP("port", "p", 8080, "REST port")
 	restCmd.Flags().BoolP("debug", "d", false, "set logs level to DEBUG")
+	restCmd.Flags().BoolP("gob", "g", false, "set encoding to Gob")
 }

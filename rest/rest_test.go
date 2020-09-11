@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	gn "github.com/gnames/gnames/model"
-	"github.com/gnames/gnmatcher/binary"
-	"github.com/gnames/gnmatcher/model"
+	gn "github.com/gnames/gnames/domain/entity"
+	"github.com/gnames/gnames/lib/encode"
+	"github.com/gnames/gnmatcher/domain/entity"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -18,14 +18,15 @@ var _ = Describe("Rest", func() {
 	Describe("Ping()", func() {
 		It("Gets pong from REST server", func() {
 			var req []byte
+			enc := encode.GNgob{}
 			resp, err := http.Post(url+"ping", "application/x-binary", bytes.NewReader(req))
 			Expect(err).To(BeNil())
 
 			respBytes, err := ioutil.ReadAll(resp.Body)
 			Expect(err).To(BeNil())
 
-			var response model.Pong
-			binary.Decode(respBytes, &response)
+			var response string
+			enc.Decode(respBytes, &response)
 			Expect(string(response)).To(Equal("pong"))
 		})
 	})
@@ -33,27 +34,29 @@ var _ = Describe("Rest", func() {
 	Describe("Version()", func() {
 		It("Gets Version from REST server", func() {
 			var req []byte
+			enc := encode.GNgob{}
 			resp, err := http.Post(url+"version", "application/x-binary", bytes.NewReader(req))
 			Expect(err).To(BeNil())
 			respBytes, err := ioutil.ReadAll(resp.Body)
 			Expect(err).To(BeNil())
 
-			var response model.Version
-			binary.Decode(respBytes, &response)
+			var response entity.Version
+			enc.Decode(respBytes, &response)
 			Expect(response.Version).To(MatchRegexp(`^v\d+\.\d+\.\d+`))
 		})
 	})
 
 	Describe("MatchAry()", func() {
 		It("Finds exact matches for entered names", func() {
-			var response []model.Match
+			var response []entity.Match
+			enc := encode.GNgob{}
 			request := []string{
 				"Not name", "Bubo bubo", "Pomatomus",
 				"Pardosa moesta", "Plantago major var major",
 				"Cytospora ribis mitovirus 2",
 				"A-shaped rods", "Alb. alba",
 			}
-			req, err := binary.Encode(request)
+			req, err := enc.Encode(request)
 			Expect(err).To(BeNil())
 			r := bytes.NewReader(req)
 			resp, err := http.Post(url+"match", "application/x-binary", r)
@@ -61,7 +64,7 @@ var _ = Describe("Rest", func() {
 			respBytes, err := ioutil.ReadAll(resp.Body)
 			Expect(err).To(BeNil())
 
-			binary.Decode(respBytes, &response)
+			enc.Decode(respBytes, &response)
 			Expect(len(response)).To(Equal(8))
 
 			bad := response[0]
@@ -98,20 +101,21 @@ var _ = Describe("Rest", func() {
 		})
 
 		It("Finds fuzzy matches for entered names", func() {
-			var response []model.Match
+			var response []entity.Match
 			request := []string{
 				"Not name", "Pomatomusi",
 				"Pardosa moeste", "Pardosamoestus",
 				"Accanthurus glaucopareus",
 			}
-			req, err := binary.Encode(request)
+			enc := encode.GNgob{}
+			req, err := enc.Encode(request)
 			Expect(err).To(BeNil())
 			resp, err := http.Post(url+"match", "application/x-binary", bytes.NewReader(req))
 			Expect(err).To(BeNil())
 			respBytes, err := ioutil.ReadAll(resp.Body)
 			Expect(err).To(BeNil())
 
-			binary.Decode(respBytes, &response)
+			enc.Decode(respBytes, &response)
 
 			Expect(len(response)).To(Equal(5))
 			bad := response[0]

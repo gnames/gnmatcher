@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/dgraph-io/badger/v2"
+	"github.com/gnames/gnmatcher/domain/entity"
 	"github.com/gnames/gnmatcher/matcher"
-	"github.com/gnames/gnmatcher/model"
 	"github.com/gnames/gnmatcher/stemskv"
 	log "github.com/sirupsen/logrus"
 )
@@ -31,7 +31,7 @@ func NewGNMatcher(m matcher.Matcher) GNMatcher {
 
 // MatchNames takes a list of name-strings and matches them against known
 // by names aggregated in gnames database.
-func (gnm GNMatcher) MatchNames(names []string) []*model.Match {
+func (gnm GNMatcher) MatchNames(names []string) []*entity.Match {
 	m := gnm.Matcher
 	cnf := m.Config
 	kv := gnm.KV
@@ -45,7 +45,7 @@ func (gnm GNMatcher) MatchNames(names []string) []*model.Match {
 
 	names = truncateNamesToMaxNumber(names)
 	log.Printf("Processing %d names.", len(names))
-	res := make([]*model.Match, len(names))
+	res := make([]*entity.Match, len(names))
 
 	go loadNames(chIn, names)
 	for i := 0; i < cnf.JobsNum; i++ {

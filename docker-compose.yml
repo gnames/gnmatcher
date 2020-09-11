@@ -12,9 +12,10 @@ services:
       - rest:/var/opt/gnmatcher
     command:
       - rest
-      - -p
+      - --port
       - "8080"
-      - -d
+      - --gob
+      - --debug
 volumes:
   rest:
 

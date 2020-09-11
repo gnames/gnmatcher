@@ -1,14 +1,11 @@
-/* Pacage model contains main structures and interfaces that describe input,
-output and methods that provide functionality for gnmatcher service.
+/* Package entity provides main data-structures that describe input and
+output of gnmatcher functionality.
 */
-package model
+package entity
 
 import (
-	gn "github.com/gnames/gnames/model"
+	gn "github.com/gnames/gnames/domain/entity"
 )
-
-// Pong is output from Ping method. Suppose to return "pong".
-type Pong string
 
 // Version is output from GetVersion method.
 type Version struct {

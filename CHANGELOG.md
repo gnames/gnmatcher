@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v0.3.3]
+
+- Add [#18] clean up architecture
 - Add [#17] do not match full canonical forms.
 
 ## [v0.3.2]
@@ -40,7 +43,8 @@
 
 This document follows [changelog guidelines]
 
-[v0.3.0]: https://github.com/gnames/gnmatcher/compare/v0.3.1...v0.3.2
+[v0.3.3]: https://github.com/gnames/gnmatcher/compare/v0.3.2...v0.3.3
+[v0.3.2]: https://github.com/gnames/gnmatcher/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/gnames/gnmatcher/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/gnames/gnmatcher/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/gnames/gnmatcher/compare/v0.1.0...v0.2.0

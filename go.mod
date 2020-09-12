@@ -8,7 +8,7 @@ require (
 	github.com/dgraph-io/badger/v2 v2.2007.1
 	github.com/dustin/go-humanize v1.0.0
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
-	github.com/gnames/gnames v0.0.2
+	github.com/gnames/gnames v0.0.3-0.20200912100801-1bce5ea89967
 	github.com/gorilla/mux v1.7.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mitchellh/go-homedir v1.1.0

@@ -11,13 +11,9 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/gnames/gnames/lib/sys"
+	"github.com/gnames/gnmatcher/domain/entity"
 	log "github.com/sirupsen/logrus"
 )
-
-type CanonicalKV struct {
-	ID   string
-	Name string
-}
 
 // NewStemsKV creates key-value store for stems and their canonical forms.
 func NewStemsKV(path string, db *sql.DB) {
@@ -45,7 +41,7 @@ func NewStemsKV(path string, db *sql.DB) {
 	}
 
 	kvTxn := kv.NewTransaction(true)
-	var stemRes []CanonicalKV
+	var stemRes []entity.MatchItem
 	var currentStem, stem, name, id string
 	count := 0
 	for rows.Next() {
@@ -79,7 +75,7 @@ func NewStemsKV(path string, db *sql.DB) {
 			currentStem = stem
 			stemRes = nil
 		}
-		stemRes = append(stemRes, CanonicalKV{ID: id, Name: name})
+		stemRes = append(stemRes, entity.MatchItem{ID: id, MatchStr: name})
 	}
 	err = kvTxn.Commit()
 	if err != nil {

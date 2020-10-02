@@ -5,13 +5,13 @@ import (
 	"sync"
 
 	"github.com/dgraph-io/badger/v2"
-	"github.com/dvirsky/levenshtein"
 	gn "github.com/gnames/gnames/domain/entity"
 	"github.com/gnames/gnames/lib/sys"
 	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/dbase"
 	"github.com/gnames/gnmatcher/domain/entity"
+	"github.com/gnames/gnmatcher/domain/usecase"
 	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"
 	uuid "github.com/satori/go.uuid"
@@ -32,7 +32,8 @@ var (
 type Matcher struct {
 	Config  config.Config
 	Filters *bloom.Filters
-	Trie    *levenshtein.MinTree
+	KeyVal  *badger.DB
+	usecase.FuzzyMatcher
 }
 
 // MatchTask contains a name to be matched and an index where it should be
@@ -63,10 +64,13 @@ func NewMatcher(cnf config.Config) Matcher {
 
 	log.Println("Initializing levenshtein trie.")
 	trie := fuzzy.GetTrie(cnf.TrieDir(), db)
-	m.Trie = trie
 
 	log.Println("Initializing key-value store for stems.")
 	stemskv.NewStemsKV(cnf.StemsDir(), db)
+
+	path := m.Config.StemsDir()
+	kv := stemskv.ConnectKeyVal(path)
+	m.FuzzyMatcher = NewFuzzyMatcherTrie(trie, kv)
 
 	return m
 }
@@ -74,7 +78,7 @@ func NewMatcher(cnf config.Config) Matcher {
 // MatchWorker takes name-strings from chIn channel, matches them
 // and sends results to chOut channel.
 func (m Matcher) MatchWorker(chIn <-chan MatchTask,
-	chOut chan<- MatchResult, wg *sync.WaitGroup, kv *badger.DB) {
+	chOut chan<- MatchResult, wg *sync.WaitGroup) {
 	parser := gnparser.NewGNparser()
 	defer wg.Done()
 	var matchResult *entity.Match
@@ -91,10 +95,10 @@ func (m Matcher) MatchWorker(chIn <-chan MatchTask,
 			matchResult = m.MatchVirus(ns)
 		}
 		if matchResult == nil {
-			matchResult = m.MatchFuzzy(ns.Canonical, ns.CanonicalStem, ns, kv)
+			matchResult = m.MatchFuzzy(ns.Canonical, ns.CanonicalStem, ns)
 		}
 		if matchResult == nil {
-			matchResult = m.MatchPartial(ns, kv)
+			matchResult = m.MatchPartial(ns)
 		}
 		chOut <- MatchResult{Index: tsk.Index, Match: matchResult}
 	}

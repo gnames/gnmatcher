@@ -2,22 +2,49 @@ package matcher
 
 import (
 	"bytes"
-	"encoding/gob"
+	"fmt"
 
 	"github.com/dgraph-io/badger/v2"
+	"github.com/dvirsky/levenshtein"
 	gn "github.com/gnames/gnames/domain/entity"
+	"github.com/gnames/gnames/lib/encode"
 	"github.com/gnames/gnmatcher/domain/entity"
 	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"
+	log "github.com/sirupsen/logrus"
 )
 
-// MatchFuzzy tries to do fuzzy matchin of a stemmed name-string to canonical
+type FuzzyMatcherTrie struct {
+	Trie    *levenshtein.MinTree
+	KeyVal  *badger.DB
+	Encoder encode.Encoder
+}
+
+func NewFuzzyMatcherTrie(t *levenshtein.MinTree, kv *badger.DB) FuzzyMatcherTrie {
+	return FuzzyMatcherTrie{Trie: t, KeyVal: kv, Encoder: encode.GNgob{}}
+}
+
+func (fm FuzzyMatcherTrie) MatchStem(stem string, maxEditDistance int) []string {
+	return fm.Trie.FuzzyMatches(stem, maxEditDistance)
+}
+
+func (fm FuzzyMatcherTrie) StemToMatchItems(stem string) []entity.MatchItem {
+	var res []entity.MatchItem
+	misGob := bytes.NewBuffer(stemskv.GetValue(fm.KeyVal, stem))
+	err := fm.Encoder.Decode(misGob.Bytes(), &res)
+	if err != nil {
+		log.Warnf("Decode in StemToMatchItems for '%s' failed: %s", stem, err)
+	}
+	return res
+}
+
+// MatchFuzzy tries to get fuzzy matching of a stemmed name-string to canonical
 // forms from the gnames database.
 func (m Matcher) MatchFuzzy(name, stem string,
-	ns NameString, kv *badger.DB) *entity.Match {
+	ns NameString) *entity.Match {
 	cnf := m.Config
-	stems := m.Trie.FuzzyMatches(stem, cnf.MaxEditDist)
-	if len(stems) == 0 {
+	stemMatches := m.MatchStem(stem, cnf.MaxEditDist)
+	if len(stemMatches) == 0 {
 		return nilResult
 	}
 
@@ -25,33 +52,23 @@ func (m Matcher) MatchFuzzy(name, stem string,
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  gn.Fuzzy,
-		MatchItems: make([]entity.MatchItem, 0, len(stems)*2),
+		MatchItems: make([]entity.MatchItem, 0, len(stemMatches)*2),
 	}
-	for _, v := range stems {
-
-		editDistanceStem := fuzzy.ComputeDistance(v, stem)
-		var cans []stemskv.CanonicalKV
-		cansGob := bytes.NewBuffer(stemskv.GetValue(kv, v))
-		dec := gob.NewDecoder(cansGob)
-		dec.Decode(&cans)
-		for _, v := range cans {
-			res.MatchItems = append(
-				res.MatchItems,
-				entity.MatchItem{
-					ID:               v.ID,
-					MatchStr:         v.Name,
-					EditDistanceStem: editDistanceStem,
-				})
+	for _, stemMatch := range stemMatches {
+		editDistanceStem := fuzzy.ComputeDistance(stemMatch, stem)
+		matchItems := m.FuzzyMatcher.StemToMatchItems(stemMatch)
+		for _, matchItem := range matchItems {
+			matchItem.EditDistanceStem = editDistanceStem
+			matchItem.EditDistance = fuzzy.ComputeDistance(name, matchItem.MatchStr)
+			// skip matches with too large edit distance
+			if matchItem.EditDistance > 2 {
+				continue
+			}
+			res.MatchItems = append(res.MatchItems, matchItem)
 		}
 	}
-	calculateEditDistance(name, res)
-	return res
-}
-
-// calculateEditDistance finds the difference between the canonical form of
-// a name-string and canonical forms that fuzzy-matched its stemed version.
-func calculateEditDistance(name string, res *entity.Match) {
-	for i, v := range res.MatchItems {
-		res.MatchItems[i].EditDistance = fuzzy.ComputeDistance(name, v.MatchStr)
+	if len(res.MatchItems) == 0 {
+		return nil
 	}
+	return res
 }

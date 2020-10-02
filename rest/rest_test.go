@@ -104,7 +104,7 @@ var _ = Describe("Rest", func() {
 			var response []entity.Match
 			request := []string{
 				"Not name", "Pomatomusi",
-				"Pardosa moeste", "Pardosamoestus",
+				"Pardosa moeste", "Pardosamoeste",
 				"Accanthurus glaucopareus",
 			}
 			enc := encode.GNgob{}
@@ -136,16 +136,16 @@ var _ = Describe("Rest", func() {
 			Expect(suffix.MatchItems[0].EditDistanceStem).To(Equal(0))
 
 			space := response[3]
-			Expect(space.Name).To(Equal("Pardosamoestus"))
+			Expect(space.Name).To(Equal("Pardosamoeste"))
 			Expect(space.MatchType).To(Equal(gn.Fuzzy))
 			Expect(len(space.MatchItems)).To(Equal(1))
-			Expect(space.MatchItems[0].EditDistance).To(Equal(3))
+			Expect(space.MatchItems[0].EditDistance).To(Equal(2))
 			Expect(space.MatchItems[0].EditDistanceStem).To(Equal(1))
 
 			multi := response[4]
 			Expect(multi.Name).To(Equal("Accanthurus glaucopareus"))
 			Expect(multi.MatchType).To(Equal(gn.Fuzzy))
-			Expect(len(multi.MatchItems)).To(Equal(3))
+			Expect(len(multi.MatchItems)).To(Equal(2))
 			Expect(multi.MatchItems[0].EditDistanceStem).To(Equal(1))
 		})
 	})

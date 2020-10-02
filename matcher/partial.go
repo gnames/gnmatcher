@@ -1,7 +1,6 @@
 package matcher
 
 import (
-	"github.com/dgraph-io/badger/v2"
 	gn "github.com/gnames/gnames/domain/entity"
 	"github.com/gnames/gnmatcher/domain/entity"
 	uuid "github.com/satori/go.uuid"
@@ -10,13 +9,13 @@ import (
 
 // MatchPartial tries to match all patial variants of a name-string. The
 // process stops as soon as a match was found.
-func (m Matcher) MatchPartial(ns NameString, kv *badger.DB) *entity.Match {
+func (m Matcher) MatchPartial(ns NameString) *entity.Match {
 	if ns.Partial == nil {
 		return emptyResult(ns)
 	}
 
 	for _, partial := range ns.Partial.Multinomials {
-		if res := m.processPartial(partial, ns, kv); res != nil {
+		if res := m.processPartial(partial, ns); res != nil {
 			return res
 		}
 	}
@@ -41,8 +40,7 @@ func (m Matcher) processPartialGenus(ns NameString) *entity.Match {
 	return emptyResult(ns)
 }
 
-func (m Matcher) processPartial(p Multinomial, ns NameString,
-	kv *badger.DB) *entity.Match {
+func (m Matcher) processPartial(p Multinomial, ns NameString) *entity.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
 		id := uuid.NewV5(GNUUID, name).String()
@@ -59,7 +57,7 @@ func (m Matcher) processPartial(p Multinomial, ns NameString,
 		}
 
 		stem := stemmer.Stem(name).Stem
-		if res := m.MatchFuzzy(name, stem, ns, kv); res != nil {
+		if res := m.MatchFuzzy(name, stem, ns); res != nil {
 			res.MatchType = gn.PartialFuzzy
 			return res
 		}

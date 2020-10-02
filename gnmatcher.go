@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/dgraph-io/badger/v2"
 	"github.com/gnames/gnmatcher/domain/entity"
 	"github.com/gnames/gnmatcher/matcher"
-	"github.com/gnames/gnmatcher/stemskv"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,14 +17,11 @@ const MaxNamesNumber = 10_000
 // GNMatcher contains high level methods for scientific name matching.
 type GNMatcher struct {
 	Matcher matcher.Matcher
-	KV      *badger.DB
 }
 
 // NewGNMatcher is a constructor for GNMatcher instance
 func NewGNMatcher(m matcher.Matcher) GNMatcher {
-	path := m.Config.StemsDir()
-	kv := stemskv.ConnectKeyVal(path)
-	return GNMatcher{Matcher: m, KV: kv}
+	return GNMatcher{Matcher: m}
 }
 
 // MatchNames takes a list of name-strings and matches them against known
@@ -34,7 +29,6 @@ func NewGNMatcher(m matcher.Matcher) GNMatcher {
 func (gnm GNMatcher) MatchNames(names []string) []*entity.Match {
 	m := gnm.Matcher
 	cnf := m.Config
-	kv := gnm.KV
 
 	chIn := make(chan matcher.MatchTask)
 	chOut := make(chan matcher.MatchResult)
@@ -49,7 +43,7 @@ func (gnm GNMatcher) MatchNames(names []string) []*entity.Match {
 
 	go loadNames(chIn, names)
 	for i := 0; i < cnf.JobsNum; i++ {
-		go m.MatchWorker(chIn, chOut, &wgIn, kv)
+		go m.MatchWorker(chIn, chOut, &wgIn)
 	}
 
 	go func() {

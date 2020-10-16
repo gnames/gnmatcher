@@ -12,7 +12,7 @@ scientific names collected from many external biodiversity sources. The
 `gnmatcher` project receives a list of name-strings and returns back 0 or more
 canonical forms of known names for each name-string.
 
-The project aims to do such verification as fast and accurately as possible.
+The project aims to do such verification as fast and accurate as possible.
 Quite often, humans or character-recognition software (OCR) introduce
 misspellings in the name-strings. For this reason, `gnmatcher` uses
 fuzzy-matching algorithms when no exact match exists.  Also, for cases where

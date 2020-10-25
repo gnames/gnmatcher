@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.3.4]
+
+- Add dependency to gnlib, remove dependency to gnames/lib.
+
 ## [v0.3.3]
 
 - Add [#18] clean up architecture

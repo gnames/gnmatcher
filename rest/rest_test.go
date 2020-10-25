@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	gn "github.com/gnames/gnames/domain/entity"
-	"github.com/gnames/gnames/lib/encode"
+	"github.com/gnames/gnlib/encode"
 	"github.com/gnames/gnmatcher/domain/entity"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

@@ -2,12 +2,11 @@ package matcher
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/dvirsky/levenshtein"
 	gn "github.com/gnames/gnames/domain/entity"
-	"github.com/gnames/gnames/lib/encode"
+	"github.com/gnames/gnlib/encode"
 	"github.com/gnames/gnmatcher/domain/entity"
 	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"

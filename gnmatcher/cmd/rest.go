@@ -24,7 +24,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/gnames/gnames/lib/encode"
+	"github.com/gnames/gnlib/encode"
 	"github.com/gnames/gnmatcher"
 	gnmcnf "github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/matcher"

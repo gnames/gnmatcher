@@ -6,7 +6,7 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	gn "github.com/gnames/gnames/domain/entity"
-	"github.com/gnames/gnames/lib/sys"
+	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnmatcher/bloom"
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/dbase"

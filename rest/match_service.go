@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/gnames/gnames/lib/encode"
+	"github.com/gnames/gnlib/encode"
 	"github.com/gnames/gnmatcher"
 	"github.com/gnames/gnmatcher/domain/entity"
 )

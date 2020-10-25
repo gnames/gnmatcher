@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 
 	"github.com/dgraph-io/badger/v2"
-	"github.com/gnames/gnames/lib/sys"
+	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnmatcher/domain/entity"
 	log "github.com/sirupsen/logrus"
 )

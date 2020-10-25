@@ -1,7 +1,7 @@
 package rest
 
 import "github.com/gnames/gnmatcher/domain/usecase"
-import "github.com/gnames/gnames/lib/encode"
+import "github.com/gnames/gnlib/encode"
 
 // MatcherService describes remote service of gnmatchter.
 type MatcherService interface {

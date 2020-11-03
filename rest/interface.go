@@ -1,6 +1,6 @@
 package rest
 
-import "github.com/gnames/gnmatcher/domain/usecase"
+import mlib "github.com/gnames/gnlib/domain/entity/matcher"
 import "github.com/gnames/gnlib/encode"
 
 // MatcherService describes remote service of gnmatchter.
@@ -11,7 +11,7 @@ type MatcherService interface {
 	// Ping checks connection to the service.
 	Ping() string
 
-	usecase.Matcher
+	mlib.Matcher
 
 	encode.Encoder
 }

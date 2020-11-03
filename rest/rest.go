@@ -64,7 +64,7 @@ func pingHTTP(resp http.ResponseWriter, _ *http.Request,
 
 func getVersionHTTP(resp http.ResponseWriter, _ *http.Request,
 	m MatcherService) {
-	result := m.Version()
+	result := m.GetVersion()
 	if out, err := m.Encode(result); err == nil {
 		resp.Write(out)
 	} else {

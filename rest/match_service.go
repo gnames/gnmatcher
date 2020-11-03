@@ -1,9 +1,10 @@
 package rest
 
 import (
+	"github.com/gnames/gnlib/domain/entity/gn"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	"github.com/gnames/gnlib/encode"
 	"github.com/gnames/gnmatcher"
-	"github.com/gnames/gnmatcher/domain/entity"
 )
 
 // MatchMatcherREST implements MatcherService interface.
@@ -33,15 +34,15 @@ func (mr MatcherREST) Ping() string {
 }
 
 // GetVersion returns version number and build timestamp of gnmatcher.
-func (mr MatcherREST) Version() entity.Version {
-	return entity.Version{
+func (mr MatcherREST) GetVersion() gn.Version {
+	return gn.Version{
 		Version: gnmatcher.Version,
 		Build:   gnmatcher.Build,
 	}
 }
 
 // MatchAry takes a list of strings and matches them to known scientific names.
-func (mr MatcherREST) MatchAry(names []string) []*entity.Match {
+func (mr MatcherREST) MatchAry(names []string) []*mlib.Match {
 	return mr.gnm.MatchNames(names)
 }
 

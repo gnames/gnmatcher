@@ -5,9 +5,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	gn "github.com/gnames/gnames/domain/entity"
+	"github.com/gnames/gnlib/domain/entity/gn"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/encode"
-	"github.com/gnames/gnmatcher/domain/entity"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -40,7 +41,7 @@ var _ = Describe("Rest", func() {
 			respBytes, err := ioutil.ReadAll(resp.Body)
 			Expect(err).To(BeNil())
 
-			var response entity.Version
+			var response gn.Version
 			enc.Decode(respBytes, &response)
 			Expect(response.Version).To(MatchRegexp(`^v\d+\.\d+\.\d+`))
 		})
@@ -48,7 +49,7 @@ var _ = Describe("Rest", func() {
 
 	Describe("MatchAry()", func() {
 		It("Finds exact matches for entered names", func() {
-			var response []entity.Match
+			var response []mlib.Match
 			enc := encode.GNgob{}
 			request := []string{
 				"Not name", "Bubo bubo", "Pomatomus",
@@ -69,43 +70,44 @@ var _ = Describe("Rest", func() {
 
 			bad := response[0]
 			Expect(bad.Name).To(Equal("Not name"))
-			Expect(bad.MatchType).To(Equal(gn.NoMatch))
+			Expect(bad.MatchType).To(Equal(vlib.NoMatch))
 			Expect(bad.MatchItems).To(BeNil())
 
 			good := response[1]
 			Expect(good.Name).To(Equal("Bubo bubo"))
-			Expect(good.MatchType).To(Equal(gn.Exact))
+			Expect(good.MatchType).To(Equal(vlib.Exact))
 			Expect(good.MatchItems[0].MatchStr).To(Equal("Bubo bubo"))
 
 			full := response[4]
 			Expect(full.Name).To(Equal("Plantago major var major"))
-			Expect(full.MatchType).To(Equal(gn.Exact))
+			Expect(full.MatchType).To(Equal(vlib.Exact))
 			Expect(full.VirusMatch).To(BeFalse())
 			Expect(full.MatchItems[0].MatchStr).To(Equal("Plantago major major"))
 
 			virus := response[5]
 			Expect(virus.Name).To(Equal("Cytospora ribis mitovirus 2"))
-			Expect(virus.MatchType).To(Equal(gn.Exact))
+			Expect(virus.MatchType).To(Equal(vlib.Exact))
 			Expect(virus.VirusMatch).To(BeTrue())
 			Expect(virus.MatchItems[0].MatchStr).To(Equal("Cytospora ribis mitovirus 2"))
 
 			noParse := response[6]
 			Expect(noParse.Name).To(Equal("A-shaped rods"))
-			Expect(noParse.MatchType).To(Equal(gn.NoMatch))
+			Expect(noParse.MatchType).To(Equal(vlib.NoMatch))
 			Expect(noParse.MatchItems).To(BeNil())
 
 			abbr := response[7]
 			Expect(abbr.Name).To(Equal("Alb. alba"))
-			Expect(abbr.MatchType).To(Equal(gn.NoMatch))
+			Expect(abbr.MatchType).To(Equal(vlib.NoMatch))
 			Expect(abbr.MatchItems).To(BeNil())
 		})
 
 		It("Finds fuzzy matches for entered names", func() {
-			var response []entity.Match
+			var response []mlib.Match
 			request := []string{
 				"Not name", "Pomatomusi",
 				"Pardosa moeste", "Pardosamoeste",
 				"Accanthurus glaucopareus",
+				"Tillaudsia utriculata",
 			}
 			enc := encode.GNgob{}
 			req, err := enc.Encode(request)
@@ -117,36 +119,42 @@ var _ = Describe("Rest", func() {
 
 			enc.Decode(respBytes, &response)
 
-			Expect(len(response)).To(Equal(5))
+			Expect(len(response)).To(Equal(6))
 			bad := response[0]
 			Expect(bad.Name).To(Equal("Not name"))
-			Expect(bad.MatchType).To(Equal(gn.NoMatch))
+			Expect(bad.MatchType).To(Equal(vlib.NoMatch))
 			Expect(bad.MatchItems).To(BeNil())
 
 			uni := response[1]
 			Expect(uni.Name).To(Equal("Pomatomusi"))
-			Expect(uni.MatchType).To(Equal(gn.NoMatch))
+			Expect(uni.MatchType).To(Equal(vlib.NoMatch))
 			Expect(uni.MatchItems).To(BeNil())
 
 			suffix := response[2]
 			Expect(suffix.Name).To(Equal("Pardosa moeste"))
-			Expect(suffix.MatchType).To(Equal(gn.Fuzzy))
+			Expect(suffix.MatchType).To(Equal(vlib.Fuzzy))
 			Expect(len(suffix.MatchItems)).To(Equal(1))
 			Expect(suffix.MatchItems[0].EditDistance).To(Equal(1))
 			Expect(suffix.MatchItems[0].EditDistanceStem).To(Equal(0))
 
 			space := response[3]
 			Expect(space.Name).To(Equal("Pardosamoeste"))
-			Expect(space.MatchType).To(Equal(gn.Fuzzy))
+			Expect(space.MatchType).To(Equal(vlib.Fuzzy))
 			Expect(len(space.MatchItems)).To(Equal(1))
 			Expect(space.MatchItems[0].EditDistance).To(Equal(2))
 			Expect(space.MatchItems[0].EditDistanceStem).To(Equal(1))
 
 			multi := response[4]
 			Expect(multi.Name).To(Equal("Accanthurus glaucopareus"))
-			Expect(multi.MatchType).To(Equal(gn.Fuzzy))
+			Expect(multi.MatchType).To(Equal(vlib.Fuzzy))
 			Expect(len(multi.MatchItems)).To(Equal(2))
 			Expect(multi.MatchItems[0].EditDistanceStem).To(Equal(1))
+
+			multi2 := response[5]
+			Expect(multi2.Name).To(Equal("Tillaudsia utriculata"))
+			Expect(multi2.MatchType).To(Equal(vlib.Fuzzy))
+			Expect(len(multi2.MatchItems)).To(Equal(1))
+			Expect(multi2.MatchItems[0].EditDistanceStem).To(Equal(1))
 		})
 	})
 })

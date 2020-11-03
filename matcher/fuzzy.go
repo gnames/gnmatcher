@@ -5,9 +5,9 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/dvirsky/levenshtein"
-	gn "github.com/gnames/gnames/domain/entity"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/encode"
-	"github.com/gnames/gnmatcher/domain/entity"
 	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"
 	log "github.com/sirupsen/logrus"
@@ -27,9 +27,10 @@ func (fm FuzzyMatcherTrie) MatchStem(stem string, maxEditDistance int) []string 
 	return fm.Trie.FuzzyMatches(stem, maxEditDistance)
 }
 
-func (fm FuzzyMatcherTrie) StemToMatchItems(stem string) []entity.MatchItem {
-	var res []entity.MatchItem
+func (fm FuzzyMatcherTrie) StemToMatchItems(stem string) []mlib.MatchItem {
+	var res []mlib.MatchItem
 	misGob := bytes.NewBuffer(stemskv.GetValue(fm.KeyVal, stem))
+	log.Debugf("match: %+v %s", res, stem)
 	err := fm.Encoder.Decode(misGob.Bytes(), &res)
 	if err != nil {
 		log.Warnf("Decode in StemToMatchItems for '%s' failed: %s", stem, err)
@@ -40,18 +41,18 @@ func (fm FuzzyMatcherTrie) StemToMatchItems(stem string) []entity.MatchItem {
 // MatchFuzzy tries to get fuzzy matching of a stemmed name-string to canonical
 // forms from the gnames database.
 func (m Matcher) MatchFuzzy(name, stem string,
-	ns NameString) *entity.Match {
+	ns NameString) *mlib.Match {
 	cnf := m.Config
 	stemMatches := m.MatchStem(stem, cnf.MaxEditDist)
 	if len(stemMatches) == 0 {
 		return nilResult
 	}
 
-	res := &entity.Match{
+	res := &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
-		MatchType:  gn.Fuzzy,
-		MatchItems: make([]entity.MatchItem, 0, len(stemMatches)*2),
+		MatchType:  vlib.Fuzzy,
+		MatchItems: make([]mlib.MatchItem, 0, len(stemMatches)*2),
 	}
 	for _, stemMatch := range stemMatches {
 		editDistanceStem := fuzzy.ComputeDistance(stemMatch, stem)

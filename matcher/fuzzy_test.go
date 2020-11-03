@@ -4,7 +4,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/gnames/gnmatcher/domain/entity"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	. "github.com/gnames/gnmatcher/matcher"
 )
 
@@ -28,7 +28,7 @@ var matchStemMock = map[string][]string{
 	"Acacia may":    {"Acacia ma"},
 }
 
-var stemToMatchItemsMock = map[string][]entity.MatchItem{
+var stemToMatchItemsMock = map[string][]mlib.MatchItem{
 	"Pardosa moest": {{ID: "123", MatchStr: "Pardosa moesta"}},
 	"Acacia ma":     {{ID: "124", MatchStr: "Acacia maustica"}},
 }
@@ -42,8 +42,8 @@ func (fuzzyMatcherMock) MatchStem(stem string, maxED int) []string {
 	return []string{}
 }
 
-func (fuzzyMatcherMock) StemToMatchItems(stem string) []entity.MatchItem {
-	res := []entity.MatchItem{}
+func (fuzzyMatcherMock) StemToMatchItems(stem string) []mlib.MatchItem {
+	res := []mlib.MatchItem{}
 	if mis, ok := stemToMatchItemsMock[stem]; ok {
 		return mis
 	}

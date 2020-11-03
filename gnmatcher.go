@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/gnames/gnmatcher/domain/entity"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	"github.com/gnames/gnmatcher/matcher"
 	log "github.com/sirupsen/logrus"
 )
@@ -26,7 +26,7 @@ func NewGNMatcher(m matcher.Matcher) GNMatcher {
 
 // MatchNames takes a list of name-strings and matches them against known
 // by names aggregated in gnames database.
-func (gnm GNMatcher) MatchNames(names []string) []*entity.Match {
+func (gnm GNMatcher) MatchNames(names []string) []*mlib.Match {
 	m := gnm.Matcher
 	cnf := m.Config
 
@@ -39,7 +39,7 @@ func (gnm GNMatcher) MatchNames(names []string) []*entity.Match {
 
 	names = truncateNamesToMaxNumber(names)
 	log.Printf("Processing %d names.", len(names))
-	res := make([]*entity.Match, len(names))
+	res := make([]*mlib.Match, len(names))
 
 	go loadNames(chIn, names)
 	for i := 0; i < cnf.JobsNum; i++ {

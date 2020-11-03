@@ -4,7 +4,7 @@
 
 ## [v0.3.4]
 
-- Add dependency to gnlib, remove dependency to gnames/lib.
+- Add [#22] dependency to gnlib, remove dependency to gnames/lib.
 
 ## [v0.3.3]
 

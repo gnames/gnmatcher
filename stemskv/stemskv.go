@@ -10,8 +10,8 @@ import (
 	"io/ioutil"
 
 	"github.com/dgraph-io/badger/v2"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	"github.com/gnames/gnlib/sys"
-	"github.com/gnames/gnmatcher/domain/entity"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -41,7 +41,7 @@ func NewStemsKV(path string, db *sql.DB) {
 	}
 
 	kvTxn := kv.NewTransaction(true)
-	var stemRes []entity.MatchItem
+	var stemRes []mlib.MatchItem
 	var currentStem, stem, name, id string
 	count := 0
 	for rows.Next() {
@@ -75,7 +75,7 @@ func NewStemsKV(path string, db *sql.DB) {
 			currentStem = stem
 			stemRes = nil
 		}
-		stemRes = append(stemRes, entity.MatchItem{ID: id, MatchStr: name})
+		stemRes = append(stemRes, mlib.MatchItem{ID: id, MatchStr: name})
 	}
 	err = kvTxn.Commit()
 	if err != nil {

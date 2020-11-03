@@ -1,15 +1,15 @@
 package matcher
 
 import (
-	gn "github.com/gnames/gnames/domain/entity"
-	"github.com/gnames/gnmatcher/domain/entity"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	uuid "github.com/satori/go.uuid"
 	"gitlab.com/gogna/gnparser/stemmer"
 )
 
 // MatchPartial tries to match all patial variants of a name-string. The
 // process stops as soon as a match was found.
-func (m Matcher) MatchPartial(ns NameString) *entity.Match {
+func (m Matcher) MatchPartial(ns NameString) *mlib.Match {
 	if ns.Partial == nil {
 		return emptyResult(ns)
 	}
@@ -23,24 +23,24 @@ func (m Matcher) MatchPartial(ns NameString) *entity.Match {
 	return m.processPartialGenus(ns)
 }
 
-func (m Matcher) processPartialGenus(ns NameString) *entity.Match {
+func (m Matcher) processPartialGenus(ns NameString) *mlib.Match {
 	var isIn bool
 	gID := uuid.NewV5(GNUUID, ns.Partial.Genus).String()
 	m.Filters.Mux.Lock()
 	isIn = m.Filters.Canonical.Check([]byte(gID))
 	m.Filters.Mux.Unlock()
 	if isIn {
-		return &entity.Match{
+		return &mlib.Match{
 			ID:         ns.ID,
 			Name:       ns.Name,
-			MatchType:  gn.PartialExact,
-			MatchItems: []entity.MatchItem{{ID: gID, MatchStr: ns.Partial.Genus}},
+			MatchType:  vlib.PartialExact,
+			MatchItems: []mlib.MatchItem{{ID: gID, MatchStr: ns.Partial.Genus}},
 		}
 	}
 	return emptyResult(ns)
 }
 
-func (m Matcher) processPartial(p Multinomial, ns NameString) *entity.Match {
+func (m Matcher) processPartial(p Multinomial, ns NameString) *mlib.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
 		id := uuid.NewV5(GNUUID, name).String()
@@ -48,17 +48,17 @@ func (m Matcher) processPartial(p Multinomial, ns NameString) *entity.Match {
 		isIn := m.Filters.Canonical.Check([]byte(id))
 		m.Filters.Mux.Unlock()
 		if isIn {
-			return &entity.Match{
+			return &mlib.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
-				MatchType:  gn.PartialExact,
-				MatchItems: []entity.MatchItem{{ID: id, MatchStr: ns.Partial.Genus}},
+				MatchType:  vlib.PartialExact,
+				MatchItems: []mlib.MatchItem{{ID: id, MatchStr: ns.Partial.Genus}},
 			}
 		}
 
 		stem := stemmer.Stem(name).Stem
 		if res := m.MatchFuzzy(name, stem, ns); res != nil {
-			res.MatchType = gn.PartialFuzzy
+			res.MatchType = vlib.PartialFuzzy
 			return res
 		}
 	}

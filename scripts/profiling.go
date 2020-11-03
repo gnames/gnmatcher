@@ -16,8 +16,8 @@ import (
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	"github.com/gnames/gnlib/encode"
-	"github.com/gnames/gnmatcher/domain/entity"
 )
 
 const Batch = 10_000
@@ -57,7 +57,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if err != nil {
 			log.Fatalf("Cannot get data: %v", err)
 		}
-		var response []entity.Match
+		var response []mlib.Match
 		enc.Decode(respBytes, &response)
 
 		var name, match, matchType string

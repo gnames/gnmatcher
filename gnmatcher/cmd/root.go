@@ -39,7 +39,7 @@ import (
 )
 
 const configText = `# Path to keep working data and key-value stores
-WorkDir: /var/gnmatcher
+WorkDir: ~/.local/share/gnmatcher
 
 # Postgresql host for gnames database
 PgHost: localhost

@@ -2,6 +2,7 @@ package rest_test
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -137,6 +138,10 @@ var _ = Describe("Rest", func() {
 			Expect(suffix.MatchItems[0].EditDistance).To(Equal(1))
 			Expect(suffix.MatchItems[0].EditDistanceStem).To(Equal(0))
 
+			// support for missing spaces is limited, because we cannot
+			// generate correct stemmed version from them, so many
+			// of such names are not matched due to edit distance bigger than
+			// the threshold.
 			space := response[3]
 			Expect(space.Name).To(Equal("Pardosamoeste"))
 			Expect(space.MatchType).To(Equal(vlib.Fuzzy))
@@ -150,17 +155,22 @@ var _ = Describe("Rest", func() {
 			Expect(len(fuzzy.MatchItems)).To(Equal(2))
 			Expect(fuzzy.MatchItems[0].EditDistanceStem).To(Equal(1))
 
+			// Added because stem was missing in canonicals table.
+			// Still not sure why it was possible, the solution is in
+			// creating canonical_stems if they are empty.
 			fuzzy2 := response[5]
 			Expect(fuzzy2.Name).To(Equal("Tillaudsia utriculata"))
 			Expect(fuzzy2.MatchType).To(Equal(vlib.Fuzzy))
 			Expect(len(fuzzy2.MatchItems)).To(Equal(1))
 			Expect(fuzzy2.MatchItems[0].EditDistanceStem).To(Equal(1))
 
-			// fuzzy3 := response[6]
-			// Expect(fuzzy3.Name).To(Equal("Drosohila melanogaster"))
-			// Expect(fuzzy3.MatchType).To(Equal(vlib.Fuzzy))
-			// Expect(len(fuzzy3.MatchItems)).To(Equal(1))
-			// Expect(fuzzy3.MatchItems[0].EditDistanceStem).To(Equal(1))
+			// Added because stem for Drosophila melanogaster was missing.
+			// It was missing because canonical and stem are the same.
+			fuzzy3 := response[6]
+			Expect(fuzzy3.Name).To(Equal("Drosohila melanogaster"))
+			Expect(fuzzy3.MatchType).To(Equal(vlib.Fuzzy))
+			Expect(len(fuzzy3.MatchItems)).To(Equal(2))
+			Expect(fuzzy3.MatchItems[0].EditDistanceStem).To(Equal(1))
 		})
 	})
 })

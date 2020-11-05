@@ -3,13 +3,13 @@ package matcher
 import (
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	uuid "github.com/satori/go.uuid"
+	"github.com/gnames/gnlib/gnuuid"
 	"gitlab.com/gogna/gnparser/stemmer"
 )
 
 // MatchPartial tries to match all patial variants of a name-string. The
 // process stops as soon as a match was found.
-func (m Matcher) MatchPartial(ns NameString) *mlib.Match {
+func (m Matcher) matchPartial(ns nameString) *mlib.Match {
 	if ns.Partial == nil {
 		return emptyResult(ns)
 	}
@@ -23,9 +23,9 @@ func (m Matcher) MatchPartial(ns NameString) *mlib.Match {
 	return m.processPartialGenus(ns)
 }
 
-func (m Matcher) processPartialGenus(ns NameString) *mlib.Match {
+func (m Matcher) processPartialGenus(ns nameString) *mlib.Match {
 	var isIn bool
-	gID := uuid.NewV5(GNUUID, ns.Partial.Genus).String()
+	gID := gnuuid.New(ns.Partial.Genus).String()
 	m.Filters.Mux.Lock()
 	isIn = m.Filters.Canonical.Check([]byte(gID))
 	m.Filters.Mux.Unlock()
@@ -40,10 +40,10 @@ func (m Matcher) processPartialGenus(ns NameString) *mlib.Match {
 	return emptyResult(ns)
 }
 
-func (m Matcher) processPartial(p Multinomial, ns NameString) *mlib.Match {
+func (m Matcher) processPartial(p multinomial, ns nameString) *mlib.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
-		id := uuid.NewV5(GNUUID, name).String()
+		id := gnuuid.New(name).String()
 		m.Filters.Mux.Lock()
 		isIn := m.Filters.Canonical.Check([]byte(id))
 		m.Filters.Mux.Unlock()
@@ -57,7 +57,7 @@ func (m Matcher) processPartial(p Multinomial, ns NameString) *mlib.Match {
 		}
 
 		stem := stemmer.Stem(name).Stem
-		if res := m.MatchFuzzy(name, stem, ns); res != nil {
+		if res := m.matchFuzzy(name, stem, ns); res != nil {
 			res.MatchType = vlib.PartialFuzzy
 			return res
 		}

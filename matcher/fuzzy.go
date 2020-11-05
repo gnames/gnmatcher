@@ -30,7 +30,6 @@ func (fm FuzzyMatcherTrie) MatchStem(stem string, maxEditDistance int) []string 
 func (fm FuzzyMatcherTrie) StemToMatchItems(stem string) []mlib.MatchItem {
 	var res []mlib.MatchItem
 	misGob := bytes.NewBuffer(stemskv.GetValue(fm.KeyVal, stem))
-	log.Debugf("match: %+v %s", res, stem)
 	err := fm.Encoder.Decode(misGob.Bytes(), &res)
 	if err != nil {
 		log.Warnf("Decode in StemToMatchItems for '%s' failed: %s", stem, err)
@@ -40,8 +39,8 @@ func (fm FuzzyMatcherTrie) StemToMatchItems(stem string) []mlib.MatchItem {
 
 // MatchFuzzy tries to get fuzzy matching of a stemmed name-string to canonical
 // forms from the gnames database.
-func (m Matcher) MatchFuzzy(name, stem string,
-	ns NameString) *mlib.Match {
+func (m Matcher) matchFuzzy(name, stem string,
+	ns nameString) *mlib.Match {
 	cnf := m.Config
 	stemMatches := m.MatchStem(stem, cnf.MaxEditDist)
 	if len(stemMatches) == 0 {

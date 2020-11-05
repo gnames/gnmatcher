@@ -68,7 +68,7 @@ as well.`,
 			log.Print("Serialization with JSON.")
 		}
 
-		service := rest.NewMatcherREST(&gnm, port, enc)
+		service := rest.NewMatcherService(&gnm, port, enc)
 		rest.Run(service)
 		os.Exit(0)
 	},

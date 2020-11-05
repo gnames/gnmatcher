@@ -28,6 +28,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.0
+	github.com/stretchr/testify v1.5.1
 	github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d // indirect
 	github.com/tmthrgd/go-bitset v0.0.0-20190904054048-394d9a556c05 // indirect
 	github.com/tmthrgd/go-bitwise v0.0.0-20190904053232-1430ee983fca // indirect

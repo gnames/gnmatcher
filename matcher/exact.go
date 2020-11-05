@@ -7,7 +7,7 @@ import (
 
 // Match tries to match a canonical form of a name-string exactly to canonical
 // from from gnames database.
-func (m Matcher) Match(ns NameString) *mlib.Match {
+func (m Matcher) match(ns nameString) *mlib.Match {
 	var isIn bool
 	m.Filters.Mux.Lock()
 	isIn = m.Filters.Canonical.Check([]byte(ns.CanonicalID))
@@ -30,7 +30,7 @@ func (m Matcher) Match(ns NameString) *mlib.Match {
 
 // MatchVirus tries to match a name-string exactly to a virus name from the
 // gnames database.
-func (m Matcher) MatchVirus(ns NameString) *mlib.Match {
+func (m Matcher) matchVirus(ns nameString) *mlib.Match {
 	var isIn bool
 	m.Filters.Mux.Lock()
 	isIn = m.Filters.Virus.Check([]byte(ns.ID))

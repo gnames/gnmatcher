@@ -13,16 +13,12 @@ import (
 	"github.com/gnames/gnmatcher/dbase"
 	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"
-	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"gitlab.com/gogna/gnparser"
 	"gitlab.com/gogna/gnparser/pb"
 )
 
 var (
-	// GNUUID is a UUID seed made from 'globalnames.org' domain to generate
-	// UUIDv5 identifiers.
-	GNUUID    = uuid.NewV5(uuid.NamespaceDNS, "globalnames.org")
 	nilResult *mlib.Match
 )
 
@@ -83,30 +79,30 @@ func (m Matcher) MatchWorker(chIn <-chan MatchTask,
 	var matchResult *mlib.Match
 
 	for tsk := range chIn {
-		ns, parsed := NewNameString(parser, tsk.Name)
+		ns, parsed := newNameString(parser, tsk.Name)
 		if parsed.Parsed {
-			if abbrResult := DetectAbbreviated(parsed); abbrResult != nil {
+			if abbrResult := detectAbbreviated(parsed); abbrResult != nil {
 				chOut <- MatchResult{Index: tsk.Index, Match: abbrResult}
 				continue
 			}
-			matchResult = m.Match(ns)
+			matchResult = m.match(ns)
 		} else {
-			matchResult = m.MatchVirus(ns)
+			matchResult = m.matchVirus(ns)
 		}
 		if matchResult == nil {
-			matchResult = m.MatchFuzzy(ns.Canonical, ns.CanonicalStem, ns)
+			matchResult = m.matchFuzzy(ns.Canonical, ns.CanonicalStem, ns)
 		}
 		if matchResult == nil {
-			matchResult = m.MatchPartial(ns)
+			matchResult = m.matchPartial(ns)
 		}
 		chOut <- MatchResult{Index: tsk.Index, Match: matchResult}
 	}
 }
 
-// DetectAbbreviated checks if parsed name is abbreviated. If name is not
+// detectAbbreviated checks if parsed name is abbreviated. If name is not
 // abbreviated the function returns nil. If it is abbreviated, it returns
 // result with the MatchType 'NONE'.
-func DetectAbbreviated(parsed *pb.Parsed) *mlib.Match {
+func detectAbbreviated(parsed *pb.Parsed) *mlib.Match {
 	if parsed.Quality != int32(3) {
 		return nilResult
 	}
@@ -133,7 +129,7 @@ func (m Matcher) prepareWorkDirs() {
 	}
 }
 
-func emptyResult(ns NameString) *mlib.Match {
+func emptyResult(ns nameString) *mlib.Match {
 	return &mlib.Match{
 		ID:        ns.ID,
 		Name:      ns.Name,

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix [#24] 'Acacia horrida nur' wont return partial exact match.
+- Fix [#23] 'Drosohila melanogaster' wont return fuzzy match.
+
 ## [v0.3.4]
 
 - Add [#22] dependency to gnlib, remove dependency to gnames/lib.

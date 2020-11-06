@@ -2,7 +2,6 @@ package rest_test
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 

@@ -48,19 +48,24 @@ func (m Matcher) processPartial(p multinomial, ns nameString) *mlib.Match {
 		isIn := m.Filters.Canonical.Check([]byte(id))
 		m.Filters.Mux.Unlock()
 		if isIn {
-			return &mlib.Match{
+			res := &mlib.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
 				MatchType:  vlib.PartialExact,
 				MatchItems: []mlib.MatchItem{{ID: id, MatchStr: ns.Partial.Genus}},
 			}
+			return res
 		}
+	}
 
+	// if exact partial failed, try fuzzy
+	for _, name := range names {
 		stem := stemmer.Stem(name).Stem
 		if res := m.matchFuzzy(name, stem, ns); res != nil {
 			res.MatchType = vlib.PartialFuzzy
 			return res
 		}
 	}
+
 	return nilResult
 }

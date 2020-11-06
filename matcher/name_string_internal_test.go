@@ -15,6 +15,7 @@ func TestNameString(t *testing.T) {
 		"Homo habilis L. Leakey, Tobias & Napier, 1964",
 		"Pabstia viridis var. parviflora (Hoehne) Garay",
 		"Abedus deinostoma herberti utahensis Menke 1960",
+		"Acacia horrida nur",
 	}
 	nstrings := make([]nameString, len(names))
 	for i, name := range names {
@@ -40,4 +41,12 @@ func TestNameString(t *testing.T) {
 	assert.Equal(t, len(quat.Multinomials), 2)
 	assert.Equal(t, quat.Multinomials[0].Tail, "Abedus utahensis")
 	assert.Equal(t, quat.Multinomials[0].Head, "Abedus deinostoma herberti")
+	assert.Equal(t, quat.Multinomials[1].Tail, "Abedus herberti")
+	assert.Equal(t, quat.Multinomials[1].Head, "Abedus deinostoma")
+
+	tri2 := nstrings[4].Partial
+	assert.Equal(t, tri2.Genus, "Acacia")
+	assert.Equal(t, len(tri2.Multinomials), 1)
+	assert.Equal(t, tri2.Multinomials[0].Tail, "Acacia nur")
+	assert.Equal(t, tri2.Multinomials[0].Head, "Acacia horrida")
 }

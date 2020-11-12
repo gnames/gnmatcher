@@ -1,0 +1,15 @@
+goos: linux
+goarch: amd64
+pkg: github.com/gnames/gnmatcher/fuzzy
+BenchmarkDist/CompareOnce-8         	 2695398	       439 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2731302	       442 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2677281	       438 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2696419	       438 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2724859	       445 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2704029	       441 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2732486	       443 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2750121	       444 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2709091	       438 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-8         	 2730810	       441 ns/op	      32 B/op	       1 allocs/op
+PASS
+ok  	github.com/gnames/gnmatcher/fuzzy	16.456s

@@ -1,21 +1,41 @@
 package fuzzy_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"fmt"
+	"testing"
 
-	. "github.com/gnames/gnmatcher/fuzzy"
-	. "github.com/onsi/ginkgo/extensions/table"
+	"github.com/gnames/gnmatcher/fuzzy"
+	"github.com/stretchr/testify/assert"
 )
 
-var _ = Describe("Fuzzy", func() {
-	DescribeTable("StripTags",
-		func(s1, s2 string, expected int) {
-			Expect(ComputeDistance(s1, s2)).To(Equal(expected))
-		},
-		Entry("identical", "Hello", "Hello", 0),
-		Entry("distance 1", "Pomatomus", "Pom-tomus", 1),
-		Entry("distance 2", "Pomatomus", "Poma  tomus", 2),
-		Entry("distance utf8 1", "Pomatomus", "Pomщtomus", 1),
-	)
-})
+func TestDist(t *testing.T) {
+	testData := []struct {
+		str1, str2 string
+		dist       int
+	}{
+		{"Hello", "Hello", 0},
+		{"Pomatomus", "Pom-tomus", 1},
+		{"Pomatomus", "Poma  tomus", 2},
+		{"Pomatomus", "Pomщtomus", 1},
+		{"sitting", "kitten", 3},
+	}
+
+	for _, v := range testData {
+		msg := fmt.Sprintf("'%s' vs '%s'", v.str1, v.str2)
+		dist := fuzzy.ComputeDistance(v.str1, v.str2)
+		assert.Equal(t, dist, v.dist, msg)
+	}
+}
+
+// BenchmarkDist checks the speed of fuzzy matching. Run it with:
+// `go test -bench=. -benchmem -count=10 -run=XXX > bench.txt && benchstat bench.txt`
+
+func BenchmarkDist(b *testing.B) {
+	var out int
+	b.Run("CompareOnce", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			out = fuzzy.ComputeDistance("Pomatomus solatror", "Pomatomus saltator")
+		}
+		_ = fmt.Sprintf("%d\n", out)
+	})
+}

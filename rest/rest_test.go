@@ -2,6 +2,7 @@ package rest_test
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -131,6 +132,7 @@ var _ = Describe("Rest", func() {
 			Expect(uni.MatchItems).To(BeNil())
 
 			suffix := response[2]
+			fmt.Printf("%+v\n", suffix)
 			Expect(suffix.Name).To(Equal("Pardosa moeste"))
 			Expect(suffix.MatchType).To(Equal(vlib.Fuzzy))
 			Expect(len(suffix.MatchItems)).To(Equal(1))

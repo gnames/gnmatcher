@@ -8,8 +8,8 @@ import (
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/encode"
-	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"
+	"github.com/gnames/levenshtein/entity/editdist"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -54,11 +54,11 @@ func (m Matcher) matchFuzzy(name, stem string,
 		MatchItems: make([]mlib.MatchItem, 0, len(stemMatches)*2),
 	}
 	for _, stemMatch := range stemMatches {
-		editDistanceStem := fuzzy.ComputeDistance(stemMatch, stem)
+		editDistanceStem, _, _ := editdist.ComputeDistance(stemMatch, stem, false)
 		matchItems := m.FuzzyMatcher.StemToMatchItems(stemMatch)
 		for _, matchItem := range matchItems {
 			matchItem.EditDistanceStem = editDistanceStem
-			matchItem.EditDistance = fuzzy.ComputeDistance(name, matchItem.MatchStr)
+			matchItem.EditDistance, _, _ = editdist.ComputeDistance(name, matchItem.MatchStr, false)
 			// skip matches with too large edit distance
 			if matchItem.EditDistance > 2 {
 				continue

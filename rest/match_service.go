@@ -9,13 +9,13 @@ import (
 
 // matchMatcherREST implements MatcherService interface.
 type matcherREST struct {
-	gnm  *gnmatcher.GNMatcher
+	gnm  gnmatcher.GNMatcher
 	port int
 	enc  encode.Encoder
 }
 
 // NewMNewMatcherREST is a constructor for MatchREST.
-func NewMatcherService(gnm *gnmatcher.GNMatcher,
+func NewMatcherService(gnm gnmatcher.GNMatcher,
 	port int, enc encode.Encoder) matcherREST {
 	return matcherREST{
 		gnm:  gnm,

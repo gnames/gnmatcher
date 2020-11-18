@@ -65,7 +65,7 @@ func NewMatcher(cnf config.Config) Matcher {
 
 	path := m.Config.StemsDir()
 	kv := stemskv.ConnectKeyVal(path)
-	m.FuzzyMatcher = NewFuzzyMatcherTrie(trie, kv)
+	m.FuzzyMatcher = NewFuzzyMatcher(trie, kv)
 
 	return m
 }

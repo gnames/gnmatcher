@@ -14,19 +14,19 @@ import (
 // name-strings will be truncated.
 const MaxNamesNumber = 10_000
 
-// GNMatcher contains high level methods for scientific name matching.
-type GNMatcher struct {
-	Matcher matcher.Matcher
+// gnmatcher implements GNMatcher interface.
+type gnmatcher struct {
+	matcher.Matcher
 }
 
-// NewGNMatcher is a constructor for GNMatcher instance
-func NewGNMatcher(m matcher.Matcher) GNMatcher {
-	return GNMatcher{Matcher: m}
+// NewGNMatcher is a constructor for GNMatcher interface
+func NewGNMatcher(m matcher.Matcher) gnmatcher {
+	return gnmatcher{Matcher: m}
 }
 
-// MatchNames takes a list of name-strings and matches them against known
-// by names aggregated in gnames database.
-func (gnm GNMatcher) MatchNames(names []string) []*mlib.Match {
+// MatchNames function takes a list of name-strings and matches them against
+// known names aggregated in gnames database.
+func (gnm gnmatcher) MatchNames(names []string) []*mlib.Match {
 	m := gnm.Matcher
 	cnf := m.Config
 

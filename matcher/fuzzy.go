@@ -8,26 +8,27 @@ import (
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnmatcher/fuzzy"
 	"github.com/gnames/gnmatcher/stemskv"
-	"github.com/gnames/levenshtein/entity/editdist"
 	log "github.com/sirupsen/logrus"
 )
 
-type FuzzyMatcherTrie struct {
+type fuzzyMatcher struct {
 	Trie    *levenshtein.MinTree
 	KeyVal  *badger.DB
 	Encoder encode.Encoder
 }
 
-func NewFuzzyMatcherTrie(t *levenshtein.MinTree, kv *badger.DB) FuzzyMatcherTrie {
-	return FuzzyMatcherTrie{Trie: t, KeyVal: kv, Encoder: encode.GNgob{}}
+// Creates new a struct compatible with FuzzyMatcher interface.
+func NewFuzzyMatcher(t *levenshtein.MinTree, kv *badger.DB) fuzzyMatcher {
+	return fuzzyMatcher{Trie: t, KeyVal: kv, Encoder: encode.GNgob{}}
 }
 
-func (fm FuzzyMatcherTrie) MatchStem(stem string, maxEditDistance int) []string {
+func (fm fuzzyMatcher) MatchStem(stem string, maxEditDistance int) []string {
 	return fm.Trie.FuzzyMatches(stem, maxEditDistance)
 }
 
-func (fm FuzzyMatcherTrie) StemToMatchItems(stem string) []mlib.MatchItem {
+func (fm fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
 	var res []mlib.MatchItem
 	misGob := bytes.NewBuffer(stemskv.GetValue(fm.KeyVal, stem))
 	err := fm.Encoder.Decode(misGob.Bytes(), &res)
@@ -54,13 +55,17 @@ func (m Matcher) matchFuzzy(name, stem string,
 		MatchItems: make([]mlib.MatchItem, 0, len(stemMatches)*2),
 	}
 	for _, stemMatch := range stemMatches {
-		editDistanceStem, _, _ := editdist.ComputeDistance(stemMatch, stem, false)
+		editDistanceStem := fuzzy.EditDistance(stemMatch, stem)
+		if editDistanceStem == -1 {
+			continue
+		}
 		matchItems := m.FuzzyMatcher.StemToMatchItems(stemMatch)
 		for _, matchItem := range matchItems {
 			matchItem.EditDistanceStem = editDistanceStem
-			matchItem.EditDistance, _, _ = editdist.ComputeDistance(name, matchItem.MatchStr, false)
-			// skip matches with too large edit distance
-			if matchItem.EditDistance > 2 {
+			// runs edit distance with checks, returns -1 if checks failed.
+			matchItem.EditDistance = fuzzy.EditDistance(name, matchItem.MatchStr)
+			// skip matches that failed edit distance checks.
+			if matchItem.EditDistance == -1 {
 				continue
 			}
 			res.MatchItems = append(res.MatchItems, matchItem)

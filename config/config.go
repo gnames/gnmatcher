@@ -10,7 +10,6 @@ import (
 // Config collects and stores external configuration data.
 type Config struct {
 	WorkDir     string
-	NatsURI     string
 	JobsNum     int
 	MaxEditDist int
 	PgHost      string
@@ -24,7 +23,7 @@ type Config struct {
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
 	cnf := Config{
-		WorkDir:     "/tmp/gnmatcher",
+		WorkDir:     "~/.local/share/gnmatcher",
 		JobsNum:     8,
 		MaxEditDist: 1,
 		PgHost:      "localhost",
@@ -64,13 +63,6 @@ type Option func(cnf *Config)
 func OptWorkDir(s string) Option {
 	return func(cnf *Config) {
 		cnf.WorkDir = s
-	}
-}
-
-// OptNatsURI defines a URI to connect to NATS messaging service server.
-func OptNatsURI(s string) Option {
-	return func(cnf *Config) {
-		cnf.NatsURI = s
 	}
 }
 

@@ -1,15 +1,15 @@
 goos: linux
 goarch: amd64
 pkg: github.com/gnames/gnmatcher/fuzzy
-BenchmarkDist/CompareOnce-8         	 2401525	       488 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2450061	       486 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2454891	       488 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2477222	       487 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2453178	       484 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2473770	       487 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2467306	       488 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2464329	       489 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2426406	       486 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2470998	       487 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2193975	       529 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2246265	       531 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2257545	       535 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2261835	       530 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2254430	       533 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2254054	       531 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2260148	       531 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2261071	       536 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2258666	       549 ns/op	      32 B/op	       1 allocs/op
+BenchmarkDist/CompareOnce-12         	 2254395	       531 ns/op	      32 B/op	       1 allocs/op
 PASS
-ok  	github.com/gnames/gnmatcher/fuzzy	16.910s
+ok  	github.com/gnames/gnmatcher/fuzzy	17.416s

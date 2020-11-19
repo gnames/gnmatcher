@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.3.5]
+
 - Fix [#24] 'Acacia horrida nur' wont return partial exact match.
 - Fix [#23] 'Drosohila melanogaster' wont return fuzzy match.
 

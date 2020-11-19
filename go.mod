@@ -9,7 +9,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/gnames/gnlib v0.0.3
-	github.com/gnames/levenshtein v0.0.1
+	github.com/gnames/levenshtein v0.1.0
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/gorilla/mux v1.7.4
 	github.com/jinzhu/gorm v1.9.16

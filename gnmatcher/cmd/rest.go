@@ -27,7 +27,8 @@ import (
 	"github.com/gnames/gnlib/encode"
 	"github.com/gnames/gnmatcher"
 	gnmcnf "github.com/gnames/gnmatcher/config"
-	"github.com/gnames/gnmatcher/matcher"
+	"github.com/gnames/gnmatcher/io/bloom"
+	"github.com/gnames/gnmatcher/io/trie"
 	"github.com/gnames/gnmatcher/rest"
 	log "github.com/sirupsen/logrus"
 
@@ -52,8 +53,9 @@ as well.`,
 			log.Fatalf("Cannot get port flag: %s", err)
 		}
 		cnf := gnmcnf.NewConfig(opts...)
-		m := matcher.NewMatcher(cnf)
-		gnm := gnmatcher.NewGNMatcher(m)
+		em := bloom.NewExactMatcher(cnf)
+		fm := trie.NewFuzzyMatcher(cnf)
+		gnm := gnmatcher.NewGNMatcher(em, fm)
 		if err != nil {
 			log.Printf("Cannot create an instance of GNMatcher: %s.", err)
 			os.Exit(1)

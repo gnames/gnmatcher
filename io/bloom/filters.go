@@ -4,8 +4,7 @@
 package bloom
 
 import (
-	"database/sql"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"sync"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
@@ -17,9 +16,6 @@ const (
 	virusFile     = "viruses.bf"
 	sizesFile     = "canonical_sizes.csv"
 )
-
-// filters is a package variable and once it is created it is reused.
-var filters *Filters
 
 // Filters contain bloom filters data we use for matching.
 type Filters struct {
@@ -36,30 +32,29 @@ type Filters struct {
 	Mux sync.Mutex
 }
 
-// GetFilters returns bloom filters for name-string matching.
+// getFilters returns bloom filters for name-string matching.
 // If filters had been already created before, it just returns them.
 // Otherwise it creates filters from either database, or from cached files.
 // Creating filters from cache is significantly faster.
-func GetFilters(path string, db *sql.DB) *Filters {
+func (em *exactMatcher) getFilters() {
+	path := em.cfg.FiltersDir()
 	var err error
 
-	if filters != nil {
-		return filters
+	if em.filters != nil {
+		return
 	}
 
-	err = filtersFromCache(path)
+	err = em.filtersFromCache(path)
 	if err != nil {
 		log.Fatalf("Cannot create filters at %s from cache: %s.", path, err)
 	}
 
-	if filters != nil {
-		return filters
+	if em.filters != nil {
+		return
 	}
 
-	err = filtersFromDB(path, db)
+	err = em.filtersFromDB(path)
 	if err != nil {
 		log.Fatalf("Cannot create filters at %s from database: %s.", path, err)
 	}
-
-	return filters
 }

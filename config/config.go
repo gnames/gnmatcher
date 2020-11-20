@@ -3,7 +3,9 @@ package config
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
+	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -22,8 +24,9 @@ type Config struct {
 // NewConfig is a Config constructor that takes external options to
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
+	workDir := "~/.local/share/gnmatcher"
 	cnf := Config{
-		WorkDir:     "~/.local/share/gnmatcher",
+		WorkDir:     ConvertTilda(workDir),
 		JobsNum:     8,
 		MaxEditDist: 1,
 		PgHost:      "localhost",
@@ -119,4 +122,15 @@ func OptPgDB(s string) Option {
 	return func(cnf *Config) {
 		cnf.PgDB = s
 	}
+}
+
+func ConvertTilda(path string) string {
+	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, "~\\") {
+		home, err := homedir.Dir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		path = filepath.Join(home, path[2:])
+	}
+	return path
 }

@@ -10,7 +10,7 @@ import (
 // TestFuzzyLimit checks that edit distances larger than 2 are ignored.
 func TestFuzzyLimit(t *testing.T) {
 	ns := nameString{ID: "123", Name: "Pardosa maesta"}
-	m := Matcher{FuzzyMatcher: fuzzyMatcherMock{}}
+	m := matcher{fuzzyMatcher: fuzzyMatcherMock{}}
 	res := m.matchFuzzy("Pardosa maesta", "Pardosa maest", ns)
 	assert.Equal(t, len(res.MatchItems), 1)
 	assert.Equal(t, res.MatchItems[0].EditDistance, 1)
@@ -33,7 +33,9 @@ var stemToMatchItemsMock = map[string][]mlib.MatchItem{
 
 type fuzzyMatcherMock struct{}
 
-func (fuzzyMatcherMock) MatchStem(stem string, maxED int) []string {
+func (fuzzyMatcherMock) Init() {}
+
+func (fuzzyMatcherMock) MatchStem(stem string) []string {
 	if stems, ok := matchStemMock[stem]; ok {
 		return stems
 	}

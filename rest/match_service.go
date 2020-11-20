@@ -8,7 +8,7 @@ import (
 )
 
 // matchMatcherREST implements MatcherService interface.
-type matcherREST struct {
+type matcherService struct {
 	gnm  gnmatcher.GNMatcher
 	port int
 	enc  encode.Encoder
@@ -16,8 +16,8 @@ type matcherREST struct {
 
 // NewMNewMatcherREST is a constructor for MatchREST.
 func NewMatcherService(gnm gnmatcher.GNMatcher,
-	port int, enc encode.Encoder) matcherREST {
-	return matcherREST{
+	port int, enc encode.Encoder) matcherService {
+	return matcherService{
 		gnm:  gnm,
 		port: port,
 		enc:  enc,
@@ -25,17 +25,17 @@ func NewMatcherService(gnm gnmatcher.GNMatcher,
 }
 
 // GetPort returns port number to the service.
-func (mr matcherREST) Port() int {
+func (mr matcherService) Port() int {
 	return mr.port
 }
 
 // Ping returns "pong" message if connection to the service did succed.
-func (mr matcherREST) Ping() string {
+func (mr matcherService) Ping() string {
 	return "pong"
 }
 
 // GetVersion returns version number and build timestamp of gnmatcher.
-func (mr matcherREST) GetVersion() gn.Version {
+func (mr matcherService) GetVersion() gn.Version {
 	return gn.Version{
 		Version: gnmatcher.Version,
 		Build:   gnmatcher.Build,
@@ -43,16 +43,16 @@ func (mr matcherREST) GetVersion() gn.Version {
 }
 
 // MatchAry takes a list of strings and matches them to known scientific names.
-func (mr matcherREST) MatchAry(names []string) []*mlib.Match {
+func (mr matcherService) MatchNames(names []string) []*mlib.Match {
 	return mr.gnm.MatchNames(names)
 }
 
 // Encode encodes an object into a byte slice.
-func (mr matcherREST) Encode(obj interface{}) ([]byte, error) {
+func (mr matcherService) Encode(obj interface{}) ([]byte, error) {
 	return mr.enc.Encode(obj)
 }
 
 // Decode decodes an object from a bytes slice.
-func (mr matcherREST) Decode(input []byte, output interface{}) error {
+func (mr matcherService) Decode(input []byte, output interface{}) error {
 	return mr.enc.Decode(input, output)
 }

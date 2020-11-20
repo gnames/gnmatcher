@@ -7,9 +7,9 @@ import (
 	"gitlab.com/gogna/gnparser/stemmer"
 )
 
-// MatchPartial tries to match all patial variants of a name-string. The
+// matchPartial tries to match all patial variants of a name-string. The
 // process stops as soon as a match was found.
-func (m Matcher) matchPartial(ns nameString) *mlib.Match {
+func (m matcher) matchPartial(ns nameString) *mlib.Match {
 	if ns.Partial == nil {
 		return emptyResult(ns)
 	}
@@ -23,12 +23,9 @@ func (m Matcher) matchPartial(ns nameString) *mlib.Match {
 	return m.processPartialGenus(ns)
 }
 
-func (m Matcher) processPartialGenus(ns nameString) *mlib.Match {
-	var isIn bool
+func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 	gID := gnuuid.New(ns.Partial.Genus).String()
-	m.Filters.Mux.Lock()
-	isIn = m.Filters.Canonical.Check([]byte(gID))
-	m.Filters.Mux.Unlock()
+	isIn := m.exactMatcher.MatchCanonicalID(gID)
 	if isIn {
 		return &mlib.Match{
 			ID:         ns.ID,
@@ -40,13 +37,11 @@ func (m Matcher) processPartialGenus(ns nameString) *mlib.Match {
 	return emptyResult(ns)
 }
 
-func (m Matcher) processPartial(p multinomial, ns nameString) *mlib.Match {
+func (m matcher) processPartial(p multinomial, ns nameString) *mlib.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
 		id := gnuuid.New(name).String()
-		m.Filters.Mux.Lock()
-		isIn := m.Filters.Canonical.Check([]byte(id))
-		m.Filters.Mux.Unlock()
+		isIn := m.exactMatcher.MatchCanonicalID(id)
 		if isIn {
 			res := &mlib.Match{
 				ID:         ns.ID,

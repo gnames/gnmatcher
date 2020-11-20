@@ -1,21 +1,64 @@
-package fuzzy
+package trie
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/dgraph-io/badger/v2"
 	"github.com/dvirsky/levenshtein"
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnlib/sys"
+	"github.com/gnames/gnmatcher/config"
+	"github.com/gnames/gnmatcher/io/dbase"
 	log "github.com/sirupsen/logrus"
 )
 
 const trieFile = "stem.trie"
 
-// GetTrie generates an in-memory trie for levenshtein automata. Such tree
+type fuzzyMatcher struct {
+	cfg     config.Config
+	trie    *levenshtein.MinTree
+	keyVal  *badger.DB
+	encoder encode.Encoder
+}
+
+func NewFuzzyMatcher(cfg config.Config) fuzzyMatcher {
+	db := dbase.NewDB(cfg)
+	defer db.Close()
+
+	fm := fuzzyMatcher{cfg: cfg, encoder: encode.GNgob{}}
+	fm.trie = getTrie(cfg.TrieDir(), db)
+	initStemsKV(cfg.StemsDir(), db)
+	fm.keyVal = connectKeyVal(cfg.StemsDir())
+	return fm
+}
+
+func (fm fuzzyMatcher) Init() {
+	fm.prepareDirs()
+}
+
+func (fm fuzzyMatcher) MatchStem(stem string) []string {
+	return fm.trie.FuzzyMatches(stem, fm.cfg.MaxEditDist)
+}
+
+func (fm fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
+	var res []mlib.MatchItem
+	misGob := bytes.NewBuffer(getValue(fm.keyVal, stem))
+	err := fm.encoder.Decode(misGob.Bytes(), &res)
+	if err != nil {
+		log.Warnf("Decode in StemToMatchItems for '%s' failed: %s", stem, err)
+	}
+	return res
+}
+
+// getTrie generates an in-memory trie for levenshtein automata. Such tree
 // can either be constructed from database or from a dump file. The tree
 // consists stemmed canonical forms of _gnames_ database.
-func GetTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
+func getTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
 	var trie *levenshtein.MinTree
 	trie, err := getCachedTrie(triePath)
 	if err == nil {
@@ -84,4 +127,15 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 	}
 	log.Println("Trie is created.")
 	return trie, nil
+}
+
+func (fm fuzzyMatcher) prepareDirs() {
+	log.Println("Preparing dirs for trie and stems key-value store.")
+	dirs := []string{fm.cfg.TrieDir(), fm.cfg.StemsDir()}
+	for _, dir := range dirs {
+		err := sys.MakeDir(dir)
+		if err != nil {
+			log.Fatalf("Cannot create directory %s: %s.", dir, err)
+		}
+	}
 }

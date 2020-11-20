@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.3.6]
+
+- Add [#25] clean up the architecture.
+
 ## [v0.3.5]
 
 - Fix [#24] 'Acacia horrida nur' wont return partial exact match.
@@ -52,6 +56,9 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.6]: https://github.com/gnames/gnmatcher/compare/v0.3.5...v0.3.6
+[v0.3.5]: https://github.com/gnames/gnmatcher/compare/v0.3.4...v0.3.5
+[v0.3.4]: https://github.com/gnames/gnmatcher/compare/v0.3.3...v0.3.4
 [v0.3.3]: https://github.com/gnames/gnmatcher/compare/v0.3.2...v0.3.3
 [v0.3.2]: https://github.com/gnames/gnmatcher/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/gnames/gnmatcher/compare/v0.3.0...v0.3.1
@@ -60,6 +67,14 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#25]: https://github.com/gnames/gnmatcher/issues/25
+[#24]: https://github.com/gnames/gnmatcher/issues/24
+[#23]: https://github.com/gnames/gnmatcher/issues/23
+[#22]: https://github.com/gnames/gnmatcher/issues/22
+[#21]: https://github.com/gnames/gnmatcher/issues/21
+[#20]: https://github.com/gnames/gnmatcher/issues/20
+[#19]: https://github.com/gnames/gnmatcher/issues/19
+[#18]: https://github.com/gnames/gnmatcher/issues/18
 [#17]: https://github.com/gnames/gnmatcher/issues/17
 [#16]: https://github.com/gnames/gnmatcher/issues/16
 [#15]: https://github.com/gnames/gnmatcher/issues/15

@@ -11,11 +11,8 @@
 package gnmatcher
 
 import (
-	"fmt"
-
+	"github.com/gnames/gnlib/domain/entity/gn"
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	"github.com/gnames/gnmatcher/config"
-	"github.com/gnames/gnmatcher/matcher"
 )
 
 // GNMatcher is a public API to the project functionality.
@@ -34,25 +31,6 @@ type GNMatcher interface {
 	// where they are registered.
 	//
 	MatchNames(names []string) []*mlib.Match
-}
 
-func Example() {
-	// Note that it takes several minutes to initialize lookup data structures.
-	// Requirement for initialization: Postgresql database with loaded
-	// http://opendata.globalnames.org/dumps/gnames-latest.sql.gz
-	//
-	// If data are imported already, it still takes several seconds to
-	// load lookup data into memory.
-	cnf := config.NewConfig()
-	m := matcher.NewMatcher(cnf)
-	gnm := NewGNMatcher(m)
-	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
-	for _, match := range res {
-		fmt.Println(match.Name)
-		fmt.Println(match.MatchType)
-		for _, item := range match.MatchItems {
-			fmt.Println(item.MatchStr)
-			fmt.Println(item.EditDistance)
-		}
-	}
+	gn.Versioner
 }

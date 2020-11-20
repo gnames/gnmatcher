@@ -1,7 +1,4 @@
-// stems_db package operates on a key-value store that contains stems and
-// canonical forms that correspond to these stems. It create such a key-value
-// store if necessary.
-package stemskv
+package trie
 
 import (
 	"bytes"
@@ -15,8 +12,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// NewStemsKV creates key-value store for stems and their canonical forms.
-func NewStemsKV(path string, db *sql.DB) {
+// initStemsKV creates key-value store for stems and their canonical forms.
+func initStemsKV(path string, db *sql.DB) {
 	var err error
 	err = sys.MakeDir(path)
 	if err != nil {
@@ -27,7 +24,7 @@ func NewStemsKV(path string, db *sql.DB) {
 		log.Info("Stems key-value store already exists, skipping.")
 		return
 	}
-	kv := ConnectKeyVal(path)
+	kv := connectKeyVal(path)
 	defer kv.Close()
 
 	q := `SELECT name_stem, name, id
@@ -83,8 +80,8 @@ func NewStemsKV(path string, db *sql.DB) {
 	}
 }
 
-// ConnectKeyVal connects to a key-value store
-func ConnectKeyVal(path string) *badger.DB {
+// connectKeyVal connects to a key-value store
+func connectKeyVal(path string) *badger.DB {
 	options := badger.DefaultOptions(path)
 	// running in mem: options := badger.DefaultOptions("").WithInMemory(true)
 	options.Logger = nil
@@ -95,10 +92,10 @@ func ConnectKeyVal(path string) *badger.DB {
 	return bdb
 }
 
-// GetValue takes a string and a connection to a key-value store and checks if
+// getValue takes a string and a connection to a key-value store and checks if
 // there is such stem key. It returns a list of canonicals that correspond to
 // that key.
-func GetValue(kv *badger.DB, key string) []byte {
+func getValue(kv *badger.DB, key string) []byte {
 	var res []byte
 	err := kv.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte(key))

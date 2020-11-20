@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func saveFilters(path string) {
+func saveFilters(path string, filters *Filters) {
 	var err error
 	var nilFilter *baseBloomfilter.Bloomfilter
 	files := map[string]*baseBloomfilter.Bloomfilter{
@@ -24,7 +24,7 @@ func saveFilters(path string) {
 
 		file, err = createFile(filePath)
 		if f == sizesFile {
-			err = saveSizesFile(file)
+			err = saveSizesFile(file, filters)
 			continue
 		}
 		err = saveFilterFile(filePath, file, filter)
@@ -61,7 +61,7 @@ func saveFilterFile(filePath string, file *os.File,
 	return err
 }
 
-func saveSizesFile(file *os.File) error {
+func saveSizesFile(file *os.File, filters *Filters) error {
 	var err error
 	sizes := fmt.Sprintf("CanonicalSize,%d\nVirusSize,%d\n",
 		filters.CanonicalSize, filters.VirusSize)

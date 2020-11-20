@@ -16,19 +16,19 @@ import (
 
 // filtersFromcache unmarchals data from a file, and uses the data for the
 // filter creations.
-func filtersFromCache(path string) error {
+func (em *exactMatcher) filtersFromCache(path string) error {
 	cPath := filepath.Join(path, canonicalFile)
 	vPath := filepath.Join(path, virusFile)
 	sizesPath := filepath.Join(path, sizesFile)
 	if sys.FileExists(cPath) && sys.FileExists(vPath) {
-		if err := getFiltersFromCache(cPath, vPath, sizesPath); err != nil {
+		if err := em.getFiltersFromCache(cPath, vPath, sizesPath); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func getFiltersFromCache(cPath, vPath, sizesPath string) error {
+func (em *exactMatcher) getFiltersFromCache(cPath, vPath, sizesPath string) error {
 	log.Println("Geting lookup data from a cache on disk.")
 	cCfg, vCfg := restoreConfigs(sizesPath)
 	cFilter := baseBloomfilter.New(cCfg)
@@ -51,7 +51,7 @@ func getFiltersFromCache(cPath, vPath, sizesPath string) error {
 		return err
 	}
 
-	filters = &Filters{
+	em.filters = &Filters{
 		Canonical: cFilter,
 		Virus:     vFilter,
 	}

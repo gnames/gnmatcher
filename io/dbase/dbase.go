@@ -1,5 +1,3 @@
-// Package dbase is an interface to PostgreSQL database that contains Global
-// Names index data
 package dbase
 
 import (
@@ -14,14 +12,14 @@ import (
 
 // NewDB creates a new instance of sql.DB using configuration data.
 func NewDB(cnf config.Config) *sql.DB {
-	db, err := sql.Open("postgres", opts(cnf))
+	db, err := sql.Open("postgres", dbUrl(cnf))
 	if err != nil {
 		log.Fatalf("Cannot create PostgreSQL connection: %s.", err)
 	}
 	return db
 }
 
-func opts(cnf config.Config) string {
-	return fmt.Sprintf("host=%s user=%s port=%d password=%s dbname=%s sslmode=disable",
-		cnf.PgHost, cnf.PgUser, cnf.PgPort, cnf.PgPass, cnf.PgDB)
+func dbUrl(cnf config.Config) string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+		cnf.PgUser, cnf.PgPass, cnf.PgHost, cnf.PgPort, cnf.PgDB)
 }

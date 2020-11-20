@@ -6,10 +6,12 @@ import (
 
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
+	"github.com/gnames/gnmatcher/io/dbase"
 	log "github.com/sirupsen/logrus"
 )
 
-func filtersFromDB(path string, db *sql.DB) error {
+func (em *exactMatcher) filtersFromDB(path string) error {
+	db := dbase.NewDB(em.cfg)
 	log.Println("Importing lookup data for simple canonicals.")
 	cFilter, cSize, err := createFilter(db, "canonicals")
 	if err != nil {
@@ -22,14 +24,14 @@ func filtersFromDB(path string, db *sql.DB) error {
 		return err
 	}
 
-	filters = &Filters{
+	em.filters = &Filters{
 		Canonical:     cFilter,
 		CanonicalSize: cSize,
 		Virus:         vFilter,
 		VirusSize:     vSize,
 	}
-	saveFilters(path)
-	return nil
+	saveFilters(path, em.filters)
+	return db.Close()
 }
 
 func createFilter(db *sql.DB,

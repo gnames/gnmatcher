@@ -1,0 +1,21 @@
+package fuzzy
+
+import (
+	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+)
+
+// FuzzyMatcher describes methods needed for fuzzy matching
+type FuzzyMatcher interface {
+	// Initialize data for the matcher
+	Init()
+
+	// MatchStem takes a stemmed scientific name and max edit distance.
+	// The search stops if current edit distance becomes bigger than edit
+	// distance. The method returns 0 or more stems that did match the
+	// input stem within the edit distance constraint.
+	MatchStem(stem string) []string
+
+	// StemToCanonicals takes a stem and returns back canonicals
+	// that correspond to that stem.
+	StemToMatchItems(stem string) []mlib.MatchItem
+}

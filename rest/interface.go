@@ -1,7 +1,9 @@
 package rest
 
-import mlib "github.com/gnames/gnlib/domain/entity/matcher"
-import "github.com/gnames/gnlib/encode"
+import (
+	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnmatcher"
+)
 
 // MatcherService describes remote service of gnmatchter.
 type MatcherService interface {
@@ -11,7 +13,7 @@ type MatcherService interface {
 	// Ping checks connection to the service.
 	Ping() string
 
-	mlib.Matcher
+	gnmatcher.GNMatcher
 
 	encode.Encoder
 }

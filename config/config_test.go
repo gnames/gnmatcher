@@ -12,7 +12,7 @@ import (
 func TestNew(t *testing.T) {
 	cnf := config.NewConfig()
 	deflt := config.Config{
-		WorkDir:     "~/.local/share/gnmatcher",
+		WorkDir:     config.ConvertTilda("~/.local/share/gnmatcher"),
 		JobsNum:     8,
 		MaxEditDist: 1,
 		PgHost:      "localhost",
@@ -56,9 +56,9 @@ func TestMaxED(t *testing.T) {
 
 func TestHelpers(t *testing.T) {
 	cnf := config.NewConfig()
-	assert.Equal(t, cnf.TrieDir(), "~/.local/share/gnmatcher/levenshein")
-	assert.Equal(t, cnf.FiltersDir(), "~/.local/share/gnmatcher/bloom")
-	assert.Equal(t, cnf.StemsDir(), "~/.local/share/gnmatcher/stems-kv")
+	assert.Contains(t, cnf.TrieDir(), "/.local/share/gnmatcher/levenshein")
+	assert.Contains(t, cnf.FiltersDir(), "/.local/share/gnmatcher/bloom")
+	assert.Contains(t, cnf.StemsDir(), "/.local/share/gnmatcher/stems-kv")
 }
 
 func opts() []config.Option {

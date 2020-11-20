@@ -1,12 +1,11 @@
 package gnmatcher
 
 import (
-	"fmt"
-	"sync"
-
+	"github.com/gnames/gnlib/domain/entity/gn"
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	"github.com/gnames/gnmatcher/matcher"
-	log "github.com/sirupsen/logrus"
+	"github.com/gnames/gnmatcher/entity/exact"
+	"github.com/gnames/gnmatcher/entity/fuzzy"
+	"github.com/gnames/gnmatcher/entity/matcher"
 )
 
 // MaxMaxNamesNumber is the upper limit of the number of name-strings the
@@ -16,61 +15,26 @@ const MaxNamesNumber = 10_000
 
 // gnmatcher implements GNMatcher interface.
 type gnmatcher struct {
-	matcher.Matcher
+	matcher matcher.Matcher
 }
 
 // NewGNMatcher is a constructor for GNMatcher interface
-func NewGNMatcher(m matcher.Matcher) gnmatcher {
-	return gnmatcher{Matcher: m}
+func NewGNMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher) gnmatcher {
+	gnm := gnmatcher{}
+	gnm.matcher = matcher.NewMatcher(em, fm)
+	gnm.matcher.Init()
+	return gnm
 }
 
-// MatchNames function takes a list of name-strings and matches them against
+// MatchNames takes a list of name-strings and matches them against
 // known names aggregated in gnames database.
 func (gnm gnmatcher) MatchNames(names []string) []*mlib.Match {
-	m := gnm.Matcher
-	cnf := m.Config
-
-	chIn := make(chan matcher.MatchTask)
-	chOut := make(chan matcher.MatchResult)
-	var wgIn sync.WaitGroup
-	var wgOut sync.WaitGroup
-	wgIn.Add(cnf.JobsNum)
-	wgOut.Add(1)
-
-	names = truncateNamesToMaxNumber(names)
-	log.Printf("Processing %d names.", len(names))
-	res := make([]*mlib.Match, len(names))
-
-	go loadNames(chIn, names)
-	for i := 0; i < cnf.JobsNum; i++ {
-		go m.MatchWorker(chIn, chOut, &wgIn)
-	}
-
-	go func() {
-		defer wgOut.Done()
-		for r := range chOut {
-			res[r.Index] = r.Match
-		}
-	}()
-
-	wgIn.Wait()
-	close(chOut)
-	wgOut.Wait()
-	return res
+	return gnm.matcher.MatchNames(names)
 }
 
-func loadNames(chIn chan<- matcher.MatchTask, names []string) {
-	for i, name := range names {
-		chIn <- matcher.MatchTask{Index: i, Name: name}
+func (gnm gnmatcher) GetVersion() gn.Version {
+	return gn.Version{
+		Version: Version,
+		Build:   Build,
 	}
-	close(chIn)
-}
-
-func truncateNamesToMaxNumber(names []string) []string {
-	if len(names) > MaxNamesNumber {
-		log.Warn(fmt.Sprintf("Too many names, truncating list to %d entries.",
-			MaxNamesNumber))
-		names = names[0:MaxNamesNumber]
-	}
-	return names
 }

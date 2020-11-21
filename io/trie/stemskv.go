@@ -27,11 +27,15 @@ func initStemsKV(path string, db *sql.DB) {
 	kv := connectKeyVal(path)
 	defer kv.Close()
 
-	q := `SELECT name_stem, name, id
-          FROM canonicals
-          WHERE name_stem IS NOT NULL
-            AND name_stem !~ '\.'
-          ORDER BY name_stem`
+	q := `SELECT s.name as name_stem, c.name, c.id
+          FROM canonical_stems s
+            JOIN name_strings ns
+              ON ns.canonical_stem_id = s.id
+            JOIN canonicals c
+              ON ns.canonical_id = c.id
+        GROUP BY c.name, c.id, s.name
+          ORDER BY name`
+
 	rows, err := db.Query(q)
 	if err != nil {
 		log.Fatalf("Cannot get stems from DB: %s.", err)

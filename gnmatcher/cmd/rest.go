@@ -62,13 +62,6 @@ as well.`,
 		}
 
 		var enc encode.Encoder = encode.GNjson{}
-		gob, _ := cmd.Flags().GetBool("gob")
-		if gob {
-			enc = encode.GNgob{}
-			log.Print("Serialization with Gob.")
-		} else {
-			log.Print("Serialization with JSON.")
-		}
 
 		service := rest.NewMatcherService(&gnm, port, enc)
 		rest.Run(service)
@@ -81,5 +74,4 @@ func init() {
 
 	restCmd.Flags().IntP("port", "p", 8080, "REST port")
 	restCmd.Flags().BoolP("debug", "d", false, "set logs level to DEBUG")
-	restCmd.Flags().BoolP("gob", "g", false, "set encoding to Gob")
 }

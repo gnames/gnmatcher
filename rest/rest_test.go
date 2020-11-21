@@ -16,20 +16,16 @@ import (
 const url = "http://:8080/"
 
 func TestPing(t *testing.T) {
-	enc := encode.GNgob{}
 	resp, err := http.Get(url + "ping")
 	assert.Nil(t, err)
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	assert.Nil(t, err)
+	res, err := ioutil.ReadAll(resp.Body)
 
-	var response string
-	enc.Decode(respBytes, &response)
-	assert.Equal(t, string(response), "pong")
+	assert.Equal(t, string(res), "pong")
 }
 
 func TestVer(t *testing.T) {
-	enc := encode.GNgob{}
+	enc := encode.GNjson{}
 	resp, err := http.Get(url + "version")
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
@@ -42,7 +38,7 @@ func TestVer(t *testing.T) {
 
 func TestExact(t *testing.T) {
 	var response []mlib.Match
-	enc := encode.GNgob{}
+	enc := encode.GNjson{}
 	request := []string{
 		"Not name", "Bubo bubo", "Pomatomus",
 		"Pardosa moesta", "Plantago major var major",
@@ -52,7 +48,7 @@ func TestExact(t *testing.T) {
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
 	r := bytes.NewReader(req)
-	resp, err := http.Post(url+"match", "application/x-binary", r)
+	resp, err := http.Post(url+"match", "application/json", r)
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)
@@ -102,10 +98,10 @@ func TestFuzzy(t *testing.T) {
 		"Tillaudsia utriculata",
 		"Drosohila melanogaster",
 	}
-	enc := encode.GNgob{}
+	enc := encode.GNjson{}
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
-	resp, err := http.Post(url+"match", "application/x-binary", bytes.NewReader(req))
+	resp, err := http.Post(url+"match", "application/json", bytes.NewReader(req))
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)

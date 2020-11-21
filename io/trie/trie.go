@@ -26,26 +26,26 @@ type fuzzyMatcher struct {
 	encoder encode.Encoder
 }
 
-func NewFuzzyMatcher(cfg config.Config) fuzzyMatcher {
-	db := dbase.NewDB(cfg)
-	defer db.Close()
-
+func NewFuzzyMatcher(cfg config.Config) *fuzzyMatcher {
 	fm := fuzzyMatcher{cfg: cfg, encoder: encode.GNgob{}}
-	fm.trie = getTrie(cfg.TrieDir(), db)
-	initStemsKV(cfg.StemsDir(), db)
-	fm.keyVal = connectKeyVal(cfg.StemsDir())
-	return fm
+
+	return &fm
 }
 
-func (fm fuzzyMatcher) Init() {
+func (fm *fuzzyMatcher) Init() {
 	fm.prepareDirs()
+	db := dbase.NewDB(fm.cfg)
+	defer db.Close()
+	fm.trie = getTrie(fm.cfg.TrieDir(), db)
+	initStemsKV(fm.cfg.StemsDir(), db)
+	fm.keyVal = connectKeyVal(fm.cfg.StemsDir())
 }
 
-func (fm fuzzyMatcher) MatchStem(stem string) []string {
+func (fm *fuzzyMatcher) MatchStem(stem string) []string {
 	return fm.trie.FuzzyMatches(stem, fm.cfg.MaxEditDist)
 }
 
-func (fm fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
+func (fm *fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
 	var res []mlib.MatchItem
 	misGob := bytes.NewBuffer(getValue(fm.keyVal, stem))
 	err := fm.encoder.Decode(misGob.Bytes(), &res)

@@ -11,8 +11,8 @@ require (
 	github.com/gnames/gnlib v0.0.5
 	github.com/gnames/levenshtein v0.1.0
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
-	github.com/gorilla/mux v1.7.4
 	github.com/jinzhu/gorm v1.9.16
+	github.com/labstack/echo/v4 v4.1.17
 	github.com/lib/pq v1.4.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.3.0 // indirect

@@ -14,7 +14,6 @@ services:
       - rest
       - --port
       - "8080"
-      - --gob
       - --debug
 volumes:
   rest:

@@ -34,7 +34,7 @@ func main() {
 }
 
 func processData(chNames <-chan []string, wg *sync.WaitGroup) {
-	enc := encode.GNgob{}
+	enc := encode.GNjson{}
 	defer wg.Done()
 	w := csv.NewWriter(os.Stdout)
 	defer func() {
@@ -49,7 +49,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if err != nil {
 			log.Fatalf("Cannot marshall input: %v", err)
 		}
-		resp, err := http.Post(url+"match", "application/x-binary", bytes.NewReader(req))
+		resp, err := http.Post(url+"match", "application/json", bytes.NewReader(req))
 		if err != nil {
 			log.Fatalf("Cannot send request: %v", err)
 		}

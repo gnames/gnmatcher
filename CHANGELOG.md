@@ -4,6 +4,7 @@
 
 ## [v0.3.6]
 
+- Add [#27] middleware for REST.
 - Add [#25] clean up the architecture.
 
 ## [v0.3.5]
@@ -67,6 +68,10 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#29]: https://github.com/gnames/gnmatcher/issues/29
+[#28]: https://github.com/gnames/gnmatcher/issues/28
+[#27]: https://github.com/gnames/gnmatcher/issues/27
+[#26]: https://github.com/gnames/gnmatcher/issues/26
 [#25]: https://github.com/gnames/gnmatcher/issues/25
 [#24]: https://github.com/gnames/gnmatcher/issues/24
 [#23]: https://github.com/gnames/gnmatcher/issues/23

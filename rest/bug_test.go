@@ -47,16 +47,17 @@ var bugs = []struct {
 }
 
 func TestBugs(t *testing.T) {
-	req, err := encode.GNgob{}.Encode(params())
+	enc := encode.GNjson{}
+	req, err := enc.Encode(params())
 	assert.Nil(t, err)
 	r := bytes.NewReader(req)
-	resp, err := http.Post(url+"match", "application/x-binary", r)
+	resp, err := http.Post(url+"match", "application/json", r)
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
 	var mtch []mlib.Match
-	err = encode.GNgob{}.Decode(respBytes, &mtch)
+	err = enc.Decode(respBytes, &mtch)
 	assert.Nil(t, err)
 
 	for i, v := range bugs {

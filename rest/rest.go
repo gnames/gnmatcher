@@ -1,88 +1,58 @@
 package rest
 
 import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"time"
 
-	"github.com/gorilla/mux"
+	// "github.com/gorilla/mux"
+	"fmt"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
 )
 
 // Run creates and runs the HTTP API service of gnmatcher.
 func Run(m MatcherService) {
 	log.Printf("Starting the HTTP API server on port %d.", m.Port())
-	r := mux.NewRouter()
+	e := echo.New()
+	e.Use(middleware.Gzip())
+	e.Use(middleware.CORS())
+	// e.Use(middleware.Logger())
 
-	r.HandleFunc("/", rootHTTP()).Methods("GET")
-	r.HandleFunc("/ping", pingHTTP(m)).Methods("GET")
-	r.HandleFunc("/version", versionHTTP(m)).Methods("GET")
-	r.HandleFunc("/match", matchNamesHTTP(m)).Methods("POST")
+	e.GET("/", root)
+	e.GET("/ping", ping(m))
+	e.GET("/version", ver(m))
+	e.POST("/match", match(m))
 
 	addr := fmt.Sprintf(":%d", m.Port())
-
-	server := &http.Server{
-		Handler:      r,
-		Addr:         addr,
-		WriteTimeout: 300 * time.Second,
-		ReadTimeout:  300 * time.Second,
-	}
-
-	log.Fatal(server.ListenAndServe())
+	e.Logger.Fatal(e.Start(addr))
 }
 
-func rootHTTP() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, req *http.Request) {
-		log.Debug("Pong from root")
-		w.Write([]byte("OK"))
+func root(c echo.Context) error {
+	return c.String(http.StatusOK, "OK")
+}
+
+func ping(m MatcherService) func(echo.Context) error {
+	return func(c echo.Context) error {
+		result := m.Ping()
+		return c.String(http.StatusOK, result)
 	}
 }
 
-func pingHTTP(m MatcherService) func(http.ResponseWriter, *http.Request) {
-	result := m.Ping()
-
-	return func(w http.ResponseWriter, req *http.Request) {
-		if response, err := m.Encode(result); err == nil {
-			w.Write(response)
-		} else {
-			log.Warnf("pingHTTP: cannot encode response : %v", err)
-		}
+func ver(m MatcherService) func(echo.Context) error {
+	return func(c echo.Context) error {
+		result := m.GetVersion()
+		return c.JSON(http.StatusOK, result)
 	}
 }
 
-func versionHTTP(m MatcherService) func(http.ResponseWriter, *http.Request) {
-	result := m.GetVersion()
-
-	return func(w http.ResponseWriter, req *http.Request) {
-		if response, err := m.Encode(result); err == nil {
-			w.Write(response)
-		} else {
-			log.Warnf("versionHTTP: cannot encode response : %v", err)
-		}
-	}
-}
-
-func matchNamesHTTP(m MatcherService) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, req *http.Request) {
+func match(m MatcherService) func(echo.Context) error {
+	return func(c echo.Context) error {
 		var names []string
-		body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			log.Warnf("matchAryHTTP: cannot read message from request : %v", err)
-			return
+		if err := c.Bind(&names); err != nil {
+			return err
 		}
-		err = m.Decode(body, &names)
-		if err != nil {
-			log.Warnf("matchAryHTTP: cannot decode request : %v", err)
-			return
-		}
-
-		matches := m.MatchNames(names)
-
-		if response, err := m.Encode(matches); err == nil {
-			w.Write(response)
-		} else {
-			log.Warnf("versionHTTP: cannot encode response : %v", err)
-		}
+		result := m.MatchNames(names)
+		return c.JSON(http.StatusOK, result)
 	}
 }

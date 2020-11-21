@@ -47,7 +47,7 @@ func (m matcher) processPartial(p multinomial, ns nameString) *mlib.Match {
 				ID:         ns.ID,
 				Name:       ns.Name,
 				MatchType:  vlib.PartialExact,
-				MatchItems: []mlib.MatchItem{{ID: id, MatchStr: ns.Partial.Genus}},
+				MatchItems: []mlib.MatchItem{{ID: id, MatchStr: name}},
 			}
 			return res
 		}

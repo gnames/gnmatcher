@@ -2,6 +2,7 @@ package rest
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -63,6 +64,15 @@ func TestBugs(t *testing.T) {
 	for i, v := range bugs {
 		assert.Greater(t, len(mtch[i].MatchItems), 0)
 		assert.Equal(t, mtch[i].MatchType.String(), v.matchType.String())
+		hasItem := false
+		for _, mi := range mtch[i].MatchItems {
+			if mi.MatchStr == v.matchCanonical {
+				hasItem = true
+			}
+		}
+		msg := fmt.Sprintf("%s -> %s", mtch[i].Name, v.matchCanonical)
+		assert.True(t, hasItem, msg)
+
 	}
 }
 

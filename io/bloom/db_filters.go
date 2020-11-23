@@ -24,11 +24,11 @@ func (em *exactMatcher) filtersFromDB(path string) error {
 		return err
 	}
 
-	em.filters = &Filters{
-		Canonical:     cFilter,
-		CanonicalSize: cSize,
-		Virus:         vFilter,
-		VirusSize:     vSize,
+	em.filters = &bloomFilters{
+		canonical:     cFilter,
+		canonicalSize: cSize,
+		virus:         vFilter,
+		virusSize:     vSize,
 	}
 	saveFilters(path, em.filters)
 	return db.Close()

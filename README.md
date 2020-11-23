@@ -1,24 +1,28 @@
 # gnmatcher
 
-The app matches a list of scientific name-strings to canonical forms of
-scientific names from various biodiversity datasets.
+[![GoDoc](https://godoc.org/github.com/gnames/gnmatcher?status.svg)](https://godoc.org/github.com/gnames/gnmatcher)
+
+``import "github.com/gnames/gnmatcher"``
+
+The app matches a slice of strings to canonical forms of scientific names from
+various biodiversity datasets.
 
 ## Introduction
 
 This project is a component of a scientific names verification
 (reconciliation/resolution) service [gnames]. The purpose of verification is to
-compare a list of apparent scientific name-strings to a comprehensive set of
-scientific names collected from many external biodiversity sources. The
-`gnmatcher` project receives a list of name-strings and returns back 0 or more
-canonical forms of known names for each name-string.
+compare a slice strings to a comprehensive set of scientific names collected
+from many external biodiversity sources. The `gnmatcher` project receives a
+slice of strings and returns back 0 or more canonical forms of known names
+for each string.
 
 The project aims to do such verification as fast and accurate as possible.
 Quite often, humans or character-recognition software (OCR) introduce
-misspellings in the name-strings. For this reason, `gnmatcher` uses
-fuzzy-matching algorithms when no exact match exists.  Also, for cases where
-full name-string does not have a match, `gnmatcher` tries to match it against
-parts of names. For example, if name-string did not get a match on a subspecies
-level, the algorithm will try to match it on species and genus levels.
+misspellings in the strings. For this reason, `gnmatcher` uses fuzzy-matching
+algorithms when no exact match exists.  Also, for cases where full string does
+not have a match, `gnmatcher` tries to match it against parts of the string.
+For example, if a string did not get a match on a subspecies level, the
+algorithm will try to match it on species and genus levels.
 
 Reconciliation is the normalization of lexical variations of the same name, and
 comparison of them to normalized names from biodiversity data sources.
@@ -33,19 +37,19 @@ the [model] dir.
 
 ## Input and Output
 
-A user calls HTTP resource `/match` sending an array of name-strings to the
+A user calls HTTP resource `/match` sending an slice of strings to the
 service and gets back canonical forms, the match type, as well as other
 metadata described as an `Output` message in the [protobuf] file.
 
-The optimal size of the input is 5-10 thousand name-strings per array. Note
+The optimal size of the input is 5-10 thousand strings per slice. Note
 that 10,000 is the maximal size, and larger arrays will be truncated.
 
 ## Performance
 
-For performance measurement we took [100,000 name-strings][testdata] where only
+For performance measurement we took [100,000 strings][testdata] where only
 30% of them were 'real' names. On a modern CPU with 12 hyper threads and
 `GNM_JOBS_NUM` environment variable set to 8, the service was able to process
-about 8,000 name-strings per second. For 'clean' data where most of the names
+about 8,000 strings per second. For 'clean' data where most of the names
 are "real", you should see an even higher performance.
 
 ## Prerequisites
@@ -105,9 +109,9 @@ it to the following:
 
 2. Build the `gnmatcher` binary and docker image using ``make dc`` command.
 
-3. Run docker-compose command ``docker compose``
+3. Run docker-compose command ``docker compose up``
 
-4. Run tests via ``go test ./...`` or ``ginkgo ./...``
+4. Run tests via ``go test ./... -v``
 
 [gnames]: https://github.com/gnames/gnames
 [gnames dump]: https://opendata.globalnames.org/dumps/gnames-latest.sql.gz

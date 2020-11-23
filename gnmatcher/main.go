@@ -1,3 +1,5 @@
+// package main provides an CLI interface to http service
+// to run gnmatcher functionality.
 /*
 Copyright © 2020 Dmitry Mozzherin <dmozzherin@gmail.com>
 

@@ -28,8 +28,8 @@ import (
 	"github.com/gnames/gnmatcher"
 	gnmcnf "github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/io/bloom"
+	"github.com/gnames/gnmatcher/io/rest"
 	"github.com/gnames/gnmatcher/io/trie"
-	"github.com/gnames/gnmatcher/rest"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -63,7 +63,7 @@ as well.`,
 
 		var enc encode.Encoder = encode.GNjson{}
 
-		service := rest.NewMatcherService(&gnm, port, enc)
+		service := rest.NewMatcherService(gnm, port, enc)
 		rest.Run(service)
 		os.Exit(0)
 	},

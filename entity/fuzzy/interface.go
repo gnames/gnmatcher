@@ -1,12 +1,14 @@
+// package fuzzy contains interfaces and code to facilitate fuzzy-matching
+// of name-strings to scientific names collected in gnames database.
 package fuzzy
 
 import (
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 )
 
-// FuzzyMatcher describes methods needed for fuzzy matching
+// FuzzyMatcher describes methods needed for fuzzy matching.
 type FuzzyMatcher interface {
-	// Initialize data for the matcher
+	// Initialize data for the matcher.
 	Init()
 
 	// MatchStem takes a stemmed scientific name and max edit distance.

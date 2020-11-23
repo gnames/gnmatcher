@@ -1,3 +1,5 @@
+// package dbase provides convenience methods for accessing PostgreSQL
+// database.
 package dbase
 
 import (

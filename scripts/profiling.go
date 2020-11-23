@@ -58,7 +58,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 			log.Fatalf("Cannot get data: %v", err)
 		}
 		var response []mlib.Match
-		enc.Decode(respBytes, &response)
+		_ = enc.Decode(respBytes, &response)
 
 		var name, match, matchType string
 		var editDist, editDistStem int

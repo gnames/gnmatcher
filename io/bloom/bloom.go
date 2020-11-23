@@ -6,15 +6,17 @@ package bloom
 import (
 	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnmatcher/config"
+	"github.com/gnames/gnmatcher/entity/exact"
 	log "github.com/sirupsen/logrus"
 )
 
 type exactMatcher struct {
 	cfg     config.Config
-	filters *Filters
+	filters *bloomFilters
 }
 
-func NewExactMatcher(cfg config.Config) *exactMatcher {
+// NewENewExactMatcher takes configuration object and returns ExactMatcher.
+func NewExactMatcher(cfg config.Config) exact.ExactMatcher {
 	return &exactMatcher{cfg: cfg}
 }
 
@@ -25,16 +27,16 @@ func (em *exactMatcher) Init() {
 }
 
 func (em *exactMatcher) MatchCanonicalID(uuid string) bool {
-	em.filters.Mux.Lock()
-	isIn := em.filters.Canonical.Check([]byte(uuid))
-	em.filters.Mux.Unlock()
+	em.filters.mux.Lock()
+	isIn := em.filters.canonical.Check([]byte(uuid))
+	em.filters.mux.Unlock()
 	return isIn
 }
 
 func (em *exactMatcher) MatchNameStringID(uuid string) bool {
-	em.filters.Mux.Lock()
-	isIn := em.filters.Virus.Check([]byte(uuid))
-	em.filters.Mux.Unlock()
+	em.filters.mux.Lock()
+	isIn := em.filters.virus.Check([]byte(uuid))
+	em.filters.mux.Unlock()
 	return isIn
 }
 

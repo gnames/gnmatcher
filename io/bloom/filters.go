@@ -17,19 +17,19 @@ const (
 	sizesFile     = "canonical_sizes.csv"
 )
 
-// Filters contain bloom filters data we use for matching.
-type Filters struct {
-	// Canonical is a filter for matching with canonical names.
-	Canonical *baseBloomfilter.Bloomfilter
-	// CanonicalSize is number of entries in 'simple' canonical filter. It is
+// bloomFilters contain bloom filters data we use for matching.
+type bloomFilters struct {
+	// canonical is a filter for matching with canonical names.
+	canonical *baseBloomfilter.Bloomfilter
+	// canonicalSize is number of entries in 'simple' canonical filter. It is
 	// used as an option during Canonical filter creation.
-	CanonicalSize uint
-	// Virus is a filter for matching with viruses names.
-	Virus *baseBloomfilter.Bloomfilter
+	canonicalSize uint
+	// virus is a filter for matching with viruses names.
+	virus *baseBloomfilter.Bloomfilter
 	// VirusesSize is a number of entries if 'viruses' filter.
-	VirusSize uint
-	// Mux is a mutex for thread-safe operations
-	Mux sync.Mutex
+	virusSize uint
+	// mux is a mutex for thread-safe operations
+	mux sync.Mutex
 }
 
 // getFilters returns bloom filters for name-string matching.

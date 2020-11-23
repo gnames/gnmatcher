@@ -9,12 +9,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func saveFilters(path string, filters *Filters) {
+func saveFilters(path string, filters *bloomFilters) {
 	var err error
 	var nilFilter *baseBloomfilter.Bloomfilter
 	files := map[string]*baseBloomfilter.Bloomfilter{
-		canonicalFile: filters.Canonical,
-		virusFile:     filters.Virus,
+		canonicalFile: filters.canonical,
+		virusFile:     filters.virus,
 		sizesFile:     nilFilter,
 	}
 
@@ -23,11 +23,20 @@ func saveFilters(path string, filters *Filters) {
 		filePath := filepath.Join(path, f)
 
 		file, err = createFile(filePath)
+		if err != nil {
+			log.Fatalf("Cannot create %s: %s", filePath, err)
+		}
 		if f == sizesFile {
 			err = saveSizesFile(file, filters)
+			if err != nil {
+				log.Fatalf("Cannot create sizesFile: %s", err)
+			}
 			continue
 		}
 		err = saveFilterFile(filePath, file, filter)
+		if err != nil {
+			log.Fatalf("Cannot create %s: %s", filePath, err)
+		}
 	}
 
 	if err == nil {
@@ -61,10 +70,10 @@ func saveFilterFile(filePath string, file *os.File,
 	return err
 }
 
-func saveSizesFile(file *os.File, filters *Filters) error {
+func saveSizesFile(file *os.File, filters *bloomFilters) error {
 	var err error
 	sizes := fmt.Sprintf("CanonicalSize,%d\nVirusSize,%d\n",
-		filters.CanonicalSize, filters.VirusSize)
+		filters.canonicalSize, filters.virusSize)
 	if _, err = file.WriteString(sizes); err != nil {
 		warn := fmt.Sprintf("Could not save filter sizes to disk: %s.", err)
 		log.Warn(warn)

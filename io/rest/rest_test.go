@@ -10,6 +10,7 @@ import (
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/encode"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,6 +21,9 @@ func TestPing(t *testing.T) {
 	assert.Nil(t, err)
 
 	res, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	assert.Equal(t, string(res), "pong")
 }
@@ -32,7 +36,7 @@ func TestVer(t *testing.T) {
 	assert.Nil(t, err)
 
 	var response gn.Version
-	enc.Decode(respBytes, &response)
+	_ = enc.Decode(respBytes, &response)
 	assert.Regexp(t, `^v\d+\.\d+\.\d+`, response.Version)
 }
 
@@ -53,7 +57,7 @@ func TestExact(t *testing.T) {
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
-	enc.Decode(respBytes, &response)
+	_ = enc.Decode(respBytes, &response)
 	assert.Equal(t, len(response), 8)
 
 	bad := response[0]
@@ -106,7 +110,7 @@ func TestFuzzy(t *testing.T) {
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
-	enc.Decode(respBytes, &response)
+	_ = enc.Decode(respBytes, &response)
 
 	bad := response[0]
 	assert.Equal(t, bad.Name, "Not name")

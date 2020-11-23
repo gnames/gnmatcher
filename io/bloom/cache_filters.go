@@ -51,9 +51,9 @@ func (em *exactMatcher) getFiltersFromCache(cPath, vPath, sizesPath string) erro
 		return err
 	}
 
-	em.filters = &Filters{
-		Canonical: cFilter,
-		Virus:     vFilter,
+	em.filters = &bloomFilters{
+		canonical: cFilter,
+		virus:     vFilter,
 	}
 	return nil
 }

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#28] documentation and structural improvements.
+
 ## [v0.3.6]
 
 - Add [#27] middleware for REST.

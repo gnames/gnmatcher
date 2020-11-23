@@ -1,3 +1,5 @@
+// package cmd provides command line interface to http server that runs
+// gnmatcher functionality.
 /*
 Copyright © 2020 Dmitry Mozzherin <dmozzherin@gmail.com>
 
@@ -53,9 +55,6 @@ PgPass:
 # Postgresql database
 PgDB: gnames
 
-# Number of jobs for parallel tasks
-JobsNum: 4
-
 # MaxEditDist is the maximal edit distance for fuzzy matching of
 # stemmed canonical forms. Can be 1 or 2, 2 is significantly slower.
 MaxEditDist: 1
@@ -74,7 +73,6 @@ type config struct {
 	PgUser      string
 	PgPass      string
 	PgDB        string
-	JobsNum     int
 	MaxEditDist int
 }
 
@@ -125,14 +123,13 @@ func initConfig() {
 
 	// Set environment variables to override
 	// config file settings
-	viper.BindEnv("WorkDir", "GNM_WORK_DIR")
-	viper.BindEnv("PgHost", "GNM_PG_HOST")
-	viper.BindEnv("PgPort", "GNM_PG_PORT")
-	viper.BindEnv("PgUser", "GNM_PG_USER")
-	viper.BindEnv("PgPass", "GNM_PG_PASS")
-	viper.BindEnv("PgDB", "GNM_PG_DB")
-	viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
-	viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
+	_ = viper.BindEnv("WorkDir", "GNM_WORK_DIR")
+	_ = viper.BindEnv("PgHost", "GNM_PG_HOST")
+	_ = viper.BindEnv("PgPort", "GNM_PG_PORT")
+	_ = viper.BindEnv("PgUser", "GNM_PG_USER")
+	_ = viper.BindEnv("PgPass", "GNM_PG_PASS")
+	_ = viper.BindEnv("PgDB", "GNM_PG_DB")
+	_ = viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -157,9 +154,6 @@ func getOpts() []gnmcnf.Option {
 
 	if cfg.WorkDir != "" {
 		opts = append(opts, gnmcnf.OptWorkDir(cfg.WorkDir))
-	}
-	if cfg.JobsNum != 0 {
-		opts = append(opts, gnmcnf.OptJobsNum(cfg.JobsNum))
 	}
 	if cfg.MaxEditDist != 0 {
 		opts = append(opts, gnmcnf.OptMaxEditDist(cfg.MaxEditDist))

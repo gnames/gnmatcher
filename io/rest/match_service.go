@@ -16,7 +16,7 @@ type matcherService struct {
 
 // NewMNewMatcherREST is a constructor for MatchREST.
 func NewMatcherService(gnm gnmatcher.GNMatcher,
-	port int, enc encode.Encoder) matcherService {
+	port int, enc encode.Encoder) MatcherService {
 	return matcherService{
 		gnm:  gnm,
 		port: port,

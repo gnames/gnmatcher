@@ -1,3 +1,4 @@
+// package config contains information needed to run gnmatcher project.
 package config
 
 import (
@@ -11,14 +12,23 @@ import (
 
 // Config collects and stores external configuration data.
 type Config struct {
-	WorkDir     string
-	JobsNum     int
+	// WorkDir is the main directory for gnmatcher files. It contains
+	// bloom filters levenshtein automata trees, key-value stores etc.
+	WorkDir string
+	// MaxEditDist is the maximal allowed edit distance for levenshtein automata.
+	// The number cannot exceed 2, default number is 1. The speed of execution
+	// slows down dramatically with the MaxEditDist > 1.
 	MaxEditDist int
-	PgHost      string
-	PgPort      int
-	PgUser      string
-	PgPass      string
-	PgDB        string
+	// PgHost is a hostname for the PostgreSQL server.
+	PgHost string
+	// PgPort is the port of PostgreSQL server.
+	PgPort int
+	// PgUser is the user for the database.
+	PgUser string
+	// PgPass password to access PostgreSQL server.
+	PgPass string
+	// PgDB the database name where gnames data is located.
+	PgDB string
 }
 
 // NewConfig is a Config constructor that takes external options to
@@ -27,7 +37,6 @@ func NewConfig(opts ...Option) Config {
 	workDir := "~/.local/share/gnmatcher"
 	cnf := Config{
 		WorkDir:     ConvertTilda(workDir),
-		JobsNum:     8,
 		MaxEditDist: 1,
 		PgHost:      "localhost",
 		PgPort:      5432,
@@ -66,13 +75,6 @@ type Option func(cnf *Config)
 func OptWorkDir(s string) Option {
 	return func(cnf *Config) {
 		cnf.WorkDir = s
-	}
-}
-
-// OptJobsNum sets number of concurrent jobs to run for parallel tasks.
-func OptJobsNum(i int) Option {
-	return func(cnf *Config) {
-		cnf.JobsNum = i
 	}
 }
 
@@ -124,6 +126,7 @@ func OptPgDB(s string) Option {
 	}
 }
 
+// ConvertTilda expands paths with `~/` to an actual home directory.
 func ConvertTilda(path string) string {
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, "~\\") {
 		home, err := homedir.Dir()

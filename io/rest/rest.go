@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/GeertJohan/go.rice"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
@@ -18,11 +19,14 @@ func Run(m MatcherService) {
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
 	// e.Use(middleware.Logger())
+	assetHandler := http.FileServer(rice.MustFindBox("assets").HTTPBox())
+	// serves the index.html from rice
 
 	e.GET("/", root)
 	e.GET("/ping", ping(m))
 	e.GET("/version", ver(m))
 	e.POST("/match", match(m))
+	e.GET("/api/v1/openapi.yaml", echo.WrapHandler(assetHandler))
 
 	addr := fmt.Sprintf(":%d", m.Port())
 	e.Logger.Fatal(e.Start(addr))

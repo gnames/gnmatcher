@@ -1,9 +1,10 @@
+// package trie implements FuzzyMatcher interface that is responsible for
+// fuzzy-matching strings to canonical forms of scientific names.
 package trie
 
 import (
 	"bytes"
 	"database/sql"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/gnames/gnlib/encode"
 	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnmatcher/config"
+	"github.com/gnames/gnmatcher/entity/fuzzy"
 	"github.com/gnames/gnmatcher/io/dbase"
 	log "github.com/sirupsen/logrus"
 )
@@ -26,9 +28,11 @@ type fuzzyMatcher struct {
 	encoder encode.Encoder
 }
 
-func NewFuzzyMatcher(cfg config.Config) *fuzzyMatcher {
+// NewFuzzyMatcher takes configuration and returns back FuzzyMatcher object
+// responsible for fuzzy-matching strings to canonical forms of scientific
+// names.
+func NewFuzzyMatcher(cfg config.Config) fuzzy.FuzzyMatcher {
 	fm := fuzzyMatcher{cfg: cfg, encoder: encode.GNgob{}}
-
 	return &fm
 }
 
@@ -74,7 +78,7 @@ func getTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
 }
 
 func getTrieSize(db *sql.DB) (int, error) {
-	q := fmt.Sprint("SELECT count(*) from canonical_stems")
+	q := "SELECT count(*) from canonical_stems"
 	var num int
 	row := db.QueryRow(q)
 	if err := row.Scan(&num); err != nil {
@@ -103,7 +107,7 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 	names := make([]string, size)
 
 	var name string
-	q := fmt.Sprint("SELECT name FROM canonical_stems order by name")
+	q := "SELECT name FROM canonical_stems order by name"
 	rows, err := db.Query(q)
 	if err != nil {
 		return trie, err

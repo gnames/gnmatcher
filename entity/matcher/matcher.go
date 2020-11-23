@@ -31,7 +31,7 @@ type matcher struct {
 
 // NewMatcher returns Matcher object. It takes interfaces to ExactMatcher
 // and FuzzyMatcher.
-func NewMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher) matcher {
+func NewMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher) Matcher {
 	return matcher{exactMatcher: em, fuzzyMatcher: fm}
 }
 

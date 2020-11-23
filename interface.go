@@ -2,12 +2,12 @@
 // matching of possible name-strings to scientific names registered in a
 // variety of biodiversity databases.
 //
-// The goal of the project is to return back matched canonical forms of
+// The goal of the project is to return matched canonical forms of
 // scientific names by tens of thousands a second, making it possible to work
 // with hundreds of millions/billions of name-string matching events.
 //
-// The package is intended to be used by long-running services, because it
-// takes a few seconds to initialized its lookup data structures.
+// The package is intended to be used by long-running services because it
+// takes a few seconds/minutes to initialize its lookup data structures.
 package gnmatcher
 
 import (
@@ -17,7 +17,7 @@ import (
 
 // GNMatcher is a public API to the project functionality.
 type GNMatcher interface {
-	// MatchNames take a slice of scientific name-strings and return back
+	// MatchNames takes a slice of scientific name-strings and returns back
 	// matches to canonical forms of known scientific names. The following
 	// matches are attempted:
 	// - Exact string match for viruses
@@ -29,8 +29,8 @@ type GNMatcher interface {
 	//
 	// The resulting output does provide canonical forms, but not the sources
 	// where they are registered.
-	//
 	MatchNames(names []string) []*mlib.Match
 
+	// Interface to Version number and Build timestamp
 	gn.Versioner
 }

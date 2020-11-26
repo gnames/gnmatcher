@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const url = "http://:8080/"
+const url = "http://:8080/api/v1/"
 
 var bugs = []struct {
 	name           string
@@ -52,7 +52,7 @@ func TestBugs(t *testing.T) {
 	req, err := enc.Encode(params())
 	assert.Nil(t, err)
 	r := bytes.NewReader(req)
-	resp, err := http.Post(url+"match", "application/json", r)
+	resp, err := http.Post(url+"matches", "application/json", r)
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)

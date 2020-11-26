@@ -8,7 +8,7 @@ import (
 
 const (
 	charsPerED      = 5
-	maxEditDistance = 2
+	maxEditDistance = 3
 )
 
 // EditDistance calculates edit distance (**ed**) according to Levenshtein algorithm.

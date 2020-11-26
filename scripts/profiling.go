@@ -20,7 +20,7 @@ import (
 	"github.com/gnames/gnlib/encode"
 )
 
-const Batch = 10_000
+const batch = 10_000
 
 const url = "http://:8080/"
 
@@ -43,8 +43,8 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 	count := 0
 	timeStart := time.Now().UnixNano()
 	for request := range chNames {
-		count += 1
-		total := count * Batch
+		count++
+		total := count * batch
 		req, err := enc.Encode(&request)
 		if err != nil {
 			log.Fatalf("Cannot marshall input: %v", err)
@@ -73,8 +73,8 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 			}
 			for _, v := range res.MatchItems {
 				match = v.MatchStr
-				editDist = int(v.EditDistance)
-				editDistStem = int(v.EditDistanceStem)
+				editDist = v.EditDistance
+				editDistStem = v.EditDistanceStem
 				err = w.Write([]string{
 					name, matchType, match,
 					strconv.Itoa(editDist), strconv.Itoa(editDistStem)})
@@ -95,7 +95,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 
 func namesToChannel(chNames chan<- []string) {
 	path := filepath.Join("..", "testdata", "testdata.csv")
-	names := make([]string, 0, Batch)
+	names := make([]string, 0, batch)
 	f, err := os.Open(path)
 	if err != nil {
 		log.Fatalf("Cannot open %s: %s", path, err)
@@ -117,9 +117,9 @@ func namesToChannel(chNames chan<- []string) {
 			log.Fatalf("Cannot read body from %s: %s", path, err)
 		}
 		names = append(names, row[0])
-		if len(names) > Batch-1 {
+		if len(names) > batch-1 {
 			chNames <- names
-			names = make([]string, 0, Batch)
+			names = make([]string, 0, batch)
 		}
 	}
 	chNames <- names

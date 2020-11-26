@@ -53,7 +53,7 @@ func NewConfig(opts ...Option) Config {
 // TrieDir returns path where to dump/restore
 // serialized trie.
 func (cnf Config) TrieDir() string {
-	return filepath.Join(cnf.WorkDir, "levenshein")
+	return filepath.Join(cnf.WorkDir, "trie")
 }
 
 // FiltersDir returns path where to dump/restore
@@ -74,7 +74,7 @@ type Option func(cnf *Config)
 // OptWorkDir sets a directory for key-value stores and temporary files.
 func OptWorkDir(s string) Option {
 	return func(cnf *Config) {
-		cnf.WorkDir = s
+		cnf.WorkDir = ConvertTilda(s)
 	}
 }
 

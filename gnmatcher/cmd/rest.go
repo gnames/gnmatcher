@@ -53,6 +53,7 @@ as well.`,
 			log.Fatalf("Cannot get port flag: %s", err)
 		}
 		cnf := gnmcnf.NewConfig(opts...)
+		log.Debugf("%+v", cnf)
 		em := bloom.NewExactMatcher(cnf)
 		fm := trie.NewFuzzyMatcher(cnf)
 		gnm := gnmatcher.NewGNMatcher(em, fm)

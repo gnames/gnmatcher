@@ -28,13 +28,14 @@ func (m matcher) matchFuzzy(name, stem string,
 		}
 		matchItems := m.fuzzyMatcher.StemToMatchItems(stemMatch)
 		for _, matchItem := range matchItems {
-			matchItem.EditDistanceStem = editDistanceStem
 			// runs edit distance with checks, returns -1 if checks failed.
-			matchItem.EditDistance = fuzzy.EditDistance(name, matchItem.MatchStr)
+			editDistance := fuzzy.EditDistance(name, matchItem.MatchStr)
 			// skip matches that failed edit distance checks.
-			if matchItem.EditDistance == -1 {
+			if editDistance == -1 {
 				continue
 			}
+			matchItem.EditDistance = editDistance
+			matchItem.EditDistanceStem = editDistanceStem
 			res.MatchItems = append(res.MatchItems, matchItem)
 		}
 	}

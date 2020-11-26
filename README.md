@@ -9,12 +9,12 @@ various biodiversity datasets.
 
 ## Introduction
 
-This project is a component of a scientific names verification
-(reconciliation/resolution) service [gnames]. The purpose of verification is to
-compare a slice strings to a comprehensive set of scientific names collected
-from many external biodiversity sources. The `gnmatcher` project receives a
-slice of strings and returns back 0 or more canonical forms of known names
-for each string.
+The `gnmatcher` project receives a slice of strings and returns back 0 or more
+canonical forms of known names for each string. If it is not required to know
+which biodiversity repositories include the scientific names, the project can
+be used as a stand-alone [RESTful service][OpenAPI specification]. If such
+information is important, the project is used as a component of a scientific
+names verification (reconciliation/resolution) service [gnames].
 
 The project aims to do such verification as fast and accurate as possible.
 Quite often, humans or character-recognition software (OCR) introduce
@@ -33,7 +33,7 @@ name for species, a synonym, or a discarded one.
 
 The `gnmatcher` app functions as an HTTP service. An app can access it using
 HTTP client libraries.  The API's methods and structures are described in
-the [model] dir.
+by the [OpenAPI specification].
 
 ## Input and Output
 
@@ -92,14 +92,50 @@ are "real", you should see an even higher performance.
 
 The service will run on the given port.
 
+### Usage as a library
+
+```go
+package main
+
+import (
+  "fmt"
+  "github.com/gnames/gnmatcher"
+  "github.com/gnames/gnmatcher/config"
+  "github.com/gnames/gnmatcher/io/bloom"
+  "github.com/gnames/gnmatcher/io/trie"
+)
+
+func main() {
+  // Note that it takes several minutes to initialize lookup data structures.
+  // Requirement for initialization: Postgresql database with loaded
+  // http://opendata.globalnames.org/dumps/gnames-latest.sql.gz
+  //
+  // If data are imported already, it still takes several seconds to
+  // load lookup data into memory.
+  cfg := config.NewConfig()
+  em := bloom.NewExactMatcher(cfg)
+  fm := trie.NewFuzzyMatcher(cfg)
+  gnm := gnmatcher.NewGNMatcher(em, fm)
+  res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
+  for _, match := range res {
+    fmt.Println(match.Name)
+    fmt.Println(match.MatchType)
+    for _, item := range match.MatchItems {
+      fmt.Println(item.MatchStr)
+      fmt.Println(item.EditDistance)
+    }
+  }
+}
+```
+
 ## Client
 
 A user can find an example of a client for the service in this
-[test file][rest-client]
+[test file][rest-client].
+
+The API is formally described in the [OpenAPI specification]
 
 ## Development
-
-To run tests a developer needs to install [BDD] binary [ginkgo]
 
 There is a docker-compose file that sets up HTTP service to run tests. To run
 it to the following:
@@ -120,4 +156,5 @@ it to the following:
 [testdata]: https://github.com/gnames/gnmatcher/blob/master/testdata/testdata.csv
 [rest-client]: https://github.com/gnames/gnmatcher/blob/master/rest/rest_test.go
 [BDD]: https://en.wikipedia.org/wiki/Behavior-driven_development
-[ginkgo]: https://github.com/onsi/ginkgo
+[OpenAPI specification]: https://app.swaggerhub.com/apis-docs/dimus/gnmatcher/1.0.0
+[gnmatcher interface]: https://pkg.go.dev/github.com/gnames/gnmatcher#GNMatcher

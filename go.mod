@@ -6,24 +6,24 @@ require (
 	github.com/GeertJohan/go.rice v1.0.0
 	github.com/Shugyousha/mafsa v0.2.0 // indirect
 	github.com/devopsfaith/bloomfilter v0.0.0-20190317200532-4687d0b9aa2a
-	github.com/dgraph-io/badger/v2 v2.2007.1
+	github.com/dgraph-io/badger/v2 v2.2007.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
-	github.com/gnames/gnlib v0.0.5
+	github.com/gnames/gnlib v0.0.11
 	github.com/gnames/levenshtein v0.1.0
-	github.com/google/go-cmp v0.5.2 // indirect
+	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.1.17
-	github.com/lib/pq v1.4.0 // indirect
+	github.com/lib/pq v1.8.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/mitchellh/mapstructure v1.3.0 // indirect
-	github.com/pelletier/go-toml v1.7.0 // indirect
+	github.com/mitchellh/mapstructure v1.3.3 // indirect
+	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.7.0
-	github.com/smartystreets/assertions v1.1.0 // indirect
-	github.com/spf13/afero v1.2.2 // indirect
+	github.com/smartystreets/assertions v1.2.0 // indirect
+	github.com/spf13/afero v1.4.1 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
@@ -37,7 +37,7 @@ require (
 	github.com/tmthrgd/go-memset v0.0.0-20190904060434-6fb7a21f88f1 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect
 	gitlab.com/gogna/gnparser v0.14.2
-	golang.org/x/sys v0.0.0-20201009025420-dfb3f7c4e634 // indirect
+	golang.org/x/sys v0.0.0-20201126144705-a4b67b81d3d2 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	gopkg.in/ini.v1 v1.56.0 // indirect
+	gopkg.in/ini.v1 v1.62.0 // indirect
 )

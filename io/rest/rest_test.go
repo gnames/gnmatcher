@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const url = "http://:8080/"
+const url = "http://:8080/api/v1/"
 
 func TestPing(t *testing.T) {
 	resp, err := http.Get(url + "ping")
@@ -52,7 +52,7 @@ func TestExact(t *testing.T) {
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
 	r := bytes.NewReader(req)
-	resp, err := http.Post(url+"match", "application/json", r)
+	resp, err := http.Post(url+"matches", "application/json", r)
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)
@@ -69,6 +69,8 @@ func TestExact(t *testing.T) {
 	assert.Equal(t, good.Name, "Bubo bubo")
 	assert.Equal(t, good.MatchType, vlib.Exact)
 	assert.Equal(t, good.MatchItems[0].MatchStr, "Bubo bubo")
+	assert.Equal(t, good.MatchItems[0].EditDistance, 0)
+	assert.Equal(t, good.MatchItems[0].EditDistanceStem, 0)
 
 	full := response[4]
 	assert.Equal(t, full.Name, "Plantago major var major")
@@ -101,16 +103,18 @@ func TestFuzzy(t *testing.T) {
 		"Accanthurus glaucopareus",
 		"Tillaudsia utriculata",
 		"Drosohila melanogaster",
+		"Acanthobolhrium crassicolle",
 	}
 	enc := encode.GNjson{}
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
-	resp, err := http.Post(url+"match", "application/json", bytes.NewReader(req))
+	resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
-	_ = enc.Decode(respBytes, &response)
+	err = enc.Decode(respBytes, &response)
+	assert.Nil(t, err)
 
 	bad := response[0]
 	assert.Equal(t, bad.Name, "Not name")
@@ -162,4 +166,11 @@ func TestFuzzy(t *testing.T) {
 	assert.Equal(t, fuzzy3.MatchType, vlib.Fuzzy)
 	assert.Equal(t, len(fuzzy3.MatchItems), 2)
 	assert.Equal(t, fuzzy3.MatchItems[0].EditDistanceStem, 1)
+
+	fuzzy4 := response[7]
+	assert.Equal(t, fuzzy4.Name, "Acanthobolhrium crassicolle")
+	assert.Equal(t, fuzzy4.MatchType, vlib.Fuzzy)
+	assert.Equal(t, len(fuzzy4.MatchItems), 2)
+	assert.Equal(t, fuzzy4.MatchItems[0].EditDistance, 1)
+	assert.Equal(t, fuzzy4.MatchItems[1].EditDistance, 3)
 }

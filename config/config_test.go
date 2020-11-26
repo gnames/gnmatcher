@@ -54,7 +54,7 @@ func TestMaxED(t *testing.T) {
 
 func TestHelpers(t *testing.T) {
 	cnf := config.NewConfig()
-	assert.Contains(t, cnf.TrieDir(), "/.local/share/gnmatcher/levenshein")
+	assert.Contains(t, cnf.TrieDir(), "/.local/share/gnmatcher/trie")
 	assert.Contains(t, cnf.FiltersDir(), "/.local/share/gnmatcher/bloom")
 	assert.Contains(t, cnf.StemsDir(), "/.local/share/gnmatcher/stems-kv")
 }

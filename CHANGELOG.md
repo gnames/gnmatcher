@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## [v0.3.7]
+
+- Add [#29] OpenAPI specification
 - Add [#28] documentation and structural improvements.
 
 ## [v0.3.6]
@@ -59,6 +62,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.7]: https://github.com/gnames/gnmatcher/compare/v0.3.6...v0.3.7
 [v0.3.6]: https://github.com/gnames/gnmatcher/compare/v0.3.5...v0.3.6
 [v0.3.5]: https://github.com/gnames/gnmatcher/compare/v0.3.4...v0.3.5
 [v0.3.4]: https://github.com/gnames/gnmatcher/compare/v0.3.3...v0.3.4

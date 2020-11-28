@@ -6,6 +6,9 @@ LABEL maintainer="Dmitry Mozzherin"
 
 WORKDIR /bin
 
+ENV LANG en_US.UTF-8
+ENV LC_COLLATE C
+
 COPY ./gnmatcher/gnmatcher /bin
 
 ENTRYPOINT [ "gnmatcher" ]

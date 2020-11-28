@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.3.8]
+
 - Add [#30] Remove false positives from bloom filters.
 
 ## [v0.3.7]
@@ -64,6 +66,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.3.8]: https://github.com/gnames/gnmatcher/compare/v0.3.7...v0.3.8
 [v0.3.7]: https://github.com/gnames/gnmatcher/compare/v0.3.6...v0.3.7
 [v0.3.6]: https://github.com/gnames/gnmatcher/compare/v0.3.5...v0.3.6
 [v0.3.5]: https://github.com/gnames/gnmatcher/compare/v0.3.4...v0.3.5
@@ -76,6 +79,7 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#30]: https://github.com/gnames/gnmatcher/issues/30
 [#29]: https://github.com/gnames/gnmatcher/issues/29
 [#28]: https://github.com/gnames/gnmatcher/issues/28
 [#27]: https://github.com/gnames/gnmatcher/issues/27

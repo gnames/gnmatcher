@@ -34,6 +34,10 @@ func (fm mockFuzzyMatcher) MatchStem(s string) []string {
 	return res
 }
 
+func (fm mockFuzzyMatcher) MatchStemExact(s string) bool {
+	return true
+}
+
 func (fm mockFuzzyMatcher) StemToMatchItems(s string) []mlib.MatchItem {
 	var res []mlib.MatchItem
 	return res

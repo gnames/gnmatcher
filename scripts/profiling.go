@@ -22,7 +22,7 @@ import (
 
 const batch = 10_000
 
-const url = "http://:8080/"
+const url = "http://:8080/api/v1/"
 
 func main() {
 	var wgRes sync.WaitGroup
@@ -49,7 +49,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if err != nil {
 			log.Fatalf("Cannot marshall input: %v", err)
 		}
-		resp, err := http.Post(url+"match", "application/json", bytes.NewReader(req))
+		resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))
 		if err != nil {
 			log.Fatalf("Cannot send request: %v", err)
 		}

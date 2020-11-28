@@ -49,6 +49,11 @@ func (fm *fuzzyMatcher) MatchStem(stem string) []string {
 	return fm.trie.FuzzyMatches(stem, fm.cfg.MaxEditDist)
 }
 
+func (fm *fuzzyMatcher) MatchStemExact(stem string) bool {
+	matches := fm.trie.FuzzyMatches(stem, 0)
+	return len(matches) > 0
+}
+
 func (fm *fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
 	var res []mlib.MatchItem
 	misGob := bytes.NewBuffer(getValue(fm.keyVal, stem))

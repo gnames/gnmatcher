@@ -9,7 +9,7 @@ import (
 // from from gnames database.
 func (m matcher) match(ns nameString) *mlib.Match {
 	isIn := m.exactMatcher.MatchCanonicalID(ns.CanonicalID)
-	if isIn {
+	if isIn && m.fuzzyMatcher.MatchStemExact(ns.CanonicalStem) {
 		return &mlib.Match{
 			ID:        ns.ID,
 			Name:      ns.Name,

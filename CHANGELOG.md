@@ -2,9 +2,11 @@
 
 ## Unreleased
 
+- Add [#30] Remove false positives from bloom filters.
+
 ## [v0.3.7]
 
-- Add [#29] OpenAPI specification
+- Add [#29] OpenAPI specification.
 - Add [#28] documentation and structural improvements.
 
 ## [v0.3.6]

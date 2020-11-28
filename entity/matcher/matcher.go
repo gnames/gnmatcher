@@ -106,7 +106,7 @@ func (m matcher) matchWorker(chIn <-chan nameIn,
 				continue
 			}
 			matchResult = m.match(ns)
-		} else {
+		} else if ns.IsVirus {
 			matchResult = m.matchVirus(ns)
 		}
 		if matchResult == nil {

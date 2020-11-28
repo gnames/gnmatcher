@@ -42,6 +42,10 @@ func (fuzzyMatcherMock) MatchStem(stem string) []string {
 	return []string{}
 }
 
+func (fuzzyMatcherMock) MatchStemExact(stem string) bool {
+	return true
+}
+
 func (fuzzyMatcherMock) StemToMatchItems(stem string) []mlib.MatchItem {
 	res := []mlib.MatchItem{}
 	if mis, ok := stemToMatchItemsMock[stem]; ok {

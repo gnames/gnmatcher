@@ -28,6 +28,8 @@ type nameString struct {
 	// Canonical Stem is version of the Canonical field with suffixes removed
 	// and characters substituted according to rules of Latin grammar.
 	CanonicalStem string
+	// IsVirus is true if parsed name seem to be a virus
+	IsVirus bool
 	// Partial contains truncated versions of Canonical form. It is important
 	// for matching names that could not be matched for all specific epithets.
 	Partial *partial
@@ -63,6 +65,7 @@ func newNameString(parser gnparser.GNparser,
 			Canonical:     parsed.Canonical.Simple,
 			CanonicalID:   gnuuid.New(parsed.Canonical.Simple).String(),
 			CanonicalStem: parsed.Canonical.Stem,
+			IsVirus:       parsed.NameType == pb.NameType_VIRUS,
 		}
 
 		ns.newPartial(parsed)

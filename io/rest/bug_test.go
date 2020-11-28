@@ -45,6 +45,12 @@ var bugs = []struct {
 		matchCanonical: "Acacia horrida",
 		desc:           "#24 PartialExact match does not work",
 	},
+	{
+		name:           "Bubo bubo",
+		matchType:      vlib.Exact,
+		matchCanonical: "Bubo bubo",
+		desc:           "#31 'Bubo bubo' matches partial instead of exact",
+	},
 }
 
 func TestBugs(t *testing.T) {

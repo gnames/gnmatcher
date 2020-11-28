@@ -3,6 +3,7 @@ package config_test
 import (
 	"testing"
 
+	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnmatcher/config"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -12,7 +13,7 @@ import (
 func TestNew(t *testing.T) {
 	cnf := config.NewConfig()
 	deflt := config.Config{
-		WorkDir:     config.ConvertTilda("~/.local/share/gnmatcher"),
+		WorkDir:     sys.ConvertTilda("~/.local/share/gnmatcher"),
 		MaxEditDist: 1,
 		PgHost:      "localhost",
 		PgPort:      5432,

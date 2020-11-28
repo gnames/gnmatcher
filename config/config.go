@@ -4,9 +4,8 @@ package config
 import (
 	"fmt"
 	"path/filepath"
-	"strings"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/gnames/gnlib/sys"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,7 +35,7 @@ type Config struct {
 func NewConfig(opts ...Option) Config {
 	workDir := "~/.local/share/gnmatcher"
 	cnf := Config{
-		WorkDir:     ConvertTilda(workDir),
+		WorkDir:     sys.ConvertTilda(workDir),
 		MaxEditDist: 1,
 		PgHost:      "localhost",
 		PgPort:      5432,
@@ -74,7 +73,7 @@ type Option func(cnf *Config)
 // OptWorkDir sets a directory for key-value stores and temporary files.
 func OptWorkDir(s string) Option {
 	return func(cnf *Config) {
-		cnf.WorkDir = ConvertTilda(s)
+		cnf.WorkDir = sys.ConvertTilda(s)
 	}
 }
 
@@ -124,16 +123,4 @@ func OptPgDB(s string) Option {
 	return func(cnf *Config) {
 		cnf.PgDB = s
 	}
-}
-
-// ConvertTilda expands paths with `~/` to an actual home directory.
-func ConvertTilda(path string) string {
-	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, "~\\") {
-		home, err := homedir.Dir()
-		if err != nil {
-			log.Fatal(err)
-		}
-		path = filepath.Join(home, path[2:])
-	}
-	return path
 }

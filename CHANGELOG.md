@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix [#31] 'Bubo bubo' is exact match.
+
 ## [v0.3.8]
 
 - Add [#30] Remove false positives from bloom filters.
@@ -79,6 +81,10 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#34]: https://github.com/gnames/gnmatcher/issues/34
+[#33]: https://github.com/gnames/gnmatcher/issues/33
+[#32]: https://github.com/gnames/gnmatcher/issues/32
+[#31]: https://github.com/gnames/gnmatcher/issues/31
 [#30]: https://github.com/gnames/gnmatcher/issues/30
 [#29]: https://github.com/gnames/gnmatcher/issues/29
 [#28]: https://github.com/gnames/gnmatcher/issues/28

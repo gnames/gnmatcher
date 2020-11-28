@@ -65,7 +65,6 @@ func newNameString(parser gnparser.GNparser,
 			Canonical:     parsed.Canonical.Simple,
 			CanonicalID:   gnuuid.New(parsed.Canonical.Simple).String(),
 			CanonicalStem: parsed.Canonical.Stem,
-			IsVirus:       parsed.NameType == pb.NameType_VIRUS,
 		}
 
 		ns.newPartial(parsed)
@@ -80,7 +79,11 @@ func newNameString(parser gnparser.GNparser,
 		return ns, parsed
 	}
 
-	return nameString{ID: parsed.Id, Name: name}, parsed
+	return nameString{
+		ID:      parsed.Id,
+		Name:    name,
+		IsVirus: parsed.NameType == pb.NameType_VIRUS,
+	}, parsed
 }
 
 func (ns *nameString) newPartial(parsed *pb.Parsed) {

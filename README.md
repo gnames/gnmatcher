@@ -57,6 +57,8 @@ are "real", you should see an even higher performance.
 * You will need PostgreSQL with a restored dump of
    [`gnames` database][gnames dump].
 
+* For PostgreSQL collation to work correctly set ``LC_COLLATE=C`` in
+  `/etc/default/locale`
 * Docker service
 
 ## Usage

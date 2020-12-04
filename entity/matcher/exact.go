@@ -8,8 +8,8 @@ import (
 // match tries to match a canonical form of a name-string exactly to canonical
 // from from gnames database.
 func (m matcher) match(ns nameString) *mlib.Match {
-	isIn := m.exactMatcher.MatchCanonicalID(ns.CanonicalID)
-	if isIn && m.fuzzyMatcher.MatchStemExact(ns.CanonicalStem) {
+	isIn := m.isExactMatch(ns)
+	if isIn {
 		return &mlib.Match{
 			ID:        ns.ID,
 			Name:      ns.Name,

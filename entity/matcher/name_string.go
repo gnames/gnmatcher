@@ -6,7 +6,6 @@ import (
 	"github.com/gnames/gnlib/gnuuid"
 	"gitlab.com/gogna/gnparser"
 	"gitlab.com/gogna/gnparser/pb"
-	"gitlab.com/gogna/gnparser/stemmer"
 )
 
 // nameString stores input data for doing exact, fuzzy, exact partial, and
@@ -68,14 +67,6 @@ func newNameString(parser gnparser.GNparser,
 		}
 
 		ns.newPartial(parsed)
-		// We do not fuzzy-match uninomials, however there are cases when
-		// a binomial lost empty space during OCR. We increase probability to
-		// match such binomials, if we stem them. It happens because we use trie
-		// of stemmed canonicals.
-		// For example we will be able to match 'Pardosamoestus' to 'Pardosa moesta'
-		if parsed.Cardinality == 1 {
-			ns.CanonicalStem = stemmer.Stem(ns.Canonical).Stem
-		}
 		return ns, parsed
 	}
 

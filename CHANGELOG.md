@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fix [#32] remove consequences of #30, that prevented to match uninomials.
 - Fix [#31] 'Bubo bubo' is exact match.
 
 ## [v0.3.8]

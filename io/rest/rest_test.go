@@ -133,16 +133,11 @@ func TestFuzzy(t *testing.T) {
 	assert.Equal(t, suffix.MatchItems[0].EditDistance, 1)
 	assert.Equal(t, suffix.MatchItems[0].EditDistanceStem, 0)
 
-	// support for missing spaces is limited, because we cannot
-	// generate correct stemmed version from them, so many
-	// of such names are not matched due to edit distance bigger than
-	// the threshold.
+	// We do not have yet support for lost spaces.
 	space := response[3]
 	assert.Equal(t, space.Name, "Pardosamoeste")
-	assert.Equal(t, space.MatchType, vlib.Fuzzy)
-	assert.Equal(t, len(space.MatchItems), 1)
-	assert.Equal(t, space.MatchItems[0].EditDistance, 2)
-	assert.Equal(t, space.MatchItems[0].EditDistanceStem, 1)
+	assert.Equal(t, space.MatchType, vlib.NoMatch)
+	assert.Nil(t, space.MatchItems)
 
 	fuzzy := response[4]
 	assert.Equal(t, fuzzy.Name, "Accanthurus glaucopareus")

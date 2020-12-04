@@ -51,6 +51,12 @@ var bugs = []struct {
 		matchCanonical: "Bubo bubo",
 		desc:           "#31 'Bubo bubo' matches partial instead of exact",
 	},
+	{
+		name:           "Bubo",
+		matchType:      vlib.Exact,
+		matchCanonical: "Bubo",
+		desc:           "#31 'Bubo' uninomials do not match",
+	},
 }
 
 func TestBugs(t *testing.T) {

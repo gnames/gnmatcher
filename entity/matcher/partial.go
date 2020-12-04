@@ -25,7 +25,7 @@ func (m matcher) matchPartial(ns nameString) *mlib.Match {
 
 func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 	gID := gnuuid.New(ns.Partial.Genus).String()
-	isIn := m.exactMatcher.MatchCanonicalID(gID)
+	isIn := m.isExactMatch(ns)
 	if isIn {
 		return &mlib.Match{
 			ID:         ns.ID,
@@ -41,7 +41,7 @@ func (m matcher) processPartial(p multinomial, ns nameString) *mlib.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
 		id := gnuuid.New(name).String()
-		isIn := m.exactMatcher.MatchCanonicalID(id)
+		isIn := m.isExactMatch(ns)
 		if isIn {
 			res := &mlib.Match{
 				ID:         ns.ID,

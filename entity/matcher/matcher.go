@@ -69,7 +69,7 @@ func (m matcher) MatchNames(names []string) []*mlib.Match {
 	wgOut.Add(1)
 
 	names = truncateNamesToMaxNumber(names)
-	log.Printf("Processing %d names.", len(names))
+	log.Infof("Processing %d names.", len(names))
 	res := make([]*mlib.Match, len(names))
 
 	go loadNames(chIn, names)
@@ -106,6 +106,13 @@ func (m matcher) matchWorker(chIn <-chan nameIn,
 				continue
 			}
 			matchResult = m.match(ns)
+			if ns.Cardinality < 2 {
+				if matchResult == nil {
+					matchResult = emptyResult(ns)
+				}
+				chOut <- matchOut{index: tsk.index, match: matchResult}
+				continue
+			}
 		} else if ns.IsVirus {
 			matchResult = m.matchVirus(ns)
 		}
@@ -151,6 +158,11 @@ func detectAbbreviated(parsed *pb.Parsed) *mlib.Match {
 		}
 	}
 	return nilResult
+}
+
+func (m matcher) isExactMatch(ns nameString) bool {
+	return m.exactMatcher.MatchCanonicalID(ns.CanonicalID) &&
+		m.fuzzyMatcher.MatchStemExact(ns.CanonicalStem)
 }
 
 func emptyResult(ns nameString) *mlib.Match {

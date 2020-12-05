@@ -120,7 +120,7 @@ func (m matcher) matchWorker(chIn <-chan nameIn,
 			matchResult = m.matchFuzzy(ns.Canonical, ns.CanonicalStem, ns)
 		}
 		if matchResult == nil {
-			matchResult = m.matchPartial(ns)
+			matchResult = m.matchPartial(ns, parser)
 		}
 		chOut <- matchOut{index: tsk.index, match: matchResult}
 	}
@@ -160,9 +160,9 @@ func detectAbbreviated(parsed *pb.Parsed) *mlib.Match {
 	return nilResult
 }
 
-func (m matcher) isExactMatch(ns nameString) bool {
-	return m.exactMatcher.MatchCanonicalID(ns.CanonicalID) &&
-		m.fuzzyMatcher.MatchStemExact(ns.CanonicalStem)
+func (m matcher) isExactMatch(uuid, stem string) bool {
+	return m.exactMatcher.MatchCanonicalID(uuid) &&
+		m.fuzzyMatcher.MatchStemExact(stem)
 }
 
 func emptyResult(ns nameString) *mlib.Match {

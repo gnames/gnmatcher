@@ -8,7 +8,7 @@ import (
 // match tries to match a canonical form of a name-string exactly to canonical
 // from from gnames database.
 func (m matcher) match(ns nameString) *mlib.Match {
-	isIn := m.isExactMatch(ns)
+	isIn := m.isExactMatch(ns.CanonicalID, ns.CanonicalStem)
 	if isIn {
 		return &mlib.Match{
 			ID:        ns.ID,

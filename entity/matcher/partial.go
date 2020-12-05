@@ -4,18 +4,19 @@ import (
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/gnuuid"
+	"gitlab.com/gogna/gnparser"
 	"gitlab.com/gogna/gnparser/stemmer"
 )
 
 // matchPartial tries to match all patial variants of a name-string. The
 // process stops as soon as a match was found.
-func (m matcher) matchPartial(ns nameString) *mlib.Match {
+func (m matcher) matchPartial(ns nameString, parser gnparser.GNparser) *mlib.Match {
 	if ns.Partial == nil {
 		return emptyResult(ns)
 	}
 
 	for _, partial := range ns.Partial.Multinomials {
-		if res := m.processPartial(partial, ns); res != nil {
+		if res := m.processPartial(partial, ns, parser); res != nil {
 			return res
 		}
 	}
@@ -25,7 +26,7 @@ func (m matcher) matchPartial(ns nameString) *mlib.Match {
 
 func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 	gID := gnuuid.New(ns.Partial.Genus).String()
-	isIn := m.isExactMatch(ns)
+	isIn := m.isExactMatch(gID, ns.Partial.Genus)
 	if isIn {
 		return &mlib.Match{
 			ID:         ns.ID,
@@ -37,17 +38,21 @@ func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 	return emptyResult(ns)
 }
 
-func (m matcher) processPartial(p multinomial, ns nameString) *mlib.Match {
+func (m matcher) processPartial(p multinomial, ns nameString,
+	parser gnparser.GNparser) *mlib.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
-		id := gnuuid.New(name).String()
-		isIn := m.isExactMatch(ns)
+		nsPart, parsed := newNameString(parser, name)
+		if !parsed.Parsed {
+			continue
+		}
+		isIn := m.isExactMatch(nsPart.CanonicalID, nsPart.CanonicalStem)
 		if isIn {
 			res := &mlib.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
 				MatchType:  vlib.PartialExact,
-				MatchItems: []mlib.MatchItem{{ID: id, MatchStr: name}},
+				MatchItems: []mlib.MatchItem{{ID: nsPart.ID, MatchStr: name}},
 			}
 			return res
 		}

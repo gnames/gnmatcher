@@ -1,7 +1,7 @@
 # gnmatcher
 
 [![API](https://img.shields.io/badge/OpenAPI3-1.0.0-89bf04)](https://app.swaggerhub.com/apis-docs/dimus/gnmatcher/1.0.0)
-[![GoDoc](https://godoc.org/github.com/gnames/gnmatcher?status.svg)](https://godoc.org/github.com/gnames/gnmatcher)
+[![GoDoc](https://godoc.org/github.com/gnames/gnmatcher?status.svg)](https://pkg.go.dev/github.com/gnames/gnmatcher)
 
 ``import "github.com/gnames/gnmatcher"``
 

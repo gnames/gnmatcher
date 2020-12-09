@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	gnmcnf "github.com/gnames/gnmatcher/config"
+	"github.com/gnames/gnmatcher/config"
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -40,12 +40,12 @@ MaxEditDist: 1
 `
 
 var (
-	opts []gnmcnf.Option
+	opts []config.Option
 )
 
-// config purpose is to achieve automatic import of data from the
+// cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
-type config struct {
+type cfgData struct {
 	WorkDir     string
 	PgHost      string
 	PgPort      int
@@ -53,6 +53,7 @@ type config struct {
 	PgPass      string
 	PgDB        string
 	MaxEditDist int
+	JobsNum     int
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -109,6 +110,7 @@ func initConfig() {
 	_ = viper.BindEnv("PgPass", "GNM_PG_PASS")
 	_ = viper.BindEnv("PgDB", "GNM_PG_DB")
 	_ = viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
+	_ = viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -124,33 +126,36 @@ func initConfig() {
 
 // getOpts imports data from the configuration file. Some of the settings can
 // be overriden by command line flags.
-func getOpts() []gnmcnf.Option {
-	cfg := &config{}
+func getOpts() []config.Option {
+	cfg := &cfgData{}
 	err := viper.Unmarshal(cfg)
 	if err != nil {
 		log.Fatalf("Cannot deserialize config data: %s.", err)
 	}
 
 	if cfg.WorkDir != "" {
-		opts = append(opts, gnmcnf.OptWorkDir(cfg.WorkDir))
+		opts = append(opts, config.OptWorkDir(cfg.WorkDir))
 	}
 	if cfg.MaxEditDist != 0 {
-		opts = append(opts, gnmcnf.OptMaxEditDist(cfg.MaxEditDist))
+		opts = append(opts, config.OptMaxEditDist(cfg.MaxEditDist))
 	}
 	if cfg.PgHost != "" {
-		opts = append(opts, gnmcnf.OptPgHost(cfg.PgHost))
+		opts = append(opts, config.OptPgHost(cfg.PgHost))
 	}
 	if cfg.PgPort != 0 {
-		opts = append(opts, gnmcnf.OptPgPort(cfg.PgPort))
+		opts = append(opts, config.OptPgPort(cfg.PgPort))
 	}
 	if cfg.PgUser != "" {
-		opts = append(opts, gnmcnf.OptPgUser(cfg.PgUser))
+		opts = append(opts, config.OptPgUser(cfg.PgUser))
 	}
 	if cfg.PgPass != "" {
-		opts = append(opts, gnmcnf.OptPgPass(cfg.PgPass))
+		opts = append(opts, config.OptPgPass(cfg.PgPass))
 	}
 	if cfg.PgDB != "" {
-		opts = append(opts, gnmcnf.OptPgDB(cfg.PgDB))
+		opts = append(opts, config.OptPgDB(cfg.PgDB))
+	}
+	if cfg.JobsNum > 0 {
+		opts = append(opts, config.OptJobsNum(cfg.JobsNum))
 	}
 	return opts
 }

@@ -18,6 +18,8 @@ type Config struct {
 	// The number cannot exceed 2, default number is 1. The speed of execution
 	// slows down dramatically with the MaxEditDist > 1.
 	MaxEditDist int
+	// JobsNum is the number of jobs to run in parallel
+	JobsNum int
 	// PgHost is a hostname for the PostgreSQL server.
 	PgHost string
 	// PgPort is the port of PostgreSQL server.
@@ -34,9 +36,10 @@ type Config struct {
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
 	workDir := "~/.local/share/gnmatcher"
-	cnf := Config{
+	cfg := Config{
 		WorkDir:     sys.ConvertTilda(workDir),
 		MaxEditDist: 1,
+		JobsNum:     1,
 		PgHost:      "localhost",
 		PgPort:      5432,
 		PgUser:      "postgres",
@@ -44,83 +47,90 @@ func NewConfig(opts ...Option) Config {
 		PgDB:        "gnames",
 	}
 	for _, opt := range opts {
-		opt(&cnf)
+		opt(&cfg)
 	}
-	return cnf
+	return cfg
 }
 
 // TrieDir returns path where to dump/restore
 // serialized trie.
-func (cnf Config) TrieDir() string {
-	return filepath.Join(cnf.WorkDir, "trie")
+func (cfg Config) TrieDir() string {
+	return filepath.Join(cfg.WorkDir, "trie")
 }
 
 // FiltersDir returns path where to dump/restore
 // serialized bloom filters.
-func (cnf Config) FiltersDir() string {
-	return filepath.Join(cnf.WorkDir, "bloom")
+func (cfg Config) FiltersDir() string {
+	return filepath.Join(cfg.WorkDir, "bloom")
 }
 
 // StemsDir returns path where stems key-value store
 // is located
-func (cnf Config) StemsDir() string {
-	return filepath.Join(cnf.WorkDir, "stems-kv")
+func (cfg Config) StemsDir() string {
+	return filepath.Join(cfg.WorkDir, "stems-kv")
 }
 
 // Option is a type of all options for Config.
-type Option func(cnf *Config)
+type Option func(cfg *Config)
 
 // OptWorkDir sets a directory for key-value stores and temporary files.
 func OptWorkDir(s string) Option {
-	return func(cnf *Config) {
-		cnf.WorkDir = sys.ConvertTilda(s)
+	return func(cfg *Config) {
+		cfg.WorkDir = sys.ConvertTilda(s)
 	}
 }
 
 // OptMaxEditDist sets maximal possible edit distance for fuzzy matching of
 // stemmed canonical forms.
 func OptMaxEditDist(i int) Option {
-	return func(cnf *Config) {
+	return func(cfg *Config) {
 		if i < 1 || i > 2 {
 			log.Warn(fmt.Sprintf("MaxEditDist can only be 1 or 2, leaving it at %d.",
-				cnf.MaxEditDist))
+				cfg.MaxEditDist))
 		} else {
-			cnf.MaxEditDist = i
+			cfg.MaxEditDist = i
 		}
 	}
 }
 
 // OptPgHost sets the host of gnames database
 func OptPgHost(s string) Option {
-	return func(cnf *Config) {
-		cnf.PgHost = s
+	return func(cfg *Config) {
+		cfg.PgHost = s
 	}
 }
 
 // OptPgUser sets the user of gnnames database
 func OptPgUser(s string) Option {
-	return func(cnf *Config) {
-		cnf.PgUser = s
+	return func(cfg *Config) {
+		cfg.PgUser = s
 	}
 }
 
 // OptPgPass sets the password to access gnnames database
 func OptPgPass(s string) Option {
-	return func(cnf *Config) {
-		cnf.PgPass = s
+	return func(cfg *Config) {
+		cfg.PgPass = s
 	}
 }
 
 // OptPgPort sets the port for gnames database
 func OptPgPort(i int) Option {
-	return func(cnf *Config) {
-		cnf.PgPort = i
+	return func(cfg *Config) {
+		cfg.PgPort = i
 	}
 }
 
 // OptPgDB sets the name of gnames database
 func OptPgDB(s string) Option {
-	return func(cnf *Config) {
-		cnf.PgDB = s
+	return func(cfg *Config) {
+		cfg.PgDB = s
+	}
+}
+
+// OptJobsNum sets the number of jobs to run in parallel
+func OptJobsNum(i int) Option {
+	return func(cfg *Config) {
+		cfg.JobsNum = i
 	}
 }

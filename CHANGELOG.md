@@ -2,7 +2,13 @@
 
 ## Unreleased
 
+## [v0.4.1]
+
+- Fix [#33] add JobsNum as a configuration option.
 - Fix [#32] remove consequences of #30, that prevented to match uninomials.
+
+## [v0.4.0]
+
 - Fix [#31] 'Bubo bubo' is exact match.
 
 ## [v0.3.8]
@@ -69,6 +75,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.4.1]: https://github.com/gnames/gnmatcher/compare/v0.4.0...v0.4.1
+[v0.4.0]: https://github.com/gnames/gnmatcher/compare/v0.3.8...v0.4.0
 [v0.3.8]: https://github.com/gnames/gnmatcher/compare/v0.3.7...v0.3.8
 [v0.3.7]: https://github.com/gnames/gnmatcher/compare/v0.3.6...v0.3.7
 [v0.3.6]: https://github.com/gnames/gnmatcher/compare/v0.3.5...v0.3.6

@@ -15,9 +15,9 @@ type gnmatcher struct {
 
 // NewGNMatcher is a constructor for GNMatcher interface. It takes two
 // interfaces ExactMatcher and FuzzyMatcher.
-func NewGNMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher) GNMatcher {
+func NewGNMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher, j int) GNMatcher {
 	gnm := gnmatcher{}
-	gnm.matcher = matcher.NewMatcher(em, fm)
+	gnm.matcher = matcher.NewMatcher(em, fm, j)
 	gnm.matcher.Init()
 	return gnm
 }

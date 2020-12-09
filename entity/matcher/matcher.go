@@ -17,9 +17,6 @@ const (
 	// MaxNMaxNamesNum is the largest number of names that can be processed
 	// per request. If input contains more names, it will be truncated.
 	MaxNamesNum = 10_000
-
-	// JobsNum determines number of go-routines to run during matching.
-	JobsNum = 16
 )
 
 var nilResult *mlib.Match
@@ -27,12 +24,13 @@ var nilResult *mlib.Match
 type matcher struct {
 	exactMatcher exact.ExactMatcher
 	fuzzyMatcher fuzzy.FuzzyMatcher
+	jobsNum      int
 }
 
 // NewMatcher returns Matcher object. It takes interfaces to ExactMatcher
 // and FuzzyMatcher.
-func NewMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher) Matcher {
-	return matcher{exactMatcher: em, fuzzyMatcher: fm}
+func NewMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher, j int) Matcher {
+	return matcher{exactMatcher: em, fuzzyMatcher: fm, jobsNum: j}
 }
 
 func (m matcher) Init() {
@@ -65,7 +63,7 @@ func (m matcher) MatchNames(names []string) []*mlib.Match {
 	chOut := make(chan matchOut)
 	var wgIn sync.WaitGroup
 	var wgOut sync.WaitGroup
-	wgIn.Add(JobsNum)
+	wgIn.Add(m.jobsNum)
 	wgOut.Add(1)
 
 	names = truncateNamesToMaxNumber(names)
@@ -73,7 +71,7 @@ func (m matcher) MatchNames(names []string) []*mlib.Match {
 	res := make([]*mlib.Match, len(names))
 
 	go loadNames(chIn, names)
-	for i := 0; i < JobsNum; i++ {
+	for i := 0; i < m.jobsNum; i++ {
 		go m.matchWorker(chIn, chOut, &wgIn)
 	}
 
@@ -92,13 +90,16 @@ func (m matcher) MatchNames(names []string) []*mlib.Match {
 
 // matchWorker takes name-strings from chIn channel, matches them
 // and sends results to chOut channel.
-func (m matcher) matchWorker(chIn <-chan nameIn,
-	chOut chan<- matchOut, wg *sync.WaitGroup) {
+func (m matcher) matchWorker(
+	chIn <-chan nameIn,
+	chOut chan<- matchOut,
+	wg *sync.WaitGroup,
+) {
 	parser := gnparser.NewGNparser()
 	defer wg.Done()
-	var matchResult *mlib.Match
 
 	for tsk := range chIn {
+		var matchResult *mlib.Match
 		ns, parsed := newNameString(parser, tsk.name)
 		if parsed.Parsed {
 			if abbrResult := detectAbbreviated(parsed); abbrResult != nil {
@@ -128,7 +129,8 @@ func (m matcher) matchWorker(chIn <-chan nameIn,
 
 func loadNames(chIn chan<- nameIn, names []string) {
 	for i, name := range names {
-		chIn <- nameIn{index: i, name: name}
+		ni := nameIn{index: i, name: name}
+		chIn <- ni
 	}
 	close(chIn)
 }

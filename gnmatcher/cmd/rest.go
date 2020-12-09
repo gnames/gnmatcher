@@ -52,10 +52,10 @@ as well.`,
 		if err != nil {
 			log.Fatalf("Cannot get port flag: %s", err)
 		}
-		cnf := gnmcnf.NewConfig(opts...)
-		em := bloom.NewExactMatcher(cnf)
-		fm := trie.NewFuzzyMatcher(cnf)
-		gnm := gnmatcher.NewGNMatcher(em, fm)
+		cfg := gnmcnf.NewConfig(opts...)
+		em := bloom.NewExactMatcher(cfg)
+		fm := trie.NewFuzzyMatcher(cfg)
+		gnm := gnmatcher.NewGNMatcher(em, fm, cfg.JobsNum)
 		if err != nil {
 			log.Printf("Cannot create an instance of GNMatcher: %s.", err)
 			os.Exit(1)

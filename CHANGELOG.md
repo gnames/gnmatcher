@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.4.2]
+
+- Add read/write timeout for service at 5 min.
+
 ## [v0.4.1]
 
 - Fix [#33] add JobsNum as a configuration option.
@@ -75,6 +79,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.4.2]: https://github.com/gnames/gnmatcher/compare/v0.4.1...v0.4.2
 [v0.4.1]: https://github.com/gnames/gnmatcher/compare/v0.4.0...v0.4.1
 [v0.4.0]: https://github.com/gnames/gnmatcher/compare/v0.3.8...v0.4.0
 [v0.3.8]: https://github.com/gnames/gnmatcher/compare/v0.3.7...v0.3.8

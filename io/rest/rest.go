@@ -5,6 +5,7 @@ import (
 	// "github.com/gorilla/mux"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -27,7 +28,12 @@ func Run(m MatcherService) {
 	e.POST("/api/v1/matches", match(m))
 
 	addr := fmt.Sprintf(":%d", m.Port())
-	e.Logger.Fatal(e.Start(addr))
+	s := &http.Server{
+		Addr:         addr,
+		ReadTimeout:  5 * time.Minute,
+		WriteTimeout: 5 * time.Minute,
+	}
+	e.Logger.Fatal(e.StartServer(s))
 }
 
 func root(c echo.Context) error {

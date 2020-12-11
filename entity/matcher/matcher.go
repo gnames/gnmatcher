@@ -54,10 +54,10 @@ type nameIn struct {
 
 type matchOut struct {
 	index int
-	match *mlib.Match
+	match mlib.Match
 }
 
-func (m matcher) MatchNames(names []string) []*mlib.Match {
+func (m matcher) MatchNames(names []string) []mlib.Match {
 	names = truncateNamesToMaxNumber(names)
 	chIn := make(chan nameIn)
 	chOut := make(chan matchOut)
@@ -68,7 +68,7 @@ func (m matcher) MatchNames(names []string) []*mlib.Match {
 
 	names = truncateNamesToMaxNumber(names)
 	log.Infof("Processing %d names.", len(names))
-	res := make([]*mlib.Match, len(names))
+	res := make([]mlib.Match, len(names))
 
 	go loadNames(chIn, names)
 	for i := 0; i < m.jobsNum; i++ {
@@ -103,7 +103,7 @@ func (m matcher) matchWorker(
 		ns, parsed := newNameString(parser, tsk.name)
 		if parsed.Parsed {
 			if abbrResult := detectAbbreviated(parsed); abbrResult != nil {
-				chOut <- matchOut{index: tsk.index, match: abbrResult}
+				chOut <- matchOut{index: tsk.index, match: *abbrResult}
 				continue
 			}
 			matchResult = m.match(ns)
@@ -111,7 +111,7 @@ func (m matcher) matchWorker(
 				if matchResult == nil {
 					matchResult = emptyResult(ns)
 				}
-				chOut <- matchOut{index: tsk.index, match: matchResult}
+				chOut <- matchOut{index: tsk.index, match: *matchResult}
 				continue
 			}
 		} else if ns.IsVirus {
@@ -123,7 +123,7 @@ func (m matcher) matchWorker(
 		if matchResult == nil {
 			matchResult = m.matchPartial(ns, parser)
 		}
-		chOut <- matchOut{index: tsk.index, match: matchResult}
+		chOut <- matchOut{index: tsk.index, match: *matchResult}
 	}
 }
 

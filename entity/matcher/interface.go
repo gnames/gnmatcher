@@ -12,5 +12,5 @@ type Matcher interface {
 	Init()
 	// MatchNames takes a slice of strings and returns back matches of these
 	// strings to known scientific names.
-	MatchNames(names []string) []*mlib.Match
+	MatchNames(names []string) []mlib.Match
 }

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.5.0]
+
+- Add [#34] change output/interfaces from []*Match to []Match.
+
 ## [v0.4.2]
 
 - Add read/write timeout for service at 5 min.
@@ -79,6 +83,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.0]: https://github.com/gnames/gnmatcher/compare/v0.4.2...v0.5.0
 [v0.4.2]: https://github.com/gnames/gnmatcher/compare/v0.4.1...v0.4.2
 [v0.4.1]: https://github.com/gnames/gnmatcher/compare/v0.4.0...v0.4.1
 [v0.4.0]: https://github.com/gnames/gnmatcher/compare/v0.3.8...v0.4.0
@@ -95,6 +100,9 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#37]: https://github.com/gnames/gnmatcher/issues/37
+[#36]: https://github.com/gnames/gnmatcher/issues/36
+[#35]: https://github.com/gnames/gnmatcher/issues/35
 [#34]: https://github.com/gnames/gnmatcher/issues/34
 [#33]: https://github.com/gnames/gnmatcher/issues/33
 [#32]: https://github.com/gnames/gnmatcher/issues/32

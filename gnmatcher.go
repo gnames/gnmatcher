@@ -22,7 +22,7 @@ func NewGNMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher, j int) GNMatcher
 	return gnm
 }
 
-func (gnm gnmatcher) MatchNames(names []string) []*mlib.Match {
+func (gnm gnmatcher) MatchNames(names []string) []mlib.Match {
 	return gnm.matcher.MatchNames(names)
 }
 

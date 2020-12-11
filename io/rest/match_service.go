@@ -43,7 +43,7 @@ func (mr matcherService) GetVersion() gn.Version {
 }
 
 // MatchAry takes a list of strings and matches them to known scientific names.
-func (mr matcherService) MatchNames(names []string) []*mlib.Match {
+func (mr matcherService) MatchNames(names []string) []mlib.Match {
 	return mr.gnm.MatchNames(names)
 }
 

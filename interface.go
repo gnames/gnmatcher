@@ -29,7 +29,7 @@ type GNMatcher interface {
 	//
 	// The resulting output does provide canonical forms, but not the sources
 	// where they are registered.
-	MatchNames(names []string) []*mlib.Match
+	MatchNames(names []string) []mlib.Match
 
 	// Interface to Version number and Build timestamp
 	gn.Versioner

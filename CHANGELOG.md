@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.5.1]
+
+- Add update gnparser to v0.14.4
+
 ## [v0.5.0]
 
 - Add [#34] change output/interfaces from []*Match to []Match.
@@ -83,6 +87,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.1]: https://github.com/gnames/gnmatcher/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnmatcher/compare/v0.4.2...v0.5.0
 [v0.4.2]: https://github.com/gnames/gnmatcher/compare/v0.4.1...v0.4.2
 [v0.4.1]: https://github.com/gnames/gnmatcher/compare/v0.4.0...v0.4.1
@@ -100,6 +105,9 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#40]: https://github.com/gnames/gnmatcher/issues/40
+[#39]: https://github.com/gnames/gnmatcher/issues/39
+[#38]: https://github.com/gnames/gnmatcher/issues/38
 [#37]: https://github.com/gnames/gnmatcher/issues/37
 [#36]: https://github.com/gnames/gnmatcher/issues/36
 [#35]: https://github.com/gnames/gnmatcher/issues/35

@@ -63,6 +63,12 @@ var bugs = []struct {
 		matchCanonical: "Bubo",
 		desc:           "#31 'Bubo' uninomials do not match",
 	},
+	{
+		name:           "Acetothermia bacterium enrichment culture clone B13-B-61",
+		matchType:      vlib.NoMatch,
+		matchCanonical: "",
+		desc:           "Should not be parsed",
+	},
 }
 
 func TestBugs(t *testing.T) {
@@ -81,8 +87,12 @@ func TestBugs(t *testing.T) {
 
 	for i, v := range bugs {
 		msg := fmt.Sprintf("%s -> %s", v.name, v.matchCanonical)
-		assert.Greater(t, len(mtch[i].MatchItems), 0, msg)
 		assert.Equal(t, mtch[i].MatchType.String(), v.matchType.String(), msg)
+		if mtch[i].MatchType == vlib.NoMatch {
+			assert.Empty(t, mtch[i].MatchItems)
+			continue
+		}
+		assert.Greater(t, len(mtch[i].MatchItems), 0, msg)
 		hasItem := false
 		for _, mi := range mtch[i].MatchItems {
 			if mi.MatchStr == v.matchCanonical {

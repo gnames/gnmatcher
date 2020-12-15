@@ -35,7 +35,7 @@ require (
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
 	github.com/tmthrgd/go-memset v0.0.0-20190904060434-6fb7a21f88f1 // indirect
 	github.com/tmthrgd/go-popcount v0.0.0-20190904054823-afb1ace8b04f // indirect
-	gitlab.com/gogna/gnparser v0.14.4-0.20201214111716-8a01b7019064
+	gitlab.com/gogna/gnparser v0.14.4
 	golang.org/x/sys v0.0.0-20201204225414-ed752295db88 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect

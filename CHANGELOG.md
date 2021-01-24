@@ -2,17 +2,21 @@
 
 ## Unreleased
 
+## [v0.5.3]
+
+- Add: update levenshtein to v0.1.1.
+
 ## [v0.5.2]
 
-- Add [#36] update gnparser to v1.0.4
+- Add [#36]: update gnparser to v1.0.4.
 
 ## [v0.5.1]
 
-- Add update gnparser to v0.14.4
+- Add update gnparser to v0.14.4.
 
 ## [v0.5.0]
 
-- Add [#34] change output/interfaces from []*Match to []Match.
+- Add [#34]: change output/interfaces from []*Match to []Match.
 
 ## [v0.4.2]
 
@@ -20,61 +24,61 @@
 
 ## [v0.4.1]
 
-- Fix [#33] add JobsNum as a configuration option.
-- Fix [#32] remove consequences of #30, that prevented to match uninomials.
+- Fix [#33]: add JobsNum as a configuration option.
+- Fix [#32]: remove consequences of #30, that prevented to match uninomials.
 
 ## [v0.4.0]
 
-- Fix [#31] 'Bubo bubo' is exact match.
+- Fix [#31]: 'Bubo bubo' is exact match.
 
 ## [v0.3.8]
 
-- Add [#30] Remove false positives from bloom filters.
+- Add [#30]: Remove false positives from bloom filters.
 
 ## [v0.3.7]
 
-- Add [#29] OpenAPI specification.
-- Add [#28] documentation and structural improvements.
+- Add [#29]: OpenAPI specification.
+- Add [#28]: documentation and structural improvements.
 
 ## [v0.3.6]
 
-- Add [#27] middleware for REST.
-- Add [#25] clean up the architecture.
+- Add [#27]: middleware for REST.
+- Add [#25]: clean up the architecture.
 
 ## [v0.3.5]
 
-- Fix [#24] 'Acacia horrida nur' wont return partial exact match.
-- Fix [#23] 'Drosohila melanogaster' wont return fuzzy match.
+- Fix [#24]: 'Acacia horrida nur' wont return partial exact match.
+- Fix [#23]: 'Drosohila melanogaster' wont return fuzzy match.
 
 ## [v0.3.4]
 
-- Add [#22] dependency to gnlib, remove dependency to gnames/lib.
+- Add [#22]: dependency to gnlib, remove dependency to gnames/lib.
 
 ## [v0.3.3]
 
-- Add [#18] clean up architecture
-- Add [#17] do not match full canonical forms.
+- Add [#18]: clean up architecture
+- Add [#17]: do not match full canonical forms.
 
 ## [v0.3.2]
 
-- Add [#16] migrate to MatchType from gnames project.
+- Add [#16]: migrate to MatchType from gnames project.
 
 ## [v0.3.1]
 
-- Add [#15] switch from gRPC to HTTP service.
+- Add [#15]: switch from gRPC to HTTP service.
 
 ## [v0.3.0]
 
-- Add [#14] prepare for binary release.
-- Add [#12] add more documentation.
-- Add [#8] parallelize name matching.
-- Fix [#13] make bloom filters thread safe.
+- Add [#14]: prepare for binary release.
+- Add [#12]: add more documentation.
+- Add [#8]: parallelize name matching.
+- Fix [#13]: make bloom filters thread safe.
 
 ## [v0.2.0]
 
-- Add [#11] create matcher and config parckages for better architecture.
-- Add [#10] profiling tool for typical verification of names from OCRed texts.
-- Add [#9] partial matches for names that did not match fully.
+- Add [#11]: create matcher and config parckages for better architecture.
+- Add [#10]: profiling tool for typical verification of names from OCRed texts.
+- Add [#9]: partial matches for names that did not match fully.
 
 ## [v0.1.0]
 
@@ -91,6 +95,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.3]: https://github.com/gnames/gnmatcher/compare/v0.5.2...v0.5.3
 [v0.5.2]: https://github.com/gnames/gnmatcher/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnmatcher/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnmatcher/compare/v0.4.2...v0.5.0

@@ -4,8 +4,8 @@ import (
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnlib/gnuuid"
-	"gitlab.com/gogna/gnparser"
-	"gitlab.com/gogna/gnparser/stemmer"
+	"github.com/gnames/gnparser"
+	"github.com/gnames/gnparser/entity/stemmer"
 )
 
 // matchPartial tries to match all patial variants of a name-string. The

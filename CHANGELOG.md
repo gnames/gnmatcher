@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.5.2]
+
+- Add [#36] update gnparser to v1.0.4
+
 ## [v0.5.1]
 
 - Add update gnparser to v0.14.4
@@ -87,6 +91,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.2]: https://github.com/gnames/gnmatcher/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnmatcher/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/gnames/gnmatcher/compare/v0.4.2...v0.5.0
 [v0.4.2]: https://github.com/gnames/gnmatcher/compare/v0.4.1...v0.4.2
@@ -105,6 +110,16 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#40]: https://github.com/gnames/gnmatcher/issues/40
+[#49]: https://github.com/gnames/gnmatcher/issues/49
+[#48]: https://github.com/gnames/gnmatcher/issues/48
+[#47]: https://github.com/gnames/gnmatcher/issues/47
+[#46]: https://github.com/gnames/gnmatcher/issues/46
+[#45]: https://github.com/gnames/gnmatcher/issues/45
+[#44]: https://github.com/gnames/gnmatcher/issues/44
+[#43]: https://github.com/gnames/gnmatcher/issues/43
+[#42]: https://github.com/gnames/gnmatcher/issues/42
+[#41]: https://github.com/gnames/gnmatcher/issues/41
 [#40]: https://github.com/gnames/gnmatcher/issues/40
 [#39]: https://github.com/gnames/gnmatcher/issues/39
 [#38]: https://github.com/gnames/gnmatcher/issues/38

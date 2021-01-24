@@ -1,16 +1,16 @@
 package matcher
 
 import (
-	"strings"
 	"sync"
 
 	mlib "github.com/gnames/gnlib/domain/entity/matcher"
 	vlib "github.com/gnames/gnlib/domain/entity/verifier"
 	"github.com/gnames/gnmatcher/entity/exact"
 	"github.com/gnames/gnmatcher/entity/fuzzy"
+	"github.com/gnames/gnparser"
+	"github.com/gnames/gnparser/config"
+	"github.com/gnames/gnparser/entity/parsed"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/gogna/gnparser"
-	"gitlab.com/gogna/gnparser/pb"
 )
 
 const (
@@ -95,14 +95,15 @@ func (m matcher) matchWorker(
 	chOut chan<- matchOut,
 	wg *sync.WaitGroup,
 ) {
-	parser := gnparser.NewGNparser()
+	cfg := config.New()
+	parser := gnparser.New(cfg)
 	defer wg.Done()
 
 	for tsk := range chIn {
 		var matchResult *mlib.Match
-		ns, parsed := newNameString(parser, tsk.name)
-		if parsed.Parsed {
-			if abbrResult := detectAbbreviated(parsed); abbrResult != nil {
+		ns, prsd := newNameString(parser, tsk.name)
+		if prsd.Parsed {
+			if abbrResult := detectAbbreviated(prsd); abbrResult != nil {
 				chOut <- matchOut{index: tsk.index, match: *abbrResult}
 				continue
 			}
@@ -146,15 +147,16 @@ func truncateNamesToMaxNumber(names []string) []string {
 // detectAbbreviated checks if parsed name is abbreviated. If name is not
 // abbreviated the function returns nil. If it is abbreviated, it returns
 // result with the MatchType 'NONE'.
-func detectAbbreviated(parsed *pb.Parsed) *mlib.Match {
-	if parsed.Quality != int32(3) {
+func detectAbbreviated(prsd *parsed.Parsed) *mlib.Match {
+	// Abbreviations belong to ParseQuality 4
+	if prsd.ParseQuality != 4 {
 		return nilResult
 	}
-	for _, v := range parsed.QualityWarning {
-		if strings.HasPrefix(v.Message, "Abbreviated") {
+	for _, v := range prsd.QualityWarnings {
+		if v.Warning == parsed.GenusAbbrWarn {
 			return &mlib.Match{
-				ID:        parsed.Id,
-				Name:      parsed.Verbatim,
+				ID:        prsd.VerbatimID,
+				Name:      prsd.Verbatim,
 				MatchType: vlib.NoMatch,
 			}
 		}

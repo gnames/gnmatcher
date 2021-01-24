@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/gnames/gnlib/gnuuid"
-	"gitlab.com/gogna/gnparser"
-	"gitlab.com/gogna/gnparser/pb"
+	"github.com/gnames/gnparser"
+	"github.com/gnames/gnparser/entity/parsed"
 )
 
 // nameString stores input data for doing exact, fuzzy, exact partial, and
@@ -53,38 +53,40 @@ type multinomial struct {
 }
 
 // newNameString creates a new instance of NameString.
-func newNameString(parser gnparser.GNparser,
-	name string) (nameString, *pb.Parsed) {
-	parsed := parser.ParseToObject(name)
-	if parsed.Parsed {
+func newNameString(
+	parser gnparser.GNparser,
+	name string,
+) (nameString, *parsed.Parsed) {
+	prsd := parser.ParseName(name)
+	if prsd.Parsed {
 		ns := nameString{
-			ID:            parsed.Id,
+			ID:            prsd.VerbatimID,
 			Name:          name,
-			Cardinality:   int(parsed.Cardinality),
-			Canonical:     parsed.Canonical.Simple,
-			CanonicalID:   gnuuid.New(parsed.Canonical.Simple).String(),
-			CanonicalStem: parsed.Canonical.Stem,
+			Cardinality:   int(prsd.Cardinality),
+			Canonical:     prsd.Canonical.Simple,
+			CanonicalID:   gnuuid.New(prsd.Canonical.Simple).String(),
+			CanonicalStem: prsd.Canonical.Stemmed,
 		}
 
-		ns.newPartial(parsed)
-		return ns, parsed
+		ns.newPartial(prsd)
+		return ns, &prsd
 	}
 
 	return nameString{
-		ID:      parsed.Id,
+		ID:      prsd.VerbatimID,
 		Name:    name,
-		IsVirus: parsed.NameType == pb.NameType_VIRUS,
-	}, parsed
+		IsVirus: prsd.Virus,
+	}, &prsd
 }
 
-func (ns *nameString) newPartial(parsed *pb.Parsed) {
-	if parsed.Cardinality < 2 {
+func (ns *nameString) newPartial(prsd parsed.Parsed) {
+	if prsd.Cardinality < 2 {
 		return
 	}
 	canAry := strings.Split(ns.Canonical, " ")
 
 	ns.Partial = &partial{Genus: canAry[0]}
-	partialNum := parsed.Cardinality - 2
+	partialNum := prsd.Cardinality - 2
 
 	// In case of binomial we return only genus
 	if partialNum < 1 {

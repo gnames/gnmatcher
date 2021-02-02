@@ -1,21 +1,21 @@
 package gnmatcher
 
 import (
-	"github.com/gnames/gnlib/domain/entity/gn"
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	"github.com/gnames/gnmatcher/entity/exact"
-	"github.com/gnames/gnmatcher/entity/fuzzy"
-	"github.com/gnames/gnmatcher/entity/matcher"
+	"github.com/gnames/gnlib/ent/gnvers"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	"github.com/gnames/gnmatcher/ent/exact"
+	"github.com/gnames/gnmatcher/ent/fuzzy"
+	"github.com/gnames/gnmatcher/ent/matcher"
 )
 
-// gnmatcher implements GNMatcher interface.
+// gnmatcher implements GNmatcher interface.
 type gnmatcher struct {
 	matcher matcher.Matcher
 }
 
-// NewGNMatcher is a constructor for GNMatcher interface. It takes two
+// NewGNmatcher is a constructor for GNmatcher interface. It takes two
 // interfaces ExactMatcher and FuzzyMatcher.
-func NewGNMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher, j int) GNMatcher {
+func NewGNmatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher, j int) GNmatcher {
 	gnm := gnmatcher{}
 	gnm.matcher = matcher.NewMatcher(em, fm, j)
 	gnm.matcher.Init()
@@ -26,9 +26,6 @@ func (gnm gnmatcher) MatchNames(names []string) []mlib.Match {
 	return gnm.matcher.MatchNames(names)
 }
 
-func (gnm gnmatcher) GetVersion() gn.Version {
-	return gn.Version{
-		Version: Version,
-		Build:   Build,
-	}
+func (gnm gnmatcher) GetVersion() gnvers.Version {
+	return gnvers.Version{Version: Version, Build: Build}
 }

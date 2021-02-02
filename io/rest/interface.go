@@ -2,7 +2,7 @@
 package rest
 
 import (
-	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnfmt"
 	"github.com/gnames/gnmatcher"
 )
 
@@ -15,8 +15,8 @@ type MatcherService interface {
 	Ping() string
 
 	// GNMatcher is the main use-case of the gnmatcher project.
-	gnmatcher.GNMatcher
+	gnmatcher.GNmatcher
 
 	// Encoder provides serialization/deserialization interface.
-	encode.Encoder
+	gnfmt.Encoder
 }

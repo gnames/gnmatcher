@@ -11,12 +11,12 @@
 package gnmatcher
 
 import (
-	"github.com/gnames/gnlib/domain/entity/gn"
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	"github.com/gnames/gnlib/ent/gnvers"
+	mlib "github.com/gnames/gnlib/ent/matcher"
 )
 
-// GNMatcher is a public API to the project functionality.
-type GNMatcher interface {
+// GNmatcher is a public API to the project functionality.
+type GNmatcher interface {
 	// MatchNames takes a slice of scientific name-strings and returns back
 	// matches to canonical forms of known scientific names. The following
 	// matches are attempted:
@@ -31,6 +31,6 @@ type GNMatcher interface {
 	// where they are registered.
 	MatchNames(names []string) []mlib.Match
 
-	// Interface to Version number and Build timestamp
-	gn.Versioner
+	// GetVersion returns version number and build timestamp
+	GetVersion() gnvers.Version
 }

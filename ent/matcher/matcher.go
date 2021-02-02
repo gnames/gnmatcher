@@ -3,13 +3,12 @@ package matcher
 import (
 	"sync"
 
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnmatcher/entity/exact"
-	"github.com/gnames/gnmatcher/entity/fuzzy"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnmatcher/ent/exact"
+	"github.com/gnames/gnmatcher/ent/fuzzy"
 	"github.com/gnames/gnparser"
-	"github.com/gnames/gnparser/config"
-	"github.com/gnames/gnparser/entity/parsed"
+	"github.com/gnames/gnparser/ent/parsed"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -95,7 +94,7 @@ func (m matcher) matchWorker(
 	chOut chan<- matchOut,
 	wg *sync.WaitGroup,
 ) {
-	cfg := config.New()
+	cfg := gnparser.NewConfig()
 	parser := gnparser.New(cfg)
 	defer wg.Done()
 

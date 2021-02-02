@@ -10,12 +10,12 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/dvirsky/levenshtein"
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	"github.com/gnames/gnlib/encode"
-	"github.com/gnames/gnlib/sys"
+	"github.com/gnames/gnfmt"
+	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/gnames/gnmatcher/config"
-	"github.com/gnames/gnmatcher/entity/fuzzy"
+	"github.com/gnames/gnmatcher/ent/fuzzy"
 	"github.com/gnames/gnmatcher/io/dbase"
+	"github.com/gnames/gnsys"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,14 +25,14 @@ type fuzzyMatcher struct {
 	cfg     config.Config
 	trie    *levenshtein.MinTree
 	keyVal  *badger.DB
-	encoder encode.Encoder
+	encoder gnfmt.Encoder
 }
 
 // NewFuzzyMatcher takes configuration and returns back FuzzyMatcher object
 // responsible for fuzzy-matching strings to canonical forms of scientific
 // names.
 func NewFuzzyMatcher(cfg config.Config) fuzzy.FuzzyMatcher {
-	fm := fuzzyMatcher{cfg: cfg, encoder: encode.GNgob{}}
+	fm := fuzzyMatcher{cfg: cfg, encoder: gnfmt.GNgob{}}
 	return &fm
 }
 
@@ -142,7 +142,7 @@ func (fm fuzzyMatcher) prepareDirs() {
 	log.Println("Preparing dirs for trie and stems key-value store.")
 	dirs := []string{fm.cfg.TrieDir(), fm.cfg.StemsDir()}
 	for _, dir := range dirs {
-		err := sys.MakeDir(dir)
+		err := gnsys.MakeDir(dir)
 		if err != nil {
 			log.Fatalf("Cannot create directory %s: %s.", dir, err)
 		}

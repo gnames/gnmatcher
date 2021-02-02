@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"testing"
 
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnfmt"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -72,7 +72,7 @@ var bugs = []struct {
 }
 
 func TestBugs(t *testing.T) {
-	enc := encode.GNjson{}
+	enc := gnfmt.GNjson{}
 	req, err := enc.Encode(params())
 	assert.Nil(t, err)
 	r := bytes.NewReader(req)

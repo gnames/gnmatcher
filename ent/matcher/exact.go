@@ -1,8 +1,8 @@
 package matcher
 
 import (
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 )
 
 // match tries to match a canonical form of a name-string exactly to canonical

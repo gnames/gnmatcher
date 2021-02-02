@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gnames/gnmatcher/entity/fuzzy"
+	"github.com/gnames/gnmatcher/ent/fuzzy"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )

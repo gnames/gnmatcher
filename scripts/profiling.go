@@ -16,8 +16,8 @@ import (
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnfmt"
+	mlib "github.com/gnames/gnlib/ent/matcher"
 )
 
 const batch = 10_000
@@ -34,7 +34,7 @@ func main() {
 }
 
 func processData(chNames <-chan []string, wg *sync.WaitGroup) {
-	enc := encode.GNjson{}
+	enc := gnfmt.GNjson{}
 	defer wg.Done()
 	w := csv.NewWriter(os.Stdout)
 	defer func() {

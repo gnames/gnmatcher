@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gnames/gnlib/domain/entity/gn"
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnfmt"
+	"github.com/gnames/gnlib/ent/gnvers"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,20 +29,20 @@ func TestPing(t *testing.T) {
 }
 
 func TestVer(t *testing.T) {
-	enc := encode.GNjson{}
+	enc := gnfmt.GNjson{}
 	resp, err := http.Get(url + "version")
 	assert.Nil(t, err)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
-	var response gn.Version
+	var response gnvers.Version
 	_ = enc.Decode(respBytes, &response)
 	assert.Regexp(t, `^v\d+\.\d+\.\d+`, response.Version)
 }
 
 func TestExact(t *testing.T) {
 	var response []mlib.Match
-	enc := encode.GNjson{}
+	enc := gnfmt.GNjson{}
 	request := []string{
 		"Not name", "Bubo bubo", "Pomatomus",
 		"Pardosa moesta", "Plantago major var major",
@@ -105,7 +105,7 @@ func TestFuzzy(t *testing.T) {
 		"Drosohila melanogaster",
 		"Acanthobolhrium crassicolle",
 	}
-	enc := encode.GNjson{}
+	enc := gnfmt.GNjson{}
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
 	resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))

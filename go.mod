@@ -8,11 +8,16 @@ require (
 	github.com/dgraph-io/badger/v2 v2.2007.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
-	github.com/gnames/gnlib v0.1.9
-	github.com/gnames/gnparser v1.0.4
-	github.com/gnames/levenshtein v0.1.1
+	github.com/gnames/gnfmt v0.1.0
+	github.com/gnames/gnlib v0.2.1
+	github.com/gnames/gnparser v1.0.5
+	github.com/gnames/gnsys v0.1.0
+	github.com/gnames/gnuuid v0.1.1
+	github.com/gnames/levenshtein v0.2.0
 	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
+	github.com/gsamokovarov/jump v0.40.0 // indirect
+	github.com/ipfs/go-ipfs v0.7.0 // indirect
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/lib/pq v1.9.0 // indirect
@@ -28,7 +33,7 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d // indirect
 	github.com/tmthrgd/go-bitset v0.0.0-20190904054048-394d9a556c05 // indirect
 	github.com/tmthrgd/go-bitwise v0.0.0-20190904053232-1430ee983fca // indirect

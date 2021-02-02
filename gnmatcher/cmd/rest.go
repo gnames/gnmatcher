@@ -24,7 +24,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnfmt"
 	"github.com/gnames/gnmatcher"
 	gnmcnf "github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/io/bloom"
@@ -55,13 +55,13 @@ as well.`,
 		cfg := gnmcnf.NewConfig(opts...)
 		em := bloom.NewExactMatcher(cfg)
 		fm := trie.NewFuzzyMatcher(cfg)
-		gnm := gnmatcher.NewGNMatcher(em, fm, cfg.JobsNum)
+		gnm := gnmatcher.NewGNmatcher(em, fm, cfg.JobsNum)
 		if err != nil {
-			log.Printf("Cannot create an instance of GNMatcher: %s.", err)
+			log.Printf("Cannot create an instance of GNmatcher: %s.", err)
 			os.Exit(1)
 		}
 
-		var enc encode.Encoder = encode.GNjson{}
+		var enc gnfmt.Encoder = gnfmt.GNjson{}
 
 		service := rest.NewMatcherService(gnm, port, enc)
 		rest.Run(service)

@@ -1,9 +1,9 @@
 package matcher
 
 import (
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnmatcher/entity/fuzzy"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnmatcher/ent/fuzzy"
 )
 
 // matchFuzzy tries to get fuzzy matching of a stemmed name-string to canonical

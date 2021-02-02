@@ -118,7 +118,7 @@ func main() {
   cfg := config.NewConfig()
   em := bloom.NewExactMatcher(cfg)
   fm := trie.NewFuzzyMatcher(cfg)
-  gnm := gnmatcher.NewGNMatcher(em, fm)
+  gnm := gnmatcher.NewGNmatcher(em, fm)
   res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
   for _, match := range res {
     fmt.Println(match.Name)
@@ -160,4 +160,4 @@ it to the following:
 [rest-client]: https://github.com/gnames/gnmatcher/blob/master/rest/rest_test.go
 [BDD]: https://en.wikipedia.org/wiki/Behavior-driven_development
 [OpenAPI specification]: https://app.swaggerhub.com/apis-docs/dimus/gnmatcher/1.0.0
-[gnmatcher interface]: https://pkg.go.dev/github.com/gnames/gnmatcher#GNMatcher
+[gnmatcher interface]: https://pkg.go.dev/github.com/gnames/gnmatcher#GNmatcher

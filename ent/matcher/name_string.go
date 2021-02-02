@@ -3,9 +3,9 @@ package matcher
 import (
 	"strings"
 
-	"github.com/gnames/gnlib/gnuuid"
 	"github.com/gnames/gnparser"
-	"github.com/gnames/gnparser/entity/parsed"
+	"github.com/gnames/gnparser/ent/parsed"
+	"github.com/gnames/gnuuid"
 )
 
 // nameString stores input data for doing exact, fuzzy, exact partial, and

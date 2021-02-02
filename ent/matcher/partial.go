@@ -1,11 +1,11 @@
 package matcher
 
 import (
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	vlib "github.com/gnames/gnlib/domain/entity/verifier"
-	"github.com/gnames/gnlib/gnuuid"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnparser"
-	"github.com/gnames/gnparser/entity/stemmer"
+	"github.com/gnames/gnparser/ent/stemmer"
+	"github.com/gnames/gnuuid"
 )
 
 // matchPartial tries to match all patial variants of a name-string. The

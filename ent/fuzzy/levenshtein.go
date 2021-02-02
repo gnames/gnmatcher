@@ -3,7 +3,7 @@ package fuzzy
 import (
 	"strings"
 
-	"github.com/gnames/levenshtein/entity/editdist"
+	"github.com/gnames/levenshtein/ent/editdist"
 )
 
 const (

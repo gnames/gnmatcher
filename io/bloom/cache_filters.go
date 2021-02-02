@@ -10,7 +10,7 @@ import (
 
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/gnames/gnlib/sys"
+	"github.com/gnames/gnsys"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,7 +20,15 @@ func (em *exactMatcher) filtersFromCache(path string) error {
 	cPath := filepath.Join(path, canonicalFile)
 	vPath := filepath.Join(path, virusFile)
 	sizesPath := filepath.Join(path, sizesFile)
-	if sys.FileExists(cPath) && sys.FileExists(vPath) {
+	cPathExists, err := gnsys.FileExists(cPath)
+	if err != nil {
+		return err
+	}
+	vPathExists, err := gnsys.FileExists(vPath)
+	if err != nil {
+		return err
+	}
+	if cPathExists && vPathExists {
 		if err := em.getFiltersFromCache(cPath, vPath, sizesPath); err != nil {
 			return err
 		}

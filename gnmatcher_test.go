@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"testing"
 
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/gnames/gnmatcher"
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/io/bloom"
@@ -46,7 +46,7 @@ func (fm mockFuzzyMatcher) StemToMatchItems(s string) []mlib.MatchItem {
 func TestVersion(t *testing.T) {
 	em := mockExactMatcher{}
 	fm := mockFuzzyMatcher{}
-	gnm := gnmatcher.NewGNMatcher(em, fm, 1)
+	gnm := gnmatcher.NewGNmatcher(em, fm, 1)
 	ver := gnm.GetVersion()
 	verRegex := regexp.MustCompile(`^v[\d]+\.[\d]+\.[\d]+$`)
 	assert.Regexp(t, verRegex, ver.Version)
@@ -63,7 +63,7 @@ func Example() {
 	cfg := config.NewConfig()
 	em := bloom.NewExactMatcher(cfg)
 	fm := trie.NewFuzzyMatcher(cfg)
-	gnm := gnmatcher.NewGNMatcher(em, fm, 1)
+	gnm := gnmatcher.NewGNmatcher(em, fm, 1)
 	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
 	for _, match := range res {
 		fmt.Println(match.Name)

@@ -2,7 +2,7 @@
 // to known scientific names.
 package matcher
 
-import mlib "github.com/gnames/gnlib/domain/entity/matcher"
+import mlib "github.com/gnames/gnlib/ent/matcher"
 
 // Matcher is the interface that enables matching strings to known scientific
 // names.

@@ -4,9 +4,9 @@
 package bloom
 
 import (
-	"github.com/gnames/gnlib/sys"
 	"github.com/gnames/gnmatcher/config"
-	"github.com/gnames/gnmatcher/entity/exact"
+	"github.com/gnames/gnmatcher/ent/exact"
+	"github.com/gnames/gnsys"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -43,7 +43,7 @@ func (em *exactMatcher) MatchNameStringID(uuid string) bool {
 func (em exactMatcher) prepareDir() {
 	log.Println("Preparing dir for bloom filters.")
 	bloomDir := em.cfg.FiltersDir()
-	err := sys.MakeDir(em.cfg.FiltersDir())
+	err := gnsys.MakeDir(em.cfg.FiltersDir())
 	if err != nil {
 		log.Fatalf("Cannot create directory %s: %s.", bloomDir, err)
 	}

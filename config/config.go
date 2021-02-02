@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/gnames/gnlib/sys"
+	"github.com/gnames/gnsys"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,8 +36,9 @@ type Config struct {
 // update default values to external ones.
 func NewConfig(opts ...Option) Config {
 	workDir := "~/.local/share/gnmatcher"
+	workDir, _ = gnsys.ConvertTilda(workDir)
 	cfg := Config{
-		WorkDir:     sys.ConvertTilda(workDir),
+		WorkDir:     workDir,
 		MaxEditDist: 1,
 		JobsNum:     1,
 		PgHost:      "localhost",
@@ -76,7 +77,11 @@ type Option func(cfg *Config)
 // OptWorkDir sets a directory for key-value stores and temporary files.
 func OptWorkDir(s string) Option {
 	return func(cfg *Config) {
-		cfg.WorkDir = sys.ConvertTilda(s)
+		workDir, err := gnsys.ConvertTilda(s)
+		if err != nil {
+			log.Warn(fmt.Sprintf("Cannot expand '%s': %v", s, err))
+		}
+		cfg.WorkDir = workDir
 	}
 }
 

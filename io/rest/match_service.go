@@ -1,26 +1,24 @@
 package rest
 
 import (
-	"github.com/gnames/gnlib/domain/entity/gn"
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	"github.com/gnames/gnlib/encode"
+	"github.com/gnames/gnfmt"
 	"github.com/gnames/gnmatcher"
 )
 
 // matchMatcherREST implements MatcherService interface.
 type matcherService struct {
-	gnm  gnmatcher.GNMatcher
+	gnmatcher.GNmatcher
 	port int
-	enc  encode.Encoder
+	enc  gnfmt.Encoder
 }
 
 // NewMNewMatcherREST is a constructor for MatchREST.
-func NewMatcherService(gnm gnmatcher.GNMatcher,
-	port int, enc encode.Encoder) MatcherService {
+func NewMatcherService(gnm gnmatcher.GNmatcher,
+	port int, enc gnfmt.Encoder) MatcherService {
 	return matcherService{
-		gnm:  gnm,
-		port: port,
-		enc:  enc,
+		GNMatcher: gnm,
+		port:      port,
+		enc:       enc,
 	}
 }
 
@@ -32,19 +30,6 @@ func (mr matcherService) Port() int {
 // Ping returns "pong" message if connection to the service did succed.
 func (mr matcherService) Ping() string {
 	return "pong"
-}
-
-// GetVersion returns version number and build timestamp of gnmatcher.
-func (mr matcherService) GetVersion() gn.Version {
-	return gn.Version{
-		Version: gnmatcher.Version,
-		Build:   gnmatcher.Build,
-	}
-}
-
-// MatchAry takes a list of strings and matches them to known scientific names.
-func (mr matcherService) MatchNames(names []string) []mlib.Match {
-	return mr.gnm.MatchNames(names)
 }
 
 // Encode encodes an object into a byte slice.

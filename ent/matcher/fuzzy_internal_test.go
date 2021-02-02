@@ -3,7 +3,7 @@ package matcher
 import (
 	"testing"
 
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/stretchr/testify/assert"
 )
 

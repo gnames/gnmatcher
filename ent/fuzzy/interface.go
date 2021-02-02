@@ -3,7 +3,7 @@
 package fuzzy
 
 import (
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
+	mlib "github.com/gnames/gnlib/ent/matcher"
 )
 
 // FuzzyMatcher describes methods needed for fuzzy matching.

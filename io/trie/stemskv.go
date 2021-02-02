@@ -7,15 +7,15 @@ import (
 	"io/ioutil"
 
 	"github.com/dgraph-io/badger/v2"
-	mlib "github.com/gnames/gnlib/domain/entity/matcher"
-	"github.com/gnames/gnlib/sys"
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	"github.com/gnames/gnsys"
 	log "github.com/sirupsen/logrus"
 )
 
 // initStemsKV creates key-value store for stems and their canonical forms.
 func initStemsKV(path string, db *sql.DB) {
 	var err error
-	err = sys.MakeDir(path)
+	err = gnsys.MakeDir(path)
 	if err != nil {
 		log.Fatalf("Cannot create %s: %s", path, err)
 	}

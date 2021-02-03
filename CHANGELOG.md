@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v0.5.4]
+
+- Add: update gnlib to v0.2.1
+- Add: update gnparser to v1.0.5
+
 ## [v0.5.3]
 
 - Add: update levenshtein to v0.1.1.
@@ -95,6 +100,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.4]: https://github.com/gnames/gnmatcher/compare/v0.5.3...v0.5.4
 [v0.5.3]: https://github.com/gnames/gnmatcher/compare/v0.5.2...v0.5.3
 [v0.5.2]: https://github.com/gnames/gnmatcher/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/gnames/gnmatcher/compare/v0.5.0...v0.5.1

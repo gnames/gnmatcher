@@ -14,7 +14,7 @@ type MatcherService interface {
 	// Ping checks connection to the service.
 	Ping() string
 
-	// GNMatcher is the main use-case of the gnmatcher project.
+	// GNmatcher is the main use-case of the gnmatcher project.
 	gnmatcher.GNmatcher
 
 	// Encoder provides serialization/deserialization interface.

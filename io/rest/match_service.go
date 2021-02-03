@@ -16,7 +16,7 @@ type matcherService struct {
 func NewMatcherService(gnm gnmatcher.GNmatcher,
 	port int, enc gnfmt.Encoder) MatcherService {
 	return matcherService{
-		GNMatcher: gnm,
+		GNmatcher: gnm,
 		port:      port,
 		enc:       enc,
 	}

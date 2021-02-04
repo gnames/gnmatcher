@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.5.5]
+
+- Fix: dependency on levenshtein v0.2.1
+
 ## [v0.5.4]
 
 - Add: update gnlib to v0.2.1

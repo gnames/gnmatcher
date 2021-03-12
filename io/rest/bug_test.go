@@ -3,7 +3,7 @@ package rest
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -78,7 +78,7 @@ func TestBugs(t *testing.T) {
 	r := bytes.NewReader(req)
 	resp, err := http.Post(url+"matches", "application/json", r)
 	assert.Nil(t, err)
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
 	var mtch []mlib.Match

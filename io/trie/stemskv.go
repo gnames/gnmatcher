@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/gob"
-	"io/ioutil"
+	"os"
 
 	"github.com/dgraph-io/badger/v2"
 	mlib "github.com/gnames/gnlib/ent/matcher"
@@ -122,6 +122,6 @@ func getValue(kv *badger.DB, key string) []byte {
 
 // keyValExists checks if key-value store is set.
 func keyValExists(path string) bool {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	return (err == nil && len(files) > 0)
 }

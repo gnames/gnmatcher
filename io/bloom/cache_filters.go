@@ -3,7 +3,6 @@ package bloom
 import (
 	"encoding/csv"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -42,12 +41,12 @@ func (em *exactMatcher) getFiltersFromCache(cPath, vPath, sizesPath string) erro
 	cFilter := baseBloomfilter.New(cCfg)
 	vFilter := baseBloomfilter.New(vCfg)
 
-	cBytes, err := ioutil.ReadFile(cPath)
+	cBytes, err := os.ReadFile(cPath)
 	if err != nil {
 		return err
 	}
 
-	vBytes, err := ioutil.ReadFile(vPath)
+	vBytes, err := os.ReadFile(vPath)
 	if err != nil {
 		return err
 	}

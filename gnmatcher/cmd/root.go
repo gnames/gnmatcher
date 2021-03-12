@@ -4,7 +4,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -191,7 +190,7 @@ func createConfig(path string, file string) {
 		log.Fatalf("Cannot create dir %s: %s.", path, err)
 	}
 
-	err = ioutil.WriteFile(path, []byte(configText), 0644)
+	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
 		log.Fatalf("Cannot write to file %s: %s", path, err)
 	}

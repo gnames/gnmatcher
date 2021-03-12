@@ -2,7 +2,7 @@ package rest_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -20,7 +20,7 @@ func TestPing(t *testing.T) {
 	resp, err := http.Get(url + "ping")
 	assert.Nil(t, err)
 
-	res, err := ioutil.ReadAll(resp.Body)
+	res, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func TestVer(t *testing.T) {
 	enc := gnfmt.GNjson{}
 	resp, err := http.Get(url + "version")
 	assert.Nil(t, err)
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
 	var response gnvers.Version
@@ -54,7 +54,7 @@ func TestExact(t *testing.T) {
 	r := bytes.NewReader(req)
 	resp, err := http.Post(url+"matches", "application/json", r)
 	assert.Nil(t, err)
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
 	_ = enc.Decode(respBytes, &response)
@@ -110,7 +110,7 @@ func TestFuzzy(t *testing.T) {
 	assert.Nil(t, err)
 	resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))
 	assert.Nil(t, err)
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
 	err = enc.Decode(respBytes, &response)

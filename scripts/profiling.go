@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/csv"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -53,7 +52,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if err != nil {
 			log.Fatalf("Cannot send request: %v", err)
 		}
-		respBytes, err := ioutil.ReadAll(resp.Body)
+		respBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			log.Fatalf("Cannot get data: %v", err)
 		}

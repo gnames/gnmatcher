@@ -44,10 +44,15 @@ func TestExact(t *testing.T) {
 	var response []mlib.Match
 	enc := gnfmt.GNjson{}
 	request := []string{
-		"Not name", "Bubo bubo", "Pomatomus",
-		"Pardosa moesta", "Plantago major var major",
+		"Not name",
+		"Bubo bubo",
+		"Pomatomus",
+		"Pardosa moesta",
+		"Plantago major var major",
 		"Cytospora ribis mitovirus 2",
-		"A-shaped rods", "Alb. alba",
+		"A-shaped rods",
+		"Alb. alba",
+		"Candidatus Aenigmarchaeum subterraneum",
 	}
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
@@ -93,6 +98,14 @@ func TestExact(t *testing.T) {
 	assert.Equal(t, abbr.Name, "Alb. alba")
 	assert.Equal(t, abbr.MatchType, vlib.NoMatch)
 	assert.Nil(t, abbr.MatchItems)
+
+	cand := response[8]
+	assert.Equal(t, cand.Name, "Candidatus Aenigmarchaeum subterraneum")
+	assert.Equal(t, cand.MatchType, vlib.Exact)
+	assert.Equal(t,
+		cand.MatchItems[0].MatchStr,
+		"Aenigmarchaeum subterraneum",
+	)
 }
 
 func TestFuzzy(t *testing.T) {

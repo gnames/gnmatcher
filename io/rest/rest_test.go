@@ -63,7 +63,7 @@ func TestExact(t *testing.T) {
 	assert.Nil(t, err)
 
 	_ = enc.Decode(respBytes, &response)
-	assert.Equal(t, len(response), 8)
+	assert.Equal(t, len(response), 9)
 
 	bad := response[0]
 	assert.Equal(t, bad.Name, "Not name")

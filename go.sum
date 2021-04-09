@@ -78,8 +78,8 @@ github.com/gnames/gnfmt v0.1.0/go.mod h1:WG9c3CoiVrGc1SDsxLk7zjmv2B4UIzI00m4K5Kh
 github.com/gnames/gnlib v0.0.3/go.mod h1:k7Wsdx6zTzyhbxH2JcoCVFvgOQzA4iwehRxa8eEOfF8=
 github.com/gnames/gnlib v0.2.1 h1:GxctzP7NKurCnfXmqpJnw6+Ea6Ae5Shpczs1fNbSFUM=
 github.com/gnames/gnlib v0.2.1/go.mod h1:RZs+/sQHGlyMsHK7pgbd0Zt3QlYQXFPURc+yKuO2ckY=
-github.com/gnames/gnparser v1.1.0 h1:e5dUftPKtV6wNQaygpHw3uxAs5obygvGp/bo+JdiKdA=
-github.com/gnames/gnparser v1.1.0/go.mod h1:vzLn1ntN0i0gwDCCc+uz8plVTjXThedCdFL5QpjBG8A=
+github.com/gnames/gnparser v1.2.0 h1:GtOmZdWA8o4ir6auwFSC7c0nkpNk4ClkEs0Gq26TKTY=
+github.com/gnames/gnparser v1.2.0/go.mod h1:vzLn1ntN0i0gwDCCc+uz8plVTjXThedCdFL5QpjBG8A=
 github.com/gnames/gnsys v0.1.1 h1:h5JWws6l9PB86ADO498+Zn1/lmz/FO8ZRsnGCSEFwbM=
 github.com/gnames/gnsys v0.1.1/go.mod h1:xCjepsCm9yJWTpIfDGt0sUJBLoFRGzH0I3F6ast+Bow=
 github.com/gnames/gnuuid v0.1.1 h1:UMRHYUSlD19qo8oVz1JyU57kg4yu+SJ/b+yvWYeqRiA=

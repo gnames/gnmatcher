@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.5.7]
+
+- Add: update gnparser to v1.2.0
+
 ## [v0.5.6]
 
 - Add: update gnparser to v1.1.0
@@ -108,6 +112,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.5.6]: https://github.com/gnames/gnmatcher/compare/v0.5.5...v0.5.6
 [v0.5.5]: https://github.com/gnames/gnmatcher/compare/v0.5.4...v0.5.5
 [v0.5.4]: https://github.com/gnames/gnmatcher/compare/v0.5.3...v0.5.4
 [v0.5.3]: https://github.com/gnames/gnmatcher/compare/v0.5.2...v0.5.3

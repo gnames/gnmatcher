@@ -11,7 +11,7 @@ import (
 
 // NewConfig constructor
 func TestNew(t *testing.T) {
-	cfg := config.NewConfig()
+	cfg := config.New()
 	cacheDir, _ := gnsys.ConvertTilda("~/.cache/gnmatcher")
 	deflt := config.Config{
 		CacheDir:    cacheDir,
@@ -29,7 +29,7 @@ func TestNew(t *testing.T) {
 // NewConfig with opts
 func TestNewOpts(t *testing.T) {
 	opts := opts()
-	cfg := config.NewConfig(opts...)
+	cfg := config.New(opts...)
 	withOpts := config.Config{
 		CacheDir:    "/var/opt/gnmatcher",
 		MaxEditDist: 2,
@@ -46,18 +46,18 @@ func TestNewOpts(t *testing.T) {
 // 	MaxEditDist is limited to 1 or 2
 func TestMaxED(t *testing.T) {
 	log.SetLevel(log.PanicLevel)
-	cfg := config.NewConfig(config.OptMaxEditDist(5))
+	cfg := config.New(config.OptMaxEditDist(5))
 	assert.Equal(t, cfg.MaxEditDist, 1)
-	cfg = config.NewConfig(config.OptMaxEditDist(0))
+	cfg = config.New(config.OptMaxEditDist(0))
 	assert.Equal(t, cfg.MaxEditDist, 1)
-	cfg = config.NewConfig(config.OptMaxEditDist(1))
+	cfg = config.New(config.OptMaxEditDist(1))
 	assert.Equal(t, cfg.MaxEditDist, 1)
-	cfg = config.NewConfig(config.OptMaxEditDist(2))
+	cfg = config.New(config.OptMaxEditDist(2))
 	assert.Equal(t, cfg.MaxEditDist, 2)
 }
 
 func TestHelpers(t *testing.T) {
-	cfg := config.NewConfig()
+	cfg := config.New()
 	assert.Contains(t, cfg.TrieDir(), "/.cache/gnmatcher/trie")
 	assert.Contains(t, cfg.FiltersDir(), "/.cache/gnmatcher/bloom")
 	assert.Contains(t, cfg.StemsDir(), "/.cache/gnmatcher/stems-kv")

@@ -29,14 +29,16 @@ var (
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	CacheDir    string
-	PgHost      string
-	PgPort      int
-	PgUser      string
-	PgPass      string
-	PgDB        string
-	MaxEditDist int
-	JobsNum     int
+	CacheDir       string
+	JobsNum        int
+	MaxEditDist    int
+	PgHost         string
+	PgPort         int
+	PgUser         string
+	PgPass         string
+	PgDB           string
+	WebLogsNsqdTCP string
+	WithWebLogs    bool
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -88,13 +90,15 @@ func initConfig() {
 	// Set environment variables to override
 	// config file settings
 	_ = viper.BindEnv("CacheDir", "GNM_CACHE_DIR")
+	_ = viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
+	_ = viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
+	_ = viper.BindEnv("PgDB", "GNM_PG_DB")
 	_ = viper.BindEnv("PgHost", "GNM_PG_HOST")
+	_ = viper.BindEnv("PgPass", "GNM_PG_PASS")
 	_ = viper.BindEnv("PgPort", "GNM_PG_PORT")
 	_ = viper.BindEnv("PgUser", "GNM_PG_USER")
-	_ = viper.BindEnv("PgPass", "GNM_PG_PASS")
-	_ = viper.BindEnv("PgDB", "GNM_PG_DB")
-	_ = viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
-	_ = viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
+	_ = viper.BindEnv("WebLogsNsqdTCP", "GNM_WEB_LOGS_NSQD_TCP")
+	_ = viper.BindEnv("WithWebLogs", "GNM_WITH_WEB_LOGS")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -120,11 +124,20 @@ func getOpts() []config.Option {
 	if cfg.CacheDir != "" {
 		opts = append(opts, config.OptCacheDir(cfg.CacheDir))
 	}
+	if cfg.JobsNum > 0 {
+		opts = append(opts, config.OptJobsNum(cfg.JobsNum))
+	}
 	if cfg.MaxEditDist != 0 {
 		opts = append(opts, config.OptMaxEditDist(cfg.MaxEditDist))
 	}
+	if cfg.PgDB != "" {
+		opts = append(opts, config.OptPgDB(cfg.PgDB))
+	}
 	if cfg.PgHost != "" {
 		opts = append(opts, config.OptPgHost(cfg.PgHost))
+	}
+	if cfg.PgPass != "" {
+		opts = append(opts, config.OptPgPass(cfg.PgPass))
 	}
 	if cfg.PgPort != 0 {
 		opts = append(opts, config.OptPgPort(cfg.PgPort))
@@ -132,14 +145,11 @@ func getOpts() []config.Option {
 	if cfg.PgUser != "" {
 		opts = append(opts, config.OptPgUser(cfg.PgUser))
 	}
-	if cfg.PgPass != "" {
-		opts = append(opts, config.OptPgPass(cfg.PgPass))
+	if cfg.WebLogsNsqdTCP != "" {
+		opts = append(opts, config.OptWebLogsNsqdTCP(cfg.WebLogsNsqdTCP))
 	}
-	if cfg.PgDB != "" {
-		opts = append(opts, config.OptPgDB(cfg.PgDB))
-	}
-	if cfg.JobsNum > 0 {
-		opts = append(opts, config.OptJobsNum(cfg.JobsNum))
+	if cfg.WithWebLogs {
+		opts = append(opts, config.OptWithWebLogs(true))
 	}
 	return opts
 }

@@ -15,22 +15,43 @@ type Config struct {
 	// CacheDir is the main directory for gnmatcher files. It contains
 	// bloom filters levenshtein automata trees, key-value stores etc.
 	CacheDir string
+
+	// JobsNum is the number of jobs to run in parallel
+	JobsNum int
+
 	// MaxEditDist is the maximal allowed edit distance for levenshtein automata.
 	// The number cannot exceed 2, default number is 1. The speed of execution
 	// slows down dramatically with the MaxEditDist > 1.
 	MaxEditDist int
-	// JobsNum is the number of jobs to run in parallel
-	JobsNum int
-	// PgHost is a hostname for the PostgreSQL server.
-	PgHost string
-	// PgPort is the port of PostgreSQL server.
-	PgPort int
-	// PgUser is the user for the database.
-	PgUser string
-	// PgPass password to access PostgreSQL server.
-	PgPass string
+
 	// PgDB the database name where gnames data is located.
 	PgDB string
+
+	// PgHost is a hostname for the PostgreSQL server.
+	PgHost string
+
+	// PgPass password to access PostgreSQL server.
+	PgPass string
+
+	// PgPort is the port of PostgreSQL server.
+	PgPort int
+
+	// PgUser is the user for the database.
+	PgUser string
+
+	// WebLogsNsqdTCP provides an address to the NSQ messenger TCP service. If
+	// this value is set and valid, the web logs will be published to the NSQ.
+	// The option is ignored if `Port` is not set.
+	//
+	// If WithWebLogs option is set to `false`, but `WebLogsNsqdTCP` is set to a
+	// valid URL, the logs will be sent to the NSQ messanging service, but they
+	// wil not appear as STRERR output.
+	// Example: `127.0.0.1:4150`
+	WebLogsNsqdTCP string
+
+	// WithWebLogs flag enables logs when running web-service. This flag is
+	// ignored if `Port` value is not set.
+	WithWebLogs bool
 }
 
 // TrieDir returns path where to dump/restore
@@ -62,6 +83,13 @@ func OptCacheDir(s string) Option {
 			log.Warn(fmt.Sprintf("Cannot expand '%s': %v", s, err))
 		}
 		cfg.CacheDir = cacheDir
+	}
+}
+
+// OptJobsNum sets the number of jobs to run in parallel
+func OptJobsNum(i int) Option {
+	return func(cfg *Config) {
+		cfg.JobsNum = i
 	}
 }
 
@@ -113,16 +141,23 @@ func OptPgDB(s string) Option {
 	}
 }
 
-// OptJobsNum sets the number of jobs to run in parallel
-func OptJobsNum(i int) Option {
+// OptWebLogsNsqdTCP provides a URL to NSQ messanging service.
+func OptWebLogsNsqdTCP(s string) Option {
 	return func(cfg *Config) {
-		cfg.JobsNum = i
+		cfg.WebLogsNsqdTCP = s
 	}
 }
 
-// NewConfig is a Config constructor that takes external options to
+// OptWithWebLogs sets the WithWebLogs field.
+func OptWithWebLogs(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithWebLogs = b
+	}
+}
+
+// New is a Config constructor that takes external options to
 // update default values to external ones.
-func NewConfig(opts ...Option) Config {
+func New(opts ...Option) Config {
 	cacheDir, err := os.UserCacheDir()
 	if err != nil {
 		cacheDir = "~/.cache/gnmatcher"
@@ -131,14 +166,16 @@ func NewConfig(opts ...Option) Config {
 		cacheDir = filepath.Join(cacheDir, "gnmatcher")
 	}
 	cfg := Config{
-		CacheDir:    cacheDir,
-		MaxEditDist: 1,
-		JobsNum:     1,
-		PgHost:      "localhost",
-		PgPort:      5432,
-		PgUser:      "postgres",
-		PgPass:      "postgres",
-		PgDB:        "gnames",
+		CacheDir:       cacheDir,
+		MaxEditDist:    1,
+		JobsNum:        1,
+		PgHost:         "localhost",
+		PgPort:         5432,
+		PgUser:         "postgres",
+		PgPass:         "postgres",
+		PgDB:           "gnames",
+		WebLogsNsqdTCP: "",
+		WithWebLogs:    false,
 	}
 	for _, opt := range opts {
 		opt(&cfg)

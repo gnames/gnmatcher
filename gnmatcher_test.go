@@ -44,9 +44,10 @@ func (fm mockFuzzyMatcher) StemToMatchItems(s string) []mlib.MatchItem {
 }
 
 func TestVersion(t *testing.T) {
+	cfg := config.New()
 	em := mockExactMatcher{}
 	fm := mockFuzzyMatcher{}
-	gnm := gnmatcher.NewGNmatcher(em, fm, 1)
+	gnm := gnmatcher.New(em, fm, cfg)
 	ver := gnm.GetVersion()
 	verRegex := regexp.MustCompile(`^v[\d]+\.[\d]+\.[\d]+$`)
 	assert.Regexp(t, verRegex, ver.Version)
@@ -60,10 +61,10 @@ func Example() {
 	//
 	// If data are imported already, it still takes several seconds to
 	// load lookup data into memory.
-	cfg := config.NewConfig()
+	cfg := config.New()
 	em := bloom.NewExactMatcher(cfg)
 	fm := trie.NewFuzzyMatcher(cfg)
-	gnm := gnmatcher.NewGNmatcher(em, fm, 1)
+	gnm := gnmatcher.New(em, fm, cfg)
 	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
 	for _, match := range res {
 		fmt.Println(match.Name)

@@ -9,6 +9,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	nsqcfg "github.com/sfgrp/lognsq/config"
+	"github.com/sfgrp/lognsq/ent/nsq"
+	"github.com/sfgrp/lognsq/io/nsqio"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,7 +23,11 @@ func Run(m MatcherService) {
 	e := echo.New()
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
-	e.Use(middleware.Logger())
+
+	loggerNSQ := setLogger(e, m)
+	if loggerNSQ != nil {
+		defer loggerNSQ.Stop()
+	}
 
 	e.GET("/", root)
 	e.GET("/api/v1/ping", ping(m))
@@ -65,4 +72,31 @@ func match(m MatcherService) func(echo.Context) error {
 		result := m.MatchNames(names)
 		return c.JSON(http.StatusOK, result)
 	}
+}
+
+func setLogger(e *echo.Echo, m MatcherService) nsq.NSQ {
+	nsqAddr := m.WebLogsNsqdTCP()
+	withLogs := m.WithWebLogs()
+
+	if nsqAddr != "" {
+		cfg := nsqcfg.Config{
+			StderrLogs: withLogs,
+			Topic:      "gnmatcher",
+			Address:    nsqAddr,
+		}
+		remote, err := nsqio.New(cfg)
+		logCfg := middleware.DefaultLoggerConfig
+		if err == nil {
+			logCfg.Output = remote
+		}
+		e.Use(middleware.LoggerWithConfig(logCfg))
+		if err != nil {
+			log.Warn(err)
+		}
+		return remote
+	} else if withLogs {
+		e.Use(middleware.Logger())
+		return nil
+	}
+	return nil
 }

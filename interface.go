@@ -35,6 +35,13 @@ type GNmatcher interface {
 	// where they are registered.
 	MatchNames(names []string) []mlib.Match
 
-	// GetVersion returns version number and build timestamp
+	// GetVersion returns version number and build timestamp.
 	GetVersion() gnvers.Version
+
+	// WithWebLogs returns true if web logs are enabled.
+	WithWebLogs() bool
+
+	// WebLogsNsqdTCP returns an address to a NSQ messaging TCP service or
+	// an empty string.
+	WebLogsNsqdTCP() string
 }

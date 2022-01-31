@@ -134,7 +134,7 @@ func main() {
 ## Configuration
 
 You can use either cofiguration file, or environment variables.
-Configuration file usually is located at `$HOME/.config/gnmatcher.yaml`.
+Configuration file is usually located at `$HOME/.config/gnmatcher.yaml`.
 When `gnmatcher` runs first time, it will create the configuration file.
 Logs provide the location of the configuration file with every run of
 `gnmatcher`.

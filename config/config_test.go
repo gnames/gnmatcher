@@ -12,15 +12,15 @@ import (
 // NewConfig constructor
 func TestNew(t *testing.T) {
 	cfg := config.NewConfig()
-	workDir, _ := gnsys.ConvertTilda("~/.local/share/gnmatcher")
+	cacheDir, _ := gnsys.ConvertTilda("~/.cache/gnmatcher")
 	deflt := config.Config{
-		WorkDir:     workDir,
+		CacheDir:    cacheDir,
 		MaxEditDist: 1,
 		JobsNum:     1,
 		PgHost:      "localhost",
 		PgPort:      5432,
 		PgUser:      "postgres",
-		PgPass:      "",
+		PgPass:      "postgres",
 		PgDB:        "gnames",
 	}
 	assert.Equal(t, cfg, deflt)
@@ -31,7 +31,7 @@ func TestNewOpts(t *testing.T) {
 	opts := opts()
 	cfg := config.NewConfig(opts...)
 	withOpts := config.Config{
-		WorkDir:     "/var/opt/gnmatcher",
+		CacheDir:    "/var/opt/gnmatcher",
 		MaxEditDist: 2,
 		JobsNum:     16,
 		PgHost:      "mypg",
@@ -58,14 +58,14 @@ func TestMaxED(t *testing.T) {
 
 func TestHelpers(t *testing.T) {
 	cfg := config.NewConfig()
-	assert.Contains(t, cfg.TrieDir(), "/.local/share/gnmatcher/trie")
-	assert.Contains(t, cfg.FiltersDir(), "/.local/share/gnmatcher/bloom")
-	assert.Contains(t, cfg.StemsDir(), "/.local/share/gnmatcher/stems-kv")
+	assert.Contains(t, cfg.TrieDir(), "/.cache/gnmatcher/trie")
+	assert.Contains(t, cfg.FiltersDir(), "/.cache/gnmatcher/bloom")
+	assert.Contains(t, cfg.StemsDir(), "/.cache/gnmatcher/stems-kv")
 }
 
 func opts() []config.Option {
 	return []config.Option{
-		config.OptWorkDir("/var/opt/gnmatcher"),
+		config.OptCacheDir("/var/opt/gnmatcher"),
 		config.OptMaxEditDist(2),
 		config.OptJobsNum(16),
 		config.OptPgHost("mypg"),

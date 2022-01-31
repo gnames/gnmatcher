@@ -42,7 +42,7 @@ var restCmd = &cobra.Command{
 	Long: `Runs a RESTful HTTP/1 server that takes a list of scientific names
 in binary protobuf-based format and returns output in protobuf format
 as well.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		debug, _ := cmd.Flags().GetBool("debug")
 		if debug {
 			log.SetLevel(log.DebugLevel)

@@ -80,14 +80,12 @@ func TestExact(t *testing.T) {
 	full := response[4]
 	assert.Equal(t, full.Name, "Plantago major var major")
 	assert.Equal(t, full.MatchType, vlib.Exact)
-	assert.False(t, full.VirusMatch)
 	assert.Equal(t, full.MatchItems[0].MatchStr, "Plantago major major")
 
 	virus := response[5]
 	assert.Equal(t, virus.Name, "Cytospora ribis mitovirus 2")
-	assert.Equal(t, virus.MatchType, vlib.Exact)
-	assert.True(t, virus.VirusMatch)
-	assert.Equal(t, virus.MatchItems[0].MatchStr, "Cytospora ribis mitovirus 2")
+	assert.Equal(t, virus.MatchType, vlib.Virus)
+	assert.Nil(t, virus.MatchItems)
 
 	noParse := response[6]
 	assert.Equal(t, noParse.Name, "A-shaped rods")

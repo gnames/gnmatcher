@@ -9,7 +9,7 @@ services:
     ports:
       - 0.0.0.0:8080:8080
     volumes:
-      - rest:/var/opt/gnmatcher
+      - rest: $HOME/.cache/gnmatcher
     command:
       - rest
       - --port

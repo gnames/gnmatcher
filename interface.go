@@ -27,6 +27,10 @@ type GNmatcher interface {
 	//   or last elements of the name are removed.
 	// - Partial fuzzy match of the canonical form.
 	//
+	// In case if a name is determined as a "virus" (a non-celular entity like
+	// virus, prion, plasmid etc.), It is not matched, and returned back
+	// to be found in a database.
+	//
 	// The resulting output does provide canonical forms, but not the sources
 	// where they are registered.
 	MatchNames(names []string) []mlib.Match

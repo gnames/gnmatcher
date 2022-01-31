@@ -3,6 +3,7 @@
 package cmd
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -18,25 +19,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-const configText = `# Path to keep working data and key-value stores
-WorkDir: ~/.local/share/gnmatcher
-
-# Postgresql host for gnames database
-PgHost: localhost
-
-# Postgresql user
-PgUser: postgres
-
-# Postgresql password
-PgPass:
-
-# Postgresql database
-PgDB: gnames
-
-# MaxEditDist is the maximal edit distance for fuzzy matching of
-# stemmed canonical forms. Can be 1 or 2, 2 is significantly slower.
-MaxEditDist: 1
-`
+//go:embed gnmatcher.yaml
+var configText string
 
 var (
 	opts []config.Option
@@ -45,7 +29,7 @@ var (
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	WorkDir     string
+	CacheDir    string
 	PgHost      string
 	PgPort      int
 	PgUser      string
@@ -59,7 +43,7 @@ type cfgData struct {
 var rootCmd = &cobra.Command{
 	Use:   "gnmatcher",
 	Short: "Contains tools and algorithms to verify scientific names",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		if showVersionFlag(cmd) {
 			os.Exit(0)
 		}
@@ -67,9 +51,10 @@ var rootCmd = &cobra.Command{
 }
 
 // Execute adds all child commands to the root command and sets flags
-// appropriately.  This is called by main.main(). It only needs to happen once
+// appropriately. This is called by main.main(). It only needs to happen once
 // to the rootCmd.
 func Execute() {
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatalf("Cannot start gnmatcher: %s.", err)
 	}
@@ -85,24 +70,24 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	var home string
+	var homePath, cfgPath string
 	var err error
 	configFile := "gnmatcher"
 
 	// Find home directory.
-	home, err = homedir.Dir()
+	homePath, err = homedir.Dir()
 	if err != nil {
 		log.Fatalf("Cannot find home directory: %s.", err)
 	}
-	home = filepath.Join(home, ".config")
+	cfgPath = filepath.Join(homePath, ".config")
 
 	// Search config in home directory with name ".gnmatcher" (without extension).
-	viper.AddConfigPath(home)
+	viper.AddConfigPath(cfgPath)
 	viper.SetConfigName(configFile)
 
 	// Set environment variables to override
 	// config file settings
-	_ = viper.BindEnv("WorkDir", "GNM_WORK_DIR")
+	_ = viper.BindEnv("CacheDir", "GNM_CACHE_DIR")
 	_ = viper.BindEnv("PgHost", "GNM_PG_HOST")
 	_ = viper.BindEnv("PgPort", "GNM_PG_PORT")
 	_ = viper.BindEnv("PgUser", "GNM_PG_USER")
@@ -113,8 +98,8 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	configPath := filepath.Join(home, fmt.Sprintf("%s.yaml", configFile))
-	touchConfigFile(configPath, configFile)
+	configPath := filepath.Join(cfgPath, fmt.Sprintf("%s.yaml", configFile))
+	touchConfigFile(configPath)
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
@@ -132,8 +117,8 @@ func getOpts() []config.Option {
 		log.Fatalf("Cannot deserialize config data: %s.", err)
 	}
 
-	if cfg.WorkDir != "" {
-		opts = append(opts, config.OptWorkDir(cfg.WorkDir))
+	if cfg.CacheDir != "" {
+		opts = append(opts, config.OptCacheDir(cfg.CacheDir))
 	}
 	if cfg.MaxEditDist != 0 {
 		opts = append(opts, config.OptMaxEditDist(cfg.MaxEditDist))
@@ -174,17 +159,17 @@ func showVersionFlag(cmd *cobra.Command) bool {
 }
 
 // touchConfigFile checks if config file exists, and if not, it gets created.
-func touchConfigFile(configPath string, configFile string) {
+func touchConfigFile(configPath string) {
 	if ok, err := gnsys.FileExists(configPath); ok && err == nil {
 		return
 	}
 
 	log.Printf("Creating config file: %s.", configPath)
-	createConfig(configPath, configFile)
+	createConfig(configPath)
 }
 
 // createConfig creates config file.
-func createConfig(path string, file string) {
+func createConfig(path string) {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
 		log.Fatalf("Cannot create dir %s: %s.", path, err)

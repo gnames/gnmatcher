@@ -3,6 +3,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/gnames/gnsys"
@@ -11,9 +12,9 @@ import (
 
 // Config collects and stores external configuration data.
 type Config struct {
-	// WorkDir is the main directory for gnmatcher files. It contains
+	// CacheDir is the main directory for gnmatcher files. It contains
 	// bloom filters levenshtein automata trees, key-value stores etc.
-	WorkDir string
+	CacheDir string
 	// MaxEditDist is the maximal allowed edit distance for levenshtein automata.
 	// The number cannot exceed 2, default number is 1. The speed of execution
 	// slows down dramatically with the MaxEditDist > 1.
@@ -32,56 +33,35 @@ type Config struct {
 	PgDB string
 }
 
-// NewConfig is a Config constructor that takes external options to
-// update default values to external ones.
-func NewConfig(opts ...Option) Config {
-	workDir := "~/.local/share/gnmatcher"
-	workDir, _ = gnsys.ConvertTilda(workDir)
-	cfg := Config{
-		WorkDir:     workDir,
-		MaxEditDist: 1,
-		JobsNum:     1,
-		PgHost:      "localhost",
-		PgPort:      5432,
-		PgUser:      "postgres",
-		PgPass:      "",
-		PgDB:        "gnames",
-	}
-	for _, opt := range opts {
-		opt(&cfg)
-	}
-	return cfg
-}
-
 // TrieDir returns path where to dump/restore
 // serialized trie.
 func (cfg Config) TrieDir() string {
-	return filepath.Join(cfg.WorkDir, "trie")
+	return filepath.Join(cfg.CacheDir, "trie")
 }
 
 // FiltersDir returns path where to dump/restore
 // serialized bloom filters.
 func (cfg Config) FiltersDir() string {
-	return filepath.Join(cfg.WorkDir, "bloom")
+	return filepath.Join(cfg.CacheDir, "bloom")
 }
 
 // StemsDir returns path where stems key-value store
 // is located
 func (cfg Config) StemsDir() string {
-	return filepath.Join(cfg.WorkDir, "stems-kv")
+	return filepath.Join(cfg.CacheDir, "stems-kv")
 }
 
 // Option is a type of all options for Config.
 type Option func(cfg *Config)
 
-// OptWorkDir sets a directory for key-value stores and temporary files.
-func OptWorkDir(s string) Option {
+// OptCacheDir sets a directory for key-value stores and temporary files.
+func OptCacheDir(s string) Option {
 	return func(cfg *Config) {
-		workDir, err := gnsys.ConvertTilda(s)
+		cacheDir, err := gnsys.ConvertTilda(s)
 		if err != nil {
 			log.Warn(fmt.Sprintf("Cannot expand '%s': %v", s, err))
 		}
-		cfg.WorkDir = workDir
+		cfg.CacheDir = cacheDir
 	}
 }
 
@@ -138,4 +118,30 @@ func OptJobsNum(i int) Option {
 	return func(cfg *Config) {
 		cfg.JobsNum = i
 	}
+}
+
+// NewConfig is a Config constructor that takes external options to
+// update default values to external ones.
+func NewConfig(opts ...Option) Config {
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		cacheDir = "~/.cache/gnmatcher"
+		cacheDir, _ = gnsys.ConvertTilda(cacheDir)
+	} else {
+		cacheDir = filepath.Join(cacheDir, "gnmatcher")
+	}
+	cfg := Config{
+		CacheDir:    cacheDir,
+		MaxEditDist: 1,
+		JobsNum:     1,
+		PgHost:      "localhost",
+		PgPort:      5432,
+		PgUser:      "postgres",
+		PgPass:      "postgres",
+		PgDB:        "gnames",
+	}
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+	return cfg
 }

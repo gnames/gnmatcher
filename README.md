@@ -131,6 +131,28 @@ func main() {
 }
 ```
 
+## Configuration
+
+You can use either cofiguration file, or environment variables.
+Configuration file usually is located at `$HOME/.config/gnmatcher.yaml`.
+When `gnmatcher` runs first time, it will create the configuration file.
+Logs provide the location of the configuration file with every run of
+`gnmatcher`.
+
+To make it easier to run gnmatcher in a container, or a Kubernetes pod, there
+are also environment variables that override configuration file values.
+
+| Env. Var.         | Configuration  |
+| ----------------- | ---------------|
+| GNM_CACHE_DIR     | CacheDir       |
+| GNM_PG_HOST       | PgHost         |
+| GNM_PG_PORT       | PgPort         |
+| GNM_PG_USER       | PgUser         |
+| GNM_PG_PASS       | PgPass         |
+| GNM_PG_DB         | PgDB           |
+| GNM_MAX_EDIT_DIST | MaxEditDist    |
+| GNM_JOBS_NUM      | JobsNum        |
+
 ## Client
 
 A user can find an example of a client for the service in this

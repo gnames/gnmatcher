@@ -1,0 +1,28 @@
+# CacheDir contains a path to keep working data and key-value stores.
+#
+# CacheDir: ~/.cache/gnmatcher
+
+# PgHost is the PostgreSQL host for `gnames` database
+#
+# PgHost: localhost
+
+# PgUser is a PostgreSQL user with read permissions to `gnames` database.
+#
+# PgUser: postgres
+
+# PgPass is a PostgreSQL password for `PgUser`.
+#
+# PgPass: postgres
+
+# PgDB is the name of the PostgreSQL database, usually the name is `gnames`.
+#
+# PgDB: gnames
+
+# MaxEditDist is the maximum edit distance for fuzzy matching of
+# stemmed canonical forms. Can be 1 or 2, 2 is significantly slower.
+#
+# MaxEditDist: 1
+
+# JobsNum is the number of matching processes running concurrently.
+#
+# JobsNum: 4

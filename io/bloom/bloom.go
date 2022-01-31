@@ -4,6 +4,8 @@
 package bloom
 
 import (
+	"fmt"
+
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/ent/exact"
 	"github.com/gnames/gnsys"
@@ -17,6 +19,7 @@ type exactMatcher struct {
 
 // NewENewExactMatcher takes configuration object and returns ExactMatcher.
 func NewExactMatcher(cfg config.Config) exact.ExactMatcher {
+	fmt.Printf("CFG: %#v\n\n", cfg)
 	return &exactMatcher{cfg: cfg}
 }
 

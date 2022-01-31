@@ -25,23 +25,12 @@ func (m matcher) match(ns nameString) *mlib.Match {
 	return nilResult
 }
 
-// matchVirus tries to match a name-string exactly to a virus name from the
-// gnames database.
+// matchVirus returns the "virus" name the way it was given, without matching.
 func (m matcher) matchVirus(ns nameString) *mlib.Match {
-	isIn := m.exactMatcher.MatchNameStringID(ns.ID)
-	if isIn {
-		return &mlib.Match{
-			ID:         ns.ID,
-			Name:       ns.Name,
-			VirusMatch: true,
-			MatchType:  vlib.Exact,
-			MatchItems: []mlib.MatchItem{
-				{
-					ID:       ns.ID,
-					MatchStr: ns.Name,
-				},
-			},
-		}
+	return &mlib.Match{
+		ID:         ns.ID,
+		Name:       ns.Name,
+		MatchType:  vlib.Virus,
+		MatchItems: nil,
 	}
-	return emptyResult(ns)
 }

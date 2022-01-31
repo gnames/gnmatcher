@@ -20,7 +20,7 @@ func Run(m MatcherService) {
 	e := echo.New()
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
-	// e.Use(middleware.Logger())
+	e.Use(middleware.Logger())
 
 	e.GET("/", root)
 	e.GET("/api/v1/ping", ping(m))

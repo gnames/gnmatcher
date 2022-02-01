@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## [v0.6.1]
+
+- Add [#41]: add NSQ messagin-based logger.
+
+## [v0.6.0]
+
+- Add [#40]: return Virus data without matching (matching for viruses should
+       happen via database).
+
+## [v0.5.8]
+
+- Add: update dependencies, Dockerfile
+
 ## [v0.5.7]
 
 - Add: update gnparser to v1.2.0
@@ -112,6 +125,10 @@
 
 This document follows [changelog guidelines]
 
+[v0.6.1]: https://github.com/gnames/gnmatcher/compare/v0.6.0...v0.6.1
+[v0.6.0]: https://github.com/gnames/gnmatcher/compare/v0.5.8...v0.6.0
+[v0.5.8]: https://github.com/gnames/gnmatcher/compare/v0.5.7...v0.5.8
+[v0.5.7]: https://github.com/gnames/gnmatcher/compare/v0.5.6...v0.5.7
 [v0.5.6]: https://github.com/gnames/gnmatcher/compare/v0.5.5...v0.5.6
 [v0.5.5]: https://github.com/gnames/gnmatcher/compare/v0.5.4...v0.5.5
 [v0.5.4]: https://github.com/gnames/gnmatcher/compare/v0.5.3...v0.5.4
@@ -135,6 +152,16 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#50]: https://github.com/gnames/gnmatcher/issues/50
+[#49]: https://github.com/gnames/gnmatcher/issues/49
+[#48]: https://github.com/gnames/gnmatcher/issues/48
+[#47]: https://github.com/gnames/gnmatcher/issues/47
+[#46]: https://github.com/gnames/gnmatcher/issues/46
+[#45]: https://github.com/gnames/gnmatcher/issues/45
+[#44]: https://github.com/gnames/gnmatcher/issues/44
+[#43]: https://github.com/gnames/gnmatcher/issues/43
+[#42]: https://github.com/gnames/gnmatcher/issues/42
+[#41]: https://github.com/gnames/gnmatcher/issues/41
 [#40]: https://github.com/gnames/gnmatcher/issues/40
 [#49]: https://github.com/gnames/gnmatcher/issues/49
 [#48]: https://github.com/gnames/gnmatcher/issues/48

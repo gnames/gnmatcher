@@ -23,7 +23,7 @@ func TestNew(t *testing.T) {
 		PgPass:      "postgres",
 		PgDB:        "gnames",
 	}
-	assert.Equal(t, cfg, deflt)
+	assert.Equal(t, deflt, cfg)
 }
 
 // NewConfig with opts
@@ -40,20 +40,20 @@ func TestNewOpts(t *testing.T) {
 		PgPass:      "secret",
 		PgDB:        "gnm",
 	}
-	assert.Equal(t, cfg, withOpts)
+	assert.Equal(t, withOpts, cfg)
 }
 
 // 	MaxEditDist is limited to 1 or 2
 func TestMaxED(t *testing.T) {
 	log.SetLevel(log.PanicLevel)
 	cfg := config.New(config.OptMaxEditDist(5))
-	assert.Equal(t, cfg.MaxEditDist, 1)
+	assert.Equal(t, 1, cfg.MaxEditDist)
 	cfg = config.New(config.OptMaxEditDist(0))
-	assert.Equal(t, cfg.MaxEditDist, 1)
+	assert.Equal(t, 1, cfg.MaxEditDist)
 	cfg = config.New(config.OptMaxEditDist(1))
-	assert.Equal(t, cfg.MaxEditDist, 1)
+	assert.Equal(t, 1, cfg.MaxEditDist)
 	cfg = config.New(config.OptMaxEditDist(2))
-	assert.Equal(t, cfg.MaxEditDist, 2)
+	assert.Equal(t, 2, cfg.MaxEditDist)
 }
 
 func TestHelpers(t *testing.T) {

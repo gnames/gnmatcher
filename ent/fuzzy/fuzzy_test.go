@@ -36,7 +36,7 @@ func TestDist(t *testing.T) {
 	for _, v := range testData {
 		msg := fmt.Sprintf("'%s' vs '%s'", v.str1, v.str2)
 		dist := fuzzy.EditDistance(v.str1, v.str2)
-		assert.Equal(t, dist, v.dist, msg)
+		assert.Equal(t, v.dist, dist, msg)
 	}
 }
 

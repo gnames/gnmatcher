@@ -87,7 +87,7 @@ func TestBugs(t *testing.T) {
 
 	for i, v := range bugs {
 		msg := fmt.Sprintf("%s -> %s", v.name, v.matchCanonical)
-		assert.Equal(t, mtch[i].MatchType.String(), v.matchType.String(), msg)
+		assert.Equal(t, v.matchType.String(), mtch[i].MatchType.String(), msg)
 		if mtch[i].MatchType == vlib.NoMatch {
 			assert.Empty(t, mtch[i].MatchItems)
 			continue

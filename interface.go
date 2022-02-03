@@ -17,6 +17,11 @@ import (
 
 // GNmatcher is a public API to the project functionality.
 type GNmatcher interface {
+	NameMatcher
+	WebLogger
+}
+
+type NameMatcher interface {
 	// MatchNames takes a slice of scientific name-strings and returns back
 	// matches to canonical forms of known scientific names. The following
 	// matches are attempted:
@@ -37,7 +42,9 @@ type GNmatcher interface {
 
 	// GetVersion returns version number and build timestamp.
 	GetVersion() gnvers.Version
+}
 
+type WebLogger interface {
 	// WithWebLogs returns true if web logs are enabled.
 	WithWebLogs() bool
 

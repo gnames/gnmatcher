@@ -28,10 +28,10 @@ type fuzzyMatcher struct {
 	encoder gnfmt.Encoder
 }
 
-// NewFuzzyMatcher takes configuration and returns back FuzzyMatcher object
+// New takes configuration and returns back FuzzyMatcher object
 // responsible for fuzzy-matching strings to canonical forms of scientific
 // names.
-func NewFuzzyMatcher(cfg config.Config) fuzzy.FuzzyMatcher {
+func New(cfg config.Config) fuzzy.FuzzyMatcher {
 	fm := fuzzyMatcher{cfg: cfg, encoder: gnfmt.GNgob{}}
 	return &fm
 }
@@ -119,7 +119,7 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&name); err != nil {
+		if err = rows.Scan(&name); err != nil {
 			return trie, err
 		}
 		names = append(names, name)

@@ -27,10 +27,15 @@ func (m matcher) match(ns nameString) *mlib.Match {
 
 // matchVirus returns the "virus" name the way it was given, without matching.
 func (m matcher) matchVirus(ns nameString) *mlib.Match {
+	matchItems := m.virusMatcher.MatchVirus(ns.Name)
+	matchType := vlib.Virus
+	if len(matchItems) == 0 {
+		matchType = vlib.NoMatch
+	}
 	return &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
-		MatchType:  vlib.Virus,
-		MatchItems: nil,
+		MatchType:  matchType,
+		MatchItems: matchItems,
 	}
 }

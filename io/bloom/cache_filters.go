@@ -17,36 +17,25 @@ import (
 // filter creations.
 func (em *exactMatcher) filtersFromCache(path string) error {
 	cPath := filepath.Join(path, canonicalFile)
-	vPath := filepath.Join(path, virusFile)
 	sizesPath := filepath.Join(path, sizesFile)
 	cPathExists, err := gnsys.FileExists(cPath)
 	if err != nil {
 		return err
 	}
-	vPathExists, err := gnsys.FileExists(vPath)
-	if err != nil {
-		return err
-	}
-	if cPathExists && vPathExists {
-		if err := em.getFiltersFromCache(cPath, vPath, sizesPath); err != nil {
+	if cPathExists {
+		if err := em.getFiltersFromCache(cPath, sizesPath); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (em *exactMatcher) getFiltersFromCache(cPath, vPath, sizesPath string) error {
-	log.Println("Geting lookup data from a cache on disk.")
-	cCfg, vCfg := restoreConfigs(sizesPath)
+func (em *exactMatcher) getFiltersFromCache(cPath, sizesPath string) error {
+	log.Println("Geting bloom lookup data from a cache on disk.")
+	cCfg := restoreConfigs(sizesPath)
 	cFilter := baseBloomfilter.New(cCfg)
-	vFilter := baseBloomfilter.New(vCfg)
 
 	cBytes, err := os.ReadFile(cPath)
-	if err != nil {
-		return err
-	}
-
-	vBytes, err := os.ReadFile(vPath)
 	if err != nil {
 		return err
 	}
@@ -54,19 +43,15 @@ func (em *exactMatcher) getFiltersFromCache(cPath, vPath, sizesPath string) erro
 	if err = cFilter.UnmarshalBinary(cBytes); err != nil {
 		return err
 	}
-	if err = vFilter.UnmarshalBinary(vBytes); err != nil {
-		return err
-	}
 
 	em.filters = &bloomFilters{
 		canonical: cFilter,
-		virus:     vFilter,
 	}
 	return nil
 }
 
-func restoreConfigs(sizeFile string) (bloomfilter.Config, bloomfilter.Config) {
-	var cCfg, vCfg bloomfilter.Config
+func restoreConfigs(sizeFile string) bloomfilter.Config {
+	var cCfg bloomfilter.Config
 	f, err := os.Open(sizeFile)
 	if err != nil {
 		log.Warning(fmt.Sprintf("Could not open file %s: %s.", sizeFile, err))
@@ -88,13 +73,7 @@ func restoreConfigs(sizeFile string) (bloomfilter.Config, bloomfilter.Config) {
 				P:        0.00001,
 				HashName: bloomfilter.HASHER_OPTIMAL,
 			}
-		case "VirusSize":
-			vCfg = bloomfilter.Config{
-				N:        uint(size),
-				P:        0.00001,
-				HashName: bloomfilter.HASHER_OPTIMAL,
-			}
 		}
 	}
-	return cCfg, vCfg
+	return cCfg
 }

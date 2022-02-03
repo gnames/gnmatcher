@@ -30,6 +30,7 @@ import (
 	"github.com/gnames/gnmatcher/io/bloom"
 	"github.com/gnames/gnmatcher/io/rest"
 	"github.com/gnames/gnmatcher/io/trie"
+	"github.com/gnames/gnmatcher/io/virusio"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -53,9 +54,10 @@ as well.`,
 			log.Fatalf("Cannot get port flag: %s", err)
 		}
 		cfg := gnmcnf.New(opts...)
-		em := bloom.NewExactMatcher(cfg)
-		fm := trie.NewFuzzyMatcher(cfg)
-		gnm := gnmatcher.New(em, fm, cfg)
+		em := bloom.New(cfg)
+		fm := trie.New(cfg)
+		vm := virusio.New(cfg)
+		gnm := gnmatcher.New(em, fm, vm, cfg)
 		if err != nil {
 			log.Printf("Cannot create an instance of GNmatcher: %s.", err)
 			os.Exit(1)

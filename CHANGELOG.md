@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [v0.7.0]
+
+- Add [#42]: match viruses using suffixarray approach. Matches viruses from the
+             beginning of virus name. If input string is an exact substring
+             of a virus, it is a match. If there are more than 20 matches, the
+             result is truncated to the first 21 record.
+
 ## [v0.6.1]
 
 - Add [#41]: add NSQ messagin-based logger.

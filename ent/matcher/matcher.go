@@ -7,6 +7,7 @@ import (
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnmatcher/ent/exact"
 	"github.com/gnames/gnmatcher/ent/fuzzy"
+	"github.com/gnames/gnmatcher/ent/virus"
 	"github.com/gnames/gnparser"
 	"github.com/gnames/gnparser/ent/parsed"
 	log "github.com/sirupsen/logrus"
@@ -23,18 +24,27 @@ var nilResult *mlib.Match
 type matcher struct {
 	exactMatcher exact.ExactMatcher
 	fuzzyMatcher fuzzy.FuzzyMatcher
+	virusMatcher virus.VirusMatcher
 	jobsNum      int
 }
 
 // NewMatcher returns Matcher object. It takes interfaces to ExactMatcher
 // and FuzzyMatcher.
-func NewMatcher(em exact.ExactMatcher, fm fuzzy.FuzzyMatcher, j int) Matcher {
-	return matcher{exactMatcher: em, fuzzyMatcher: fm, jobsNum: j}
+func NewMatcher(
+	em exact.ExactMatcher,
+	fm fuzzy.FuzzyMatcher,
+	vm virus.VirusMatcher,
+	j int) Matcher {
+	return matcher{
+		exactMatcher: em,
+		fuzzyMatcher: fm,
+		virusMatcher: vm,
+		jobsNum:      j}
 }
 
 func (m matcher) Init() {
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3)
 	go func() {
 		defer wg.Done()
 		m.exactMatcher.Init()
@@ -42,6 +52,10 @@ func (m matcher) Init() {
 	go func() {
 		defer wg.Done()
 		m.fuzzyMatcher.Init()
+	}()
+	go func() {
+		defer wg.Done()
+		m.virusMatcher.Init()
 	}()
 	wg.Wait()
 }

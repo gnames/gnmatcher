@@ -14,7 +14,6 @@ func saveFilters(path string, filters *bloomFilters) {
 	var nilFilter *baseBloomfilter.Bloomfilter
 	files := map[string]*baseBloomfilter.Bloomfilter{
 		canonicalFile: filters.canonical,
-		virusFile:     filters.virus,
 		sizesFile:     nilFilter,
 	}
 
@@ -33,6 +32,7 @@ func saveFilters(path string, filters *bloomFilters) {
 			}
 			continue
 		}
+
 		err = saveFilterFile(filePath, file, filter)
 		if err != nil {
 			log.Fatalf("Cannot create %s: %s", filePath, err)
@@ -53,8 +53,11 @@ func createFile(filePath string) (*os.File, error) {
 	return file, err
 }
 
-func saveFilterFile(filePath string, file *os.File,
-	filter *baseBloomfilter.Bloomfilter) error {
+func saveFilterFile(
+	filePath string,
+	file *os.File,
+	filter *baseBloomfilter.Bloomfilter,
+) error {
 	var bin []byte
 	var err error
 	bin, err = filter.MarshalBinary()
@@ -72,8 +75,8 @@ func saveFilterFile(filePath string, file *os.File,
 
 func saveSizesFile(file *os.File, filters *bloomFilters) error {
 	var err error
-	sizes := fmt.Sprintf("CanonicalSize,%d\nVirusSize,%d\n",
-		filters.canonicalSize, filters.virusSize)
+	sizes := fmt.Sprintf("CanonicalSize,%d\n",
+		filters.canonicalSize)
 	if _, err = file.WriteString(sizes); err != nil {
 		warn := fmt.Sprintf("Could not save filter sizes to disk: %s.", err)
 		log.Warn(warn)

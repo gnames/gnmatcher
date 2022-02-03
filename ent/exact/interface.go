@@ -8,11 +8,9 @@ type ExactMatcher interface {
 	// Init loads cached data into memory, and creates cache, if it does not
 	// exist yet.
 	Init()
+
 	// MatchCanonicalID matches canonical forms of scientific names. It takes
 	// UUIDv5 filter generated out of name-string and checks if the same
 	// UUIDv5 exists in the cached data.
 	MatchCanonicalID(uuid string) bool
-	// MatchNameStringID matches full strings to each other. It uses UUIDv5
-	// for matching.
-	MatchNameStringID(uuid string) bool
 }

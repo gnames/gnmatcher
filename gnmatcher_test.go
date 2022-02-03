@@ -10,6 +10,7 @@ import (
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/io/bloom"
 	"github.com/gnames/gnmatcher/io/trie"
+	"github.com/gnames/gnmatcher/io/virusio"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,15 +44,24 @@ func (fm mockFuzzyMatcher) StemToMatchItems(s string) []mlib.MatchItem {
 	return res
 }
 
+type mockVirusMatcher struct{}
+
+func (vm mockVirusMatcher) Init() {}
+
+func (vm mockVirusMatcher) MatchVirus(s string) []mlib.MatchItem { return nil }
+
+func (vm mockVirusMatcher) NameToBytes(s string) []byte { return nil }
+
 func TestVersion(t *testing.T) {
 	cfg := config.New()
 	em := mockExactMatcher{}
 	fm := mockFuzzyMatcher{}
-	gnm := gnmatcher.New(em, fm, cfg)
+	vm := mockVirusMatcher{}
+	gnm := gnmatcher.New(em, fm, vm, cfg)
 	ver := gnm.GetVersion()
-	verRegex := regexp.MustCompile(`^v[\d]+\.[\d]+\.[\d]+$`)
+	verRegex := regexp.MustCompile(`^v[\d]+\.[\d]+\.[\d]+\+?`)
 	assert.Regexp(t, verRegex, ver.Version)
-	assert.Equal(t, ver.Build, "n/a")
+	assert.Equal(t, "n/a", ver.Build)
 }
 
 func Example() {
@@ -62,9 +72,10 @@ func Example() {
 	// If data are imported already, it still takes several seconds to
 	// load lookup data into memory.
 	cfg := config.New()
-	em := bloom.NewExactMatcher(cfg)
-	fm := trie.NewFuzzyMatcher(cfg)
-	gnm := gnmatcher.New(em, fm, cfg)
+	em := bloom.New(cfg)
+	fm := trie.New(cfg)
+	vm := virusio.New(cfg)
+	gnm := gnmatcher.New(em, fm, vm, cfg)
 	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
 	for _, match := range res {
 		fmt.Println(match.Name)

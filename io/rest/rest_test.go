@@ -25,7 +25,7 @@ func TestPing(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	assert.Equal(t, string(res), "pong")
+	assert.Equal(t, "pong", string(res))
 }
 
 func TestVer(t *testing.T) {
@@ -63,46 +63,46 @@ func TestExact(t *testing.T) {
 	assert.Nil(t, err)
 
 	_ = enc.Decode(respBytes, &response)
-	assert.Equal(t, len(response), 9)
+	assert.Equal(t, 9, len(response))
 
 	bad := response[0]
-	assert.Equal(t, bad.Name, "Not name")
-	assert.Equal(t, bad.MatchType, vlib.NoMatch)
+	assert.Equal(t, "Not name", bad.Name)
+	assert.Equal(t, vlib.NoMatch, bad.MatchType)
 	assert.Nil(t, bad.MatchItems)
 
 	good := response[1]
-	assert.Equal(t, good.Name, "Bubo bubo")
-	assert.Equal(t, good.MatchType, vlib.Exact)
-	assert.Equal(t, good.MatchItems[0].MatchStr, "Bubo bubo")
-	assert.Equal(t, good.MatchItems[0].EditDistance, 0)
-	assert.Equal(t, good.MatchItems[0].EditDistanceStem, 0)
+	assert.Equal(t, "Bubo bubo", good.Name)
+	assert.Equal(t, vlib.Exact, good.MatchType)
+	assert.Equal(t, "Bubo bubo", good.MatchItems[0].MatchStr)
+	assert.Equal(t, 0, good.MatchItems[0].EditDistance)
+	assert.Equal(t, 0, good.MatchItems[0].EditDistanceStem)
 
 	full := response[4]
-	assert.Equal(t, full.Name, "Plantago major var major")
-	assert.Equal(t, full.MatchType, vlib.Exact)
-	assert.Equal(t, full.MatchItems[0].MatchStr, "Plantago major major")
+	assert.Equal(t, "Plantago major var major", full.Name)
+	assert.Equal(t, vlib.Exact, full.MatchType)
+	assert.Equal(t, "Plantago major major", full.MatchItems[0].MatchStr)
 
 	virus := response[5]
-	assert.Equal(t, virus.Name, "Cytospora ribis mitovirus 2")
-	assert.Equal(t, virus.MatchType, vlib.Virus)
-	assert.Nil(t, virus.MatchItems)
+	assert.Equal(t, "Cytospora ribis mitovirus 2", virus.Name)
+	assert.Equal(t, vlib.Virus, virus.MatchType)
+	assert.Equal(t, "Cytospora ribis mitovirus 2", virus.MatchItems[0].MatchStr)
 
 	noParse := response[6]
-	assert.Equal(t, noParse.Name, "A-shaped rods")
-	assert.Equal(t, noParse.MatchType, vlib.NoMatch)
+	assert.Equal(t, "A-shaped rods", noParse.Name)
+	assert.Equal(t, vlib.NoMatch, noParse.MatchType)
 	assert.Nil(t, noParse.MatchItems)
 
 	abbr := response[7]
-	assert.Equal(t, abbr.Name, "Alb. alba")
-	assert.Equal(t, abbr.MatchType, vlib.NoMatch)
+	assert.Equal(t, "Alb. alba", abbr.Name)
+	assert.Equal(t, vlib.NoMatch, abbr.MatchType)
 	assert.Nil(t, abbr.MatchItems)
 
 	cand := response[8]
-	assert.Equal(t, cand.Name, "Candidatus Aenigmarchaeum subterraneum")
-	assert.Equal(t, cand.MatchType, vlib.Exact)
+	assert.Equal(t, "Candidatus Aenigmarchaeum subterraneum", cand.Name)
+	assert.Equal(t, vlib.Exact, cand.MatchType)
 	assert.Equal(t,
-		cand.MatchItems[0].MatchStr,
 		"Aenigmarchaeum subterraneum",
+		cand.MatchItems[0].MatchStr,
 	)
 }
 
@@ -128,55 +128,55 @@ func TestFuzzy(t *testing.T) {
 	assert.Nil(t, err)
 
 	bad := response[0]
-	assert.Equal(t, bad.Name, "Not name")
-	assert.Equal(t, bad.MatchType, vlib.NoMatch)
+	assert.Equal(t, "Not name", bad.Name)
+	assert.Equal(t, vlib.NoMatch, bad.MatchType)
 	assert.Nil(t, bad.MatchItems)
 
 	uni := response[1]
-	assert.Equal(t, uni.Name, "Pomatomusi")
-	assert.Equal(t, uni.MatchType, vlib.NoMatch)
+	assert.Equal(t, "Pomatomusi", uni.Name)
+	assert.Equal(t, vlib.NoMatch, uni.MatchType)
 	assert.Nil(t, uni.MatchItems)
 
 	suffix := response[2]
-	assert.Equal(t, suffix.Name, "Pardosa moeste")
-	assert.Equal(t, suffix.MatchType, vlib.Fuzzy)
-	assert.Equal(t, len(suffix.MatchItems), 1)
-	assert.Equal(t, suffix.MatchItems[0].EditDistance, 1)
-	assert.Equal(t, suffix.MatchItems[0].EditDistanceStem, 0)
+	assert.Equal(t, "Pardosa moeste", suffix.Name)
+	assert.Equal(t, vlib.Fuzzy, suffix.MatchType)
+	assert.Equal(t, 1, len(suffix.MatchItems))
+	assert.Equal(t, 1, suffix.MatchItems[0].EditDistance)
+	assert.Equal(t, 0, suffix.MatchItems[0].EditDistanceStem)
 
 	// We do not have yet support for lost spaces.
 	space := response[3]
-	assert.Equal(t, space.Name, "Pardosamoeste")
-	assert.Equal(t, space.MatchType, vlib.NoMatch)
+	assert.Equal(t, "Pardosamoeste", space.Name)
+	assert.Equal(t, vlib.NoMatch, space.MatchType)
 	assert.Nil(t, space.MatchItems)
 
 	fuzzy := response[4]
-	assert.Equal(t, fuzzy.Name, "Accanthurus glaucopareus")
-	assert.Equal(t, fuzzy.MatchType, vlib.Fuzzy)
-	assert.Equal(t, len(fuzzy.MatchItems), 2)
-	assert.Equal(t, fuzzy.MatchItems[0].EditDistanceStem, 1)
+	assert.Equal(t, "Accanthurus glaucopareus", fuzzy.Name)
+	assert.Equal(t, vlib.Fuzzy, fuzzy.MatchType)
+	assert.Equal(t, 2, len(fuzzy.MatchItems))
+	assert.Equal(t, 1, fuzzy.MatchItems[0].EditDistanceStem)
 
 	// Added because stem was missing in canonicals table.
 	// Still not sure why it was possible, the solution is in
 	// creating canonical_stems if they are empty.
 	fuzzy2 := response[5]
-	assert.Equal(t, fuzzy2.Name, "Tillaudsia utriculata")
-	assert.Equal(t, fuzzy2.MatchType, vlib.Fuzzy)
-	assert.Equal(t, len(fuzzy2.MatchItems), 1)
-	assert.Equal(t, fuzzy2.MatchItems[0].EditDistanceStem, 1)
+	assert.Equal(t, "Tillaudsia utriculata", fuzzy2.Name)
+	assert.Equal(t, vlib.Fuzzy, fuzzy2.MatchType)
+	assert.Equal(t, 1, len(fuzzy2.MatchItems))
+	assert.Equal(t, 1, fuzzy2.MatchItems[0].EditDistanceStem)
 
 	// Added because stem for Drosophila melanogaster was missing.
 	// It was missing because canonical and stem are the same.
 	fuzzy3 := response[6]
-	assert.Equal(t, fuzzy3.Name, "Drosohila melanogaster")
-	assert.Equal(t, fuzzy3.MatchType, vlib.Fuzzy)
-	assert.Equal(t, len(fuzzy3.MatchItems), 2)
-	assert.Equal(t, fuzzy3.MatchItems[0].EditDistanceStem, 1)
+	assert.Equal(t, "Drosohila melanogaster", fuzzy3.Name)
+	assert.Equal(t, vlib.Fuzzy, fuzzy3.MatchType)
+	assert.Equal(t, 2, len(fuzzy3.MatchItems))
+	assert.Equal(t, 1, fuzzy3.MatchItems[0].EditDistanceStem)
 
 	fuzzy4 := response[7]
-	assert.Equal(t, fuzzy4.Name, "Acanthobolhrium crassicolle")
-	assert.Equal(t, fuzzy4.MatchType, vlib.Fuzzy)
-	assert.Equal(t, len(fuzzy4.MatchItems), 2)
-	assert.Equal(t, fuzzy4.MatchItems[0].EditDistance, 1)
-	assert.Equal(t, fuzzy4.MatchItems[1].EditDistance, 3)
+	assert.Equal(t, "Acanthobolhrium crassicolle", fuzzy4.Name)
+	assert.Equal(t, vlib.Fuzzy, fuzzy4.MatchType)
+	assert.Equal(t, 2, len(fuzzy4.MatchItems))
+	assert.Equal(t, 1, fuzzy4.MatchItems[0].EditDistance)
+	assert.Equal(t, 3, fuzzy4.MatchItems[1].EditDistance)
 }

@@ -67,9 +67,14 @@ func (cfg Config) FiltersDir() string {
 }
 
 // StemsDir returns path where stems key-value store
-// is located
+// is located.
 func (cfg Config) StemsDir() string {
 	return filepath.Join(cfg.CacheDir, "stems-kv")
+}
+
+// VirusDir returns path to cache virus matching data.
+func (cfg Config) VirusDir() string {
+	return filepath.Join(cfg.CacheDir, "virus")
 }
 
 // Option is a type of all options for Config.

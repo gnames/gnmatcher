@@ -17,18 +17,9 @@ func (em *exactMatcher) filtersFromDB(path string) error {
 	if err != nil {
 		return err
 	}
-
-	log.Println("Importing lookup data for viruses.")
-	vFilter, vSize, err := createFilter(db, "name_strings")
-	if err != nil {
-		return err
-	}
-
 	em.filters = &bloomFilters{
 		canonical:     cFilter,
 		canonicalSize: cSize,
-		virus:         vFilter,
-		virusSize:     vSize,
 	}
 	saveFilters(path, em.filters)
 	return db.Close()
@@ -70,9 +61,6 @@ func newFilter(db *sql.DB, table string,
 	bf := baseBloomfilter.New(cfg)
 
 	q := fmt.Sprintf("SELECT id FROM %s", table)
-	if table == "name_strings" {
-		q = fmt.Sprintf("SELECT id FROM %s WHERE virus = TRUE", table)
-	}
 
 	rows, err := db.Query(q)
 	if err != nil {

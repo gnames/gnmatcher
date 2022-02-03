@@ -46,7 +46,7 @@ func initStemsKV(path string, db *sql.DB) {
 	var currentStem, stem, name, id string
 	count := 0
 	for rows.Next() {
-		if err := rows.Scan(&stem, &name, &id); err != nil {
+		if err = rows.Scan(&stem, &name, &id); err != nil {
 			log.Fatalf("Cannot read stem data from query: %s.", err)
 		}
 		if currentStem == "" {

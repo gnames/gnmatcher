@@ -4,8 +4,9 @@
 package bloom
 
 import (
-	log "github.com/sirupsen/logrus"
 	"sync"
+
+	log "github.com/sirupsen/logrus"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 )
@@ -21,13 +22,11 @@ const (
 type bloomFilters struct {
 	// canonical is a filter for matching with canonical names.
 	canonical *baseBloomfilter.Bloomfilter
+
 	// canonicalSize is number of entries in 'simple' canonical filter. It is
 	// used as an option during Canonical filter creation.
 	canonicalSize uint
-	// virus is a filter for matching with viruses names.
-	virus *baseBloomfilter.Bloomfilter
-	// VirusesSize is a number of entries if 'viruses' filter.
-	virusSize uint
+
 	// mux is a mutex for thread-safe operations
 	mux sync.Mutex
 }

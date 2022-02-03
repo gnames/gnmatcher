@@ -12,8 +12,8 @@ func TestFuzzyLimit(t *testing.T) {
 	ns := nameString{ID: "123", Name: "Pardosa maesta"}
 	m := matcher{fuzzyMatcher: fuzzyMatcherMock{}}
 	res := m.matchFuzzy("Pardosa maesta", "Pardosa maest", ns)
-	assert.Equal(t, len(res.MatchItems), 1)
-	assert.Equal(t, res.MatchItems[0].EditDistance, 1)
+	assert.Equal(t, 1, len(res.MatchItems))
+	assert.Equal(t, 1, res.MatchItems[0].EditDistance)
 	ns = nameString{ID: "124", Name: "Acacia may"}
 	res = m.matchFuzzy("Acacia may", "Acacia may", ns)
 	assert.Nil(t, res)

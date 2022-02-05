@@ -46,6 +46,13 @@ func TestVirus(t *testing.T) {
 			matchlen:  1,
 		},
 		{
+			msg:       "tobacco mosaic",
+			name:      "Tobacco mosaic virus",
+			matchStr:  "Tobacco mosaic virus",
+			matchType: vlib.Virus,
+			matchlen:  14,
+		},
+		{
 			msg:       "influenza overload",
 			name:      "Influenza B virus",
 			matchStr:  "Influenza B virus",
@@ -68,7 +75,7 @@ func TestVirus(t *testing.T) {
 	assert.Nil(t, err)
 
 	_ = enc.Decode(respBytes, &response)
-	assert.Equal(t, 5, len(response))
+	assert.Equal(t, 6, len(response))
 
 	for i, v := range tests {
 		res := response[i]

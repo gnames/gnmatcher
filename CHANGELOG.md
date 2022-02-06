@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.7.2]
+
+- Add: only collect NSQ logs from `/api/v1/matches`.
+
 ## [v0.7.1]
 
 - Add: update GNparser, small fixes in configuration.
@@ -136,6 +140,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.7.2]: https://github.com/gnames/gnmatcher/compare/v0.7.1...v0.7.2
 [v0.7.1]: https://github.com/gnames/gnmatcher/compare/v0.7.0...v0.7.1
 [v0.7.0]: https://github.com/gnames/gnmatcher/compare/v0.6.1...v0.7.0
 [v0.6.1]: https://github.com/gnames/gnmatcher/compare/v0.6.0...v0.6.1

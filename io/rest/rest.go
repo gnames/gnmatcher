@@ -83,6 +83,7 @@ func setLogger(e *echo.Echo, m MatcherService) nsq.NSQ {
 			StderrLogs: withLogs,
 			Topic:      "gnmatcher",
 			Address:    nsqAddr,
+			Contains:   `/api/v1/matches`,
 		}
 		remote, err := nsqio.New(cfg)
 		logCfg := middleware.DefaultLoggerConfig

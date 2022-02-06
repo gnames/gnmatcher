@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.7.1]
+
+- Add: update GNparser, small fixes in configuration.
+
 ## [v0.7.0]
 
 - Add [#42]: match viruses using suffixarray approach. Matches viruses from the
@@ -132,6 +136,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.7.1]: https://github.com/gnames/gnmatcher/compare/v0.7.0...v0.7.1
+[v0.7.0]: https://github.com/gnames/gnmatcher/compare/v0.6.1...v0.7.0
 [v0.6.1]: https://github.com/gnames/gnmatcher/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/gnames/gnmatcher/compare/v0.5.8...v0.6.0
 [v0.5.8]: https://github.com/gnames/gnmatcher/compare/v0.5.7...v0.5.8

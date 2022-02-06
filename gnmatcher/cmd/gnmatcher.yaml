@@ -36,7 +36,7 @@
 # wil not appear as STRERR output.
 # Example: `127.0.0.1:4150`
 #
-# WebLogsNsqdTCP: 
+# WebLogsNsqdTCP:
 
 # WithWebLogs flag enables logs when running web-service. This flag is
 # ignored if `Port` value is not set.

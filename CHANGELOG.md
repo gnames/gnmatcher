@@ -4,7 +4,7 @@
 
 ## [v0.7.3] - 2022-02-08
 
-- Add: only collect NSQ logs from `/api/v1/matches`.
+- Add [#43]: improve logs for NSQ, use zerolog library.
 
 ## [v0.7.2] - 2022-02-06
 

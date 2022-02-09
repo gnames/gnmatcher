@@ -9,10 +9,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/rs/zerolog/log"
 	nsqcfg "github.com/sfgrp/lognsq/config"
 	"github.com/sfgrp/lognsq/ent/nsq"
 	"github.com/sfgrp/lognsq/io/nsqio"
-	log "github.com/sirupsen/logrus"
 )
 
 // Run creates and runs a RESTful API service of gnmatcher.
@@ -32,7 +32,7 @@ func Run(m MatcherService) {
 	e.GET("/", root)
 	e.GET("/api/v1/ping", ping(m))
 	e.GET("/api/v1/version", ver(m))
-	e.POST("/api/v1/matches", match(m))
+	e.POST("/api/v1/matches", matchPOST(m))
 
 	addr := fmt.Sprintf(":%d", m.Port())
 	s := &http.Server{
@@ -46,7 +46,7 @@ func Run(m MatcherService) {
 func root(c echo.Context) error {
 	return c.String(http.StatusOK,
 		`The OpenAPI is described at
-https://app.swaggerhub.com/apis/dimus/gnmatcher/1.0.0`)
+https://apidoc.globalnames.org/gnmatcher`)
 }
 
 func ping(m MatcherService) func(echo.Context) error {
@@ -63,13 +63,20 @@ func ver(m MatcherService) func(echo.Context) error {
 	}
 }
 
-func match(m MatcherService) func(echo.Context) error {
+func matchPOST(m MatcherService) func(echo.Context) error {
 	return func(c echo.Context) error {
 		var names []string
 		if err := c.Bind(&names); err != nil {
 			return err
 		}
 		result := m.MatchNames(names)
+		if l := len(names); l > 0 {
+			log.Info().
+				Int("namesNum", l).
+				Str("example", names[0]).
+				Str("method", "POST").
+				Msg("Name Match")
+		}
 		return c.JSON(http.StatusOK, result)
 	}
 }
@@ -83,16 +90,17 @@ func setLogger(e *echo.Echo, m MatcherService) nsq.NSQ {
 			StderrLogs: withLogs,
 			Topic:      "gnmatcher",
 			Address:    nsqAddr,
-			Contains:   `/api/v1/matches`,
 		}
 		remote, err := nsqio.New(cfg)
 		logCfg := middleware.DefaultLoggerConfig
 		if err == nil {
 			logCfg.Output = remote
+			// set app logger too
+			log.Logger = log.Output(remote)
 		}
 		e.Use(middleware.LoggerWithConfig(logCfg))
 		if err != nil {
-			log.Warn(err)
+			log.Warn().Err(err)
 		}
 		return remote
 	} else if withLogs {

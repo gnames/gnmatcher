@@ -15,7 +15,7 @@ import (
 
 	"github.com/gnames/gnmatcher/config"
 	homedir "github.com/mitchellh/go-homedir"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
@@ -58,7 +58,7 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatalf("Cannot start gnmatcher: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot start gnmatcher")
 	}
 }
 
@@ -79,7 +79,7 @@ func initConfig() {
 	// Find home directory.
 	homePath, err = homedir.Dir()
 	if err != nil {
-		log.Fatalf("Cannot find home directory: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot find home directory")
 	}
 	cfgPath = filepath.Join(homePath, ".config")
 
@@ -118,7 +118,7 @@ func getOpts() []config.Option {
 	cfg := &cfgData{}
 	err := viper.Unmarshal(cfg)
 	if err != nil {
-		log.Fatalf("Cannot deserialize config data: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot deserialize config data")
 	}
 
 	if cfg.CacheDir != "" {
@@ -159,7 +159,7 @@ func getOpts() []config.Option {
 func showVersionFlag(cmd *cobra.Command) bool {
 	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatalf("Cannot get version flag: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot get version flag")
 	}
 
 	if hasVersionFlag {
@@ -182,11 +182,11 @@ func touchConfigFile(configPath string) {
 func createConfig(path string) {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Fatalf("Cannot create dir %s: %s.", path, err)
+		log.Fatal().Err(err).Msgf("Cannot create dir %s", path)
 	}
 
 	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Fatalf("Cannot write to file %s: %s", path, err)
+		log.Fatal().Err(err).Msgf("Cannot write to file %s", path)
 	}
 }

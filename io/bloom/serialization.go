@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func saveFilters(path string, filters *bloomFilters) {
@@ -23,19 +23,19 @@ func saveFilters(path string, filters *bloomFilters) {
 
 		file, err = createFile(filePath)
 		if err != nil {
-			log.Fatalf("Cannot create %s: %s", filePath, err)
+			log.Fatal().Err(err).Msgf("Cannot create %s", filePath)
 		}
 		if f == sizesFile {
 			err = saveSizesFile(file, filters)
 			if err != nil {
-				log.Fatalf("Cannot create sizesFile: %s", err)
+				log.Fatal().Err(err).Msg("Cannot create sizesFile")
 			}
 			continue
 		}
 
 		err = saveFilterFile(filePath, file, filter)
 		if err != nil {
-			log.Fatalf("Cannot create %s: %s", filePath, err)
+			log.Fatal().Err(err).Msgf("Cannot create %s", filePath)
 		}
 	}
 
@@ -47,8 +47,7 @@ func saveFilters(path string, filters *bloomFilters) {
 func createFile(filePath string) (*os.File, error) {
 	file, err := os.Create(filePath)
 	if err != nil {
-		warn := fmt.Sprintf("Could not create file %s: %s.", filePath, err)
-		log.Warning(warn)
+		log.Warn().Err(err).Msgf("Could not create file %s", filePath)
 	}
 	return file, err
 }
@@ -62,13 +61,11 @@ func saveFilterFile(
 	var err error
 	bin, err = filter.MarshalBinary()
 	if err != nil {
-		warn := fmt.Sprintf("Could not serialize for %s: %s.", filePath, err)
-		log.Warning(warn)
+		log.Warn().Err(err).Msgf("Could not serialize for %s", filePath)
 	}
 	_, err = file.Write(bin)
 	if err != nil {
-		warn := fmt.Sprintf("Could not save %s: %s.", filePath, err)
-		log.Warning(warn)
+		log.Warn().Err(err).Msgf("Could not save %s", filePath)
 	}
 	return err
 }
@@ -78,8 +75,7 @@ func saveSizesFile(file *os.File, filters *bloomFilters) error {
 	sizes := fmt.Sprintf("CanonicalSize,%d\n",
 		filters.canonicalSize)
 	if _, err = file.WriteString(sizes); err != nil {
-		warn := fmt.Sprintf("Could not save filter sizes to disk: %s.", err)
-		log.Warn(warn)
+		log.Warn().Err(err).Msg("Could not save filter sizes to disk")
 	}
 	return err
 }

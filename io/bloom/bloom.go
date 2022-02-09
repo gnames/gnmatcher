@@ -7,7 +7,7 @@ import (
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/ent/exact"
 	"github.com/gnames/gnsys"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 type exactMatcher struct {
@@ -22,7 +22,7 @@ func New(cfg config.Config) exact.ExactMatcher {
 
 func (em *exactMatcher) Init() {
 	em.prepareDir()
-	log.Println("Initializing bloom filters.")
+	log.Info().Msg("Initializing bloom filters.")
 	em.getFilters()
 }
 
@@ -34,10 +34,10 @@ func (em *exactMatcher) MatchCanonicalID(uuid string) bool {
 }
 
 func (em exactMatcher) prepareDir() {
-	log.Println("Preparing dir for bloom filters.")
+	log.Info().Msg("Preparing dir for bloom filters.")
 	bloomDir := em.cfg.FiltersDir()
 	err := gnsys.MakeDir(em.cfg.FiltersDir())
 	if err != nil {
-		log.Fatalf("Cannot create directory %s: %s.", bloomDir, err)
+		log.Fatal().Err(err).Msgf("Cannot create directory %s", bloomDir)
 	}
 }

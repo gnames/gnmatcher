@@ -2,12 +2,11 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/gnames/gnsys"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // Config collects and stores external configuration data.
@@ -85,7 +84,7 @@ func OptCacheDir(s string) Option {
 	return func(cfg *Config) {
 		cacheDir, err := gnsys.ConvertTilda(s)
 		if err != nil {
-			log.Warn(fmt.Sprintf("Cannot expand '%s': %v", s, err))
+			log.Warn().Err(err).Msgf("Cannot expand '~' in '%s'", s)
 		}
 		cfg.CacheDir = cacheDir
 	}
@@ -103,8 +102,11 @@ func OptJobsNum(i int) Option {
 func OptMaxEditDist(i int) Option {
 	return func(cfg *Config) {
 		if i < 1 || i > 2 {
-			log.Warn(fmt.Sprintf("MaxEditDist can only be 1 or 2, leaving it at %d.",
-				cfg.MaxEditDist))
+			log.Warn().
+				Msgf(
+					"MaxEditDist can only be 1 or 2, keeping it at %d.",
+					cfg.MaxEditDist,
+				)
 		} else {
 			cfg.MaxEditDist = i
 		}

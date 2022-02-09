@@ -8,7 +8,7 @@ import (
 	"github.com/gnames/gnfmt"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/gnames/gnmatcher/io/dbase"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func (v *virusio) prepareData() {
@@ -33,12 +33,14 @@ func (v *virusio) prepareData() {
 	var data []mlib.MatchItem
 	data, err = v.dataFromDB(path)
 	if err != nil {
-		log.Fatalf("Cannot create filters at %s from database: %s.", path, err)
+		log.Fatal().Err(err).
+			Msgf("Cannot create filters at %s from database", path)
 	}
 	bs := v.processData(data)
 	err = v.saveData(bs)
 	if err != nil {
-		log.Fatalf("Cannot save virus data to disk at '%s': %s.", path, err)
+		log.Fatal().Err(err).
+			Msgf("Cannot save virus data to disk at '%s'", path)
 	}
 }
 
@@ -83,7 +85,7 @@ func (v *virusio) processData(data []mlib.MatchItem) []byte {
 func (v *virusio) dataFromDB(path string) ([]mlib.MatchItem, error) {
 	var res []mlib.MatchItem
 	db := dbase.NewDB(v.cfg)
-	log.Println("Importing lookup data for viruses.")
+	log.Info().Msg("Importing lookup data for viruses")
 
 	q := `SELECT name_string_id, name
   FROM verification v

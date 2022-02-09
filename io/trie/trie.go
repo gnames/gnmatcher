@@ -16,7 +16,7 @@ import (
 	"github.com/gnames/gnmatcher/ent/fuzzy"
 	"github.com/gnames/gnmatcher/io/dbase"
 	"github.com/gnames/gnsys"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 const trieFile = "stem.trie"
@@ -59,7 +59,8 @@ func (fm *fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
 	misGob := bytes.NewBuffer(getValue(fm.keyVal, stem))
 	err := fm.encoder.Decode(misGob.Bytes(), &res)
 	if err != nil {
-		log.Warnf("Decode in StemToMatchItems for '%s' failed: %s", stem, err)
+		log.Warn().Err(err).
+			Msgf("Decode in StemToMatchItems for '%s' failed", stem)
 	}
 	return res
 }
@@ -71,13 +72,13 @@ func getTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
 	var trie *levenshtein.MinTree
 	trie, err := getCachedTrie(triePath)
 	if err == nil {
-		log.Println("Trie data is rebuilt from cache.")
+		log.Info().Msg("Trie data is rebuilt from cache.")
 		return trie
 	}
 
 	trie, err = populateAndSaveTrie(db, triePath)
 	if err != nil {
-		log.Fatalf("Cannot build trie from db: %s", err)
+		log.Fatal().Err(err).Msg("Cannot build trie from db")
 	}
 	return trie
 }
@@ -103,7 +104,7 @@ func getCachedTrie(triePath string) (*levenshtein.MinTree, error) {
 }
 
 func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, error) {
-	log.Println("Getting trie data from database.")
+	log.Info().Msg("Getting trie data from database")
 	var trie *levenshtein.MinTree
 	size, err := getTrieSize(db)
 	if err != nil {
@@ -124,7 +125,7 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 		}
 		names = append(names, name)
 	}
-	log.Println("Building trie and saving it to disk.")
+	log.Info().Msg("Building trie and saving it to disk")
 	path := filepath.Join(triePath, trieFile)
 	w, err := os.Create(path)
 	if err != nil {
@@ -134,17 +135,17 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 	if err != nil {
 		return trie, err
 	}
-	log.Println("Trie is created.")
+	log.Info().Msg("Trie is created")
 	return trie, nil
 }
 
 func (fm fuzzyMatcher) prepareDirs() {
-	log.Println("Preparing dirs for trie and stems key-value store.")
+	log.Info().Msg("Preparing dirs for trie and stems key-value store")
 	dirs := []string{fm.cfg.TrieDir(), fm.cfg.StemsDir()}
 	for _, dir := range dirs {
 		err := gnsys.MakeDir(dir)
 		if err != nil {
-			log.Fatalf("Cannot create directory %s: %s.", dir, err)
+			log.Fatal().Err(err).Msgf("Cannot create directory %s", dir)
 		}
 	}
 }

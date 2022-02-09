@@ -7,12 +7,12 @@ import (
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 	"github.com/gnames/gnmatcher/io/dbase"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func (em *exactMatcher) filtersFromDB(path string) error {
 	db := dbase.NewDB(em.cfg)
-	log.Println("Importing lookup data for simple canonicals.")
+	log.Info().Msg("Importing lookup data for simple canonicals")
 	cFilter, cSize, err := createFilter(db, "canonicals")
 	if err != nil {
 		return err

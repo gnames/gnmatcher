@@ -31,7 +31,8 @@ import (
 	"github.com/gnames/gnmatcher/io/rest"
 	"github.com/gnames/gnmatcher/io/trie"
 	"github.com/gnames/gnmatcher/io/virusio"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/spf13/cobra"
 )
@@ -46,13 +47,16 @@ as well.`,
 	Run: func(cmd *cobra.Command, _ []string) {
 		debug, _ := cmd.Flags().GetBool("debug")
 		if debug {
-			log.SetLevel(log.DebugLevel)
-			log.Printf("Log level is set to '%s'.", log.Level.String(log.GetLevel()))
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
+			log.Info().Msgf("Log level is set to '%s'", zerolog.DebugLevel.String())
 		}
 		port, err := cmd.Flags().GetInt("port")
 		if err != nil {
-			log.Fatalf("Cannot get port flag: %s", err)
+			log.Fatal().Err(err).Msg("Cannot get port flag")
 		}
+		log.Logger = log.With().
+			Str("gnApp", "gnmatcher").
+			Logger()
 		cfg := gnmcnf.New(opts...)
 		em := bloom.New(cfg)
 		fm := trie.New(cfg)

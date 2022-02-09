@@ -9,7 +9,7 @@ import (
 	"github.com/dgraph-io/badger/v2"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/gnames/gnsys"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // initStemsKV creates key-value store for stems and their canonical forms.
@@ -17,11 +17,11 @@ func initStemsKV(path string, db *sql.DB) {
 	var err error
 	err = gnsys.MakeDir(path)
 	if err != nil {
-		log.Fatalf("Cannot create %s: %s", path, err)
+		log.Fatal().Err(err).Msgf("Cannot create %s", path)
 	}
 
 	if keyValExists(path) {
-		log.Info("Stems key-value store already exists, skipping.")
+		log.Info().Msg("Stems key-value store already exists, skipping")
 		return
 	}
 	kv := connectKeyVal(path)
@@ -38,7 +38,7 @@ func initStemsKV(path string, db *sql.DB) {
 
 	rows, err := db.Query(q)
 	if err != nil {
-		log.Fatalf("Cannot get stems from DB: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot get stems from DB")
 	}
 
 	kvTxn := kv.NewTransaction(true)
@@ -47,7 +47,7 @@ func initStemsKV(path string, db *sql.DB) {
 	count := 0
 	for rows.Next() {
 		if err = rows.Scan(&stem, &name, &id); err != nil {
-			log.Fatalf("Cannot read stem data from query: %s.", err)
+			log.Fatal().Err(err).Msg("Cannot read stem data from query")
 		}
 		if currentStem == "" {
 			currentStem = stem
@@ -59,16 +59,16 @@ func initStemsKV(path string, db *sql.DB) {
 			var b bytes.Buffer
 			enc := gob.NewEncoder(&b)
 			if err = enc.Encode(stemRes); err != nil {
-				log.Fatalf("Cannot marshal canonicals: %s.", err)
+				log.Fatal().Err(err).Msg("Cannot marshal canonicals")
 			}
 			val := b.Bytes()
 			if err = kvTxn.Set(key, val); err != nil {
-				log.Fatalf("Transaction failed to set key: %s.", err)
+				log.Fatal().Err(err).Msg("Transaction failed to set key")
 			}
 			if count > 10_000 {
 				err = kvTxn.Commit()
 				if err != nil {
-					log.Fatalf("Transaction commit faied: %s.", err)
+					log.Fatal().Err(err).Msg("Transaction commit faied")
 				}
 				count = 0
 				kvTxn = kv.NewTransaction(true)
@@ -80,7 +80,7 @@ func initStemsKV(path string, db *sql.DB) {
 	}
 	err = kvTxn.Commit()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
 }
 
@@ -91,7 +91,7 @@ func connectKeyVal(path string) *badger.DB {
 	options.Logger = nil
 	bdb, err := badger.Open(options)
 	if err != nil {
-		log.Fatalf("Cannot connect to key-value store: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot connect to key-value store")
 	}
 	return bdb
 }
@@ -106,7 +106,7 @@ func getValue(kv *badger.DB, key string) []byte {
 		if err == badger.ErrKeyNotFound {
 			return nil
 		} else if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err)
 		}
 
 		return item.Value(func(val []byte) error {
@@ -115,7 +115,7 @@ func getValue(kv *badger.DB, key string) []byte {
 		})
 	})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
 	return res
 }

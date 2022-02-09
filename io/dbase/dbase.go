@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/gnames/gnmatcher/config"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -16,7 +16,7 @@ import (
 func NewDB(cfg config.Config) *sql.DB {
 	db, err := sql.Open("postgres", dbUrl(cfg))
 	if err != nil {
-		log.Fatalf("Cannot create PostgreSQL connection: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot create PostgreSQL connection")
 	}
 	return db
 }

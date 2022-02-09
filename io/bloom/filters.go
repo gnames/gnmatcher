@@ -6,9 +6,8 @@ package bloom
 import (
 	"sync"
 
-	log "github.com/sirupsen/logrus"
-
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
+	"github.com/rs/zerolog/log"
 )
 
 // Names of the files to create cache of bloom filters.
@@ -45,7 +44,7 @@ func (em *exactMatcher) getFilters() {
 
 	err = em.filtersFromCache(path)
 	if err != nil {
-		log.Fatalf("Cannot create filters at %s from cache: %s.", path, err)
+		log.Fatal().Err(err).Msgf("Cannot create filters at %s from cache", path)
 	}
 
 	if em.filters != nil {
@@ -54,6 +53,7 @@ func (em *exactMatcher) getFilters() {
 
 	err = em.filtersFromDB(path)
 	if err != nil {
-		log.Fatalf("Cannot create filters at %s from database: %s.", path, err)
+		log.Fatal().Err(err).
+			Msgf("Cannot create filters at %s from database", path)
 	}
 }

@@ -72,7 +72,7 @@ func getTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
 	var trie *levenshtein.MinTree
 	trie, err := getCachedTrie(triePath)
 	if err == nil {
-		log.Info().Msg("Trie data is rebuilt from cache.")
+		log.Info().Msg("Trie data is rebuilt from cache")
 		return trie
 	}
 

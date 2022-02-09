@@ -19,7 +19,7 @@ import (
 // this API is described by OpenAPI schema at
 // https://app.swaggerhub.com/apis/dimus/gnmatcher/1.0.0
 func Run(m MatcherService) {
-	log.Printf("Starting the HTTP API server on port %d.", m.Port())
+	log.Info().Int("port", m.Port()).Msg("Starting HTTP API server")
 	e := echo.New()
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
@@ -82,14 +82,19 @@ func matchPOST(m MatcherService) func(echo.Context) error {
 }
 
 func setLogger(e *echo.Echo, m MatcherService) nsq.NSQ {
-	nsqAddr := m.WebLogsNsqdTCP()
-	withLogs := m.WithWebLogs()
+	cfg := m.GetConfig()
+	nsqAddr := cfg.NsqdTCPAddress
+	withLogs := cfg.WithWebLogs
+	contains := cfg.NsqdContainsFilter
+	regex := cfg.NsqdRegexFilter
 
 	if nsqAddr != "" {
 		cfg := nsqcfg.Config{
 			StderrLogs: withLogs,
 			Topic:      "gnmatcher",
 			Address:    nsqAddr,
+			Contains:   contains,
+			Regex:      regex,
 		}
 		remote, err := nsqio.New(cfg)
 		logCfg := middleware.DefaultLoggerConfig

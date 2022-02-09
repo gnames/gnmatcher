@@ -63,8 +63,7 @@ as well.`,
 		vm := virusio.New(cfg)
 		gnm := gnmatcher.New(em, fm, vm, cfg)
 		if err != nil {
-			log.Printf("Cannot create an instance of GNmatcher: %s.", err)
-			os.Exit(1)
+			log.Fatal().Err(err).Msg("Cannot create an instance of GNmatcher")
 		}
 
 		var enc gnfmt.Encoder = gnfmt.GNjson{}

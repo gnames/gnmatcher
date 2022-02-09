@@ -30,7 +30,7 @@ func (em *exactMatcher) filtersFromCache(path string) error {
 }
 
 func (em *exactMatcher) getFiltersFromCache(cPath, sizesPath string) error {
-	log.Info().Msg("Geting bloom lookup data from a cache on disk.")
+	log.Info().Msg("Geting bloom lookup data from a cache on disk")
 	cCfg := restoreConfigs(sizesPath)
 	cFilter := baseBloomfilter.New(cCfg)
 

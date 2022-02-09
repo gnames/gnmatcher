@@ -12,7 +12,7 @@ import (
 )
 
 func (v *virusio) prepareData() {
-	log.Print("Preparing virus data")
+	log.Info().Msg("Preparing virus data")
 	path := v.cfg.VirusDir()
 	var err error
 
@@ -22,8 +22,8 @@ func (v *virusio) prepareData() {
 
 	err = v.dataFromCache(path)
 	if err != nil {
-		log.Printf("Cache for viruses at '%s' is empty.", path)
-		log.Print("Virus data will be received from the database")
+		log.Info().Msgf("Cache for viruses at '%s' is empty", path)
+		log.Info().Msg("Virus data will be received from the database")
 	}
 
 	if v.sufary != nil {

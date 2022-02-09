@@ -40,7 +40,7 @@ func saveFilters(path string, filters *bloomFilters) {
 	}
 
 	if err == nil {
-		log.Print("Saved cached filters to disk.")
+		log.Info().Msg("Saved cached filters to disk")
 	}
 }
 

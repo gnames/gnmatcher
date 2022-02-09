@@ -152,7 +152,7 @@ func truncateNamesToMaxNumber(names []string) []string {
 	if l := len(names); l > MaxNamesNum {
 		log.Warn().Int("namesNum", l).
 			Str("example", names[0]).
-			Msgf("Too many names, truncating list to %d entries.", MaxNamesNum)
+			Msgf("Too many names, truncating list to %d entries", MaxNamesNum)
 		names = names[0:MaxNamesNum]
 	}
 	return names

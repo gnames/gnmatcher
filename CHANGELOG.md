@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.7.4] - 2022-02-09
+
+- Add [#44]: add options to filter NSQ logs.
+
 ## [v0.7.3] - 2022-02-08
 
 - Add [#43]: improve logs for NSQ, use zerolog library.

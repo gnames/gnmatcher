@@ -29,16 +29,18 @@ var (
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	CacheDir       string
-	JobsNum        int
-	MaxEditDist    int
-	PgHost         string
-	PgPort         int
-	PgUser         string
-	PgPass         string
-	PgDB           string
-	WebLogsNsqdTCP string
-	WithWebLogs    bool
+	CacheDir           string
+	JobsNum            int
+	MaxEditDist        int
+	PgHost             string
+	PgPort             int
+	PgUser             string
+	PgPass             string
+	PgDB               string
+	NsqdTCPAddress     string
+	NsqdContainsFilter string
+	NsqdRegexFilter    string
+	WithWebLogs        bool
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -97,7 +99,9 @@ func initConfig() {
 	_ = viper.BindEnv("PgPass", "GNM_PG_PASS")
 	_ = viper.BindEnv("PgPort", "GNM_PG_PORT")
 	_ = viper.BindEnv("PgUser", "GNM_PG_USER")
-	_ = viper.BindEnv("WebLogsNsqdTCP", "GNM_WEB_LOGS_NSQD_TCP")
+	_ = viper.BindEnv("NsqdTCPAddress", "GNM_NSQD_TCP_ADDRESS")
+	_ = viper.BindEnv("NsqdContainsFilter", "GNM_NSQD_CONTAINS_FILTER")
+	_ = viper.BindEnv("NsqdRegexFilter", "GNM_NSQD_REGEX_FILTER")
 	_ = viper.BindEnv("WithWebLogs", "GNM_WITH_WEB_LOGS")
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -107,7 +111,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Printf("Using config file: %s.", viper.ConfigFileUsed())
+		log.Info().Msgf("Using config file: %s", viper.ConfigFileUsed())
 	}
 	getOpts()
 }
@@ -145,8 +149,14 @@ func getOpts() []config.Option {
 	if cfg.PgUser != "" {
 		opts = append(opts, config.OptPgUser(cfg.PgUser))
 	}
-	if cfg.WebLogsNsqdTCP != "" {
-		opts = append(opts, config.OptWebLogsNsqdTCP(cfg.WebLogsNsqdTCP))
+	if cfg.NsqdContainsFilter != "" {
+		opts = append(opts, config.OptNsqdContainsFilter(cfg.NsqdContainsFilter))
+	}
+	if cfg.NsqdRegexFilter != "" {
+		opts = append(opts, config.OptNsqdRegexFilter(cfg.NsqdRegexFilter))
+	}
+	if cfg.NsqdTCPAddress != "" {
+		opts = append(opts, config.OptNsqdTCPAddress(cfg.NsqdTCPAddress))
 	}
 	if cfg.WithWebLogs {
 		opts = append(opts, config.OptWithWebLogs(true))
@@ -174,7 +184,7 @@ func touchConfigFile(configPath string) {
 		return
 	}
 
-	log.Printf("Creating config file: %s.", configPath)
+	log.Info().Msgf("Creating config file: %s", configPath)
 	createConfig(configPath)
 }
 

@@ -22,7 +22,7 @@ func New(cfg config.Config) exact.ExactMatcher {
 
 func (em *exactMatcher) Init() {
 	em.prepareDir()
-	log.Info().Msg("Initializing bloom filters.")
+	log.Info().Msg("Initializing bloom filters")
 	em.getFilters()
 }
 
@@ -34,7 +34,7 @@ func (em *exactMatcher) MatchCanonicalID(uuid string) bool {
 }
 
 func (em exactMatcher) prepareDir() {
-	log.Info().Msg("Preparing dir for bloom filters.")
+	log.Info().Msg("Preparing dir for bloom filters")
 	bloomDir := em.cfg.FiltersDir()
 	err := gnsys.MakeDir(em.cfg.FiltersDir())
 	if err != nil {

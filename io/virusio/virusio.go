@@ -28,7 +28,7 @@ func New(cfg config.Config) virus.VirusMatcher {
 
 func (v *virusio) Init() {
 	v.prepareDir()
-	log.Print("Initializing viruses lookup data.")
+	log.Info().Msg("Initializing viruses lookup data")
 	v.prepareData()
 }
 
@@ -48,7 +48,7 @@ func (v *virusio) MatchVirus(s string) []mlib.MatchItem {
 }
 
 func (v *virusio) prepareDir() {
-	log.Print("Preparing directory for viruses.")
+	log.Info().Msg("Preparing directory for viruses")
 	bloomDir := v.cfg.VirusDir()
 	err := gnsys.MakeDir(v.cfg.VirusDir())
 	if err != nil {

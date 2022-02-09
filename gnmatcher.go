@@ -38,10 +38,6 @@ func (gnm gnmatcher) GetVersion() gnvers.Version {
 	return gnvers.Version{Version: Version, Build: Build}
 }
 
-func (gnm gnmatcher) WithWebLogs() bool {
-	return gnm.cfg.WithWebLogs
-}
-
-func (gnm gnmatcher) WebLogsNsqdTCP() string {
-	return gnm.cfg.WebLogsNsqdTCP
+func (gnm gnmatcher) GetConfig() config.Config {
+	return gnm.cfg
 }

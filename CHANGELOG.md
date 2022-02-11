@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.7.5] - 2022-02-09
+
+- Add [#46]: Fix fuzzy match for `Isoetes longisima`.
+
 ## [v0.7.4] - 2022-02-09
 
 - Add [#44]: add options to filter NSQ logs.
@@ -156,6 +160,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.7.5]: https://github.com/gnames/gnmatcher/compare/v0.7.4...v0.7.5
+[v0.7.4]: https://github.com/gnames/gnmatcher/compare/v0.7.3...v0.7.4
 [v0.7.3]: https://github.com/gnames/gnmatcher/compare/v0.7.2...v0.7.3
 [v0.7.2]: https://github.com/gnames/gnmatcher/compare/v0.7.1...v0.7.2
 [v0.7.1]: https://github.com/gnames/gnmatcher/compare/v0.7.0...v0.7.1

@@ -34,7 +34,7 @@ func initStemsKV(path string, db *sql.DB) {
             JOIN canonicals c
               ON ns.canonical_id = c.id
         GROUP BY c.name, c.id, s.name
-          ORDER BY name`
+          ORDER BY name_stem`
 
 	rows, err := db.Query(q)
 	if err != nil {

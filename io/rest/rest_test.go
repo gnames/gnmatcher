@@ -177,6 +177,6 @@ func TestFuzzy(t *testing.T) {
 	assert.Equal(t, "Acanthobolhrium crassicolle", fuzzy4.Name)
 	assert.Equal(t, vlib.Fuzzy, fuzzy4.MatchType)
 	assert.Equal(t, 2, len(fuzzy4.MatchItems))
-	assert.Equal(t, 1, fuzzy4.MatchItems[0].EditDistance)
-	assert.Equal(t, 3, fuzzy4.MatchItems[1].EditDistance)
+	assert.Equal(t, 3, fuzzy4.MatchItems[0].EditDistance)
+	assert.Equal(t, 1, fuzzy4.MatchItems[1].EditDistance)
 }

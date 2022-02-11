@@ -58,6 +58,12 @@ var bugs = []struct {
 		desc:           "#31 'Bubo bubo' matches partial instead of exact",
 	},
 	{
+		name:           "Isoetes longisima",
+		matchType:      vlib.Fuzzy,
+		matchCanonical: "Isoetes longissima",
+		desc:           "#45 'Isoetis longisima' fuzzy match is not found",
+	},
+	{
 		name:           "Bubo",
 		matchType:      vlib.Exact,
 		matchCanonical: "Bubo",

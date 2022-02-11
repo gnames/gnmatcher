@@ -180,3 +180,23 @@ func TestFuzzy(t *testing.T) {
 	assert.Equal(t, 3, fuzzy4.MatchItems[0].EditDistance)
 	assert.Equal(t, 1, fuzzy4.MatchItems[1].EditDistance)
 }
+
+// Related to issue #43. Send a name with one suffix and get back not only
+// names with the same suffix, but also ones with another suffix if available.
+func TestStem(t *testing.T) {
+	var response []mlib.Match
+	request := []string{
+		"Isoetes longissimum",
+	}
+	enc := gnfmt.GNjson{}
+	req, err := enc.Encode(request)
+	assert.Nil(t, err)
+	resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))
+	assert.Nil(t, err)
+	respBytes, err := io.ReadAll(resp.Body)
+	assert.Nil(t, err)
+
+	err = enc.Decode(respBytes, &response)
+	assert.Nil(t, err)
+	assert.Equal(t, len(response[0].MatchItems), 2)
+}

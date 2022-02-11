@@ -1,6 +1,7 @@
-// package bloom creates and serves bloom filters for canonical names, and names of viruses. The
-// filters are persistent throughout the life of the program. The filters are
-// used to find exact matches to the database data fast.
+// package bloom creates and serves bloom filters for stemmed canonical names,
+// and names of viruses. The filters are persistent throughout the life of the
+// program. The filters are used to find exact matches to the database data
+// fast.
 package bloom
 
 import (
@@ -28,7 +29,7 @@ func (em *exactMatcher) Init() {
 
 func (em *exactMatcher) MatchCanonicalID(uuid string) bool {
 	em.filters.mux.Lock()
-	isIn := em.filters.canonical.Check([]byte(uuid))
+	isIn := em.filters.canonicalStem.Check([]byte(uuid))
 	em.filters.mux.Unlock()
 	return isIn
 }

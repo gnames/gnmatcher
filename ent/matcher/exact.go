@@ -3,26 +3,37 @@ package matcher
 import (
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnmatcher/ent/fuzzy"
 )
 
-// match tries to match a canonical form of a name-string exactly to canonical
-// from from gnames database.
-func (m matcher) match(ns nameString) *mlib.Match {
-	isIn := m.isExactMatch(ns.CanonicalID, ns.CanonicalStem)
-	if isIn {
-		return &mlib.Match{
-			ID:        ns.ID,
-			Name:      ns.Name,
-			MatchType: vlib.Exact,
-			MatchItems: []mlib.MatchItem{
-				{
-					ID:       ns.CanonicalID,
-					MatchStr: ns.Canonical,
-				},
-			},
-		}
+func (m matcher) matchStem(ns nameString) *mlib.Match {
+	matches := m.exactStemMatches(ns.CanonicalStemID, ns.CanonicalStem)
+	if len(matches) == 0 {
+		return nil
 	}
-	return nilResult
+	matchType := vlib.Fuzzy
+	matchItems := make([]mlib.MatchItem, 0, len(matches))
+	for _, v := range matches {
+		if v.MatchStr == ns.Canonical {
+			v.MatchType = vlib.Exact
+			matchType = vlib.Exact
+		} else {
+			editDistance := fuzzy.EditDistance(ns.Name, v.MatchStr)
+			// editDistance went over threshold
+			if editDistance == -1 {
+				continue
+			}
+			v.EditDistance = editDistance
+			v.MatchType = vlib.Fuzzy
+		}
+		matchItems = append(matchItems, v)
+	}
+	return &mlib.Match{
+		ID:         ns.ID,
+		Name:       ns.Name,
+		MatchType:  matchType,
+		MatchItems: matchItems,
+	}
 }
 
 // matchVirus returns the "virus" name the way it was given, without matching.

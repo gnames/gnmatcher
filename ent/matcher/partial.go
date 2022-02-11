@@ -3,6 +3,7 @@ package matcher
 import (
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnmatcher/ent/fuzzy"
 	"github.com/gnames/gnparser"
 	"github.com/gnames/gnparser/ent/stemmer"
 	"github.com/gnames/gnuuid"
@@ -26,35 +27,57 @@ func (m matcher) matchPartial(ns nameString, parser gnparser.GNparser) *mlib.Mat
 
 func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 	gID := gnuuid.New(ns.Partial.Genus).String()
-	isIn := m.isExactMatch(gID, ns.Partial.Genus)
-	if isIn {
-		return &mlib.Match{
-			ID:         ns.ID,
-			Name:       ns.Name,
-			MatchType:  vlib.PartialExact,
-			MatchItems: []mlib.MatchItem{{ID: gID, MatchStr: ns.Partial.Genus}},
-		}
+	matchItems := m.exactStemMatches(gID, ns.Partial.Genus)
+	if len(matchItems) == 0 {
+		return emptyResult(ns)
 	}
-	return emptyResult(ns)
+	for i := range matchItems {
+		matchItems[i].MatchType = vlib.PartialExact
+	}
+	return &mlib.Match{
+		ID:         ns.ID,
+		Name:       ns.Name,
+		MatchType:  vlib.PartialExact,
+		MatchItems: matchItems,
+	}
 }
 
 func (m matcher) processPartial(p multinomial, ns nameString,
 	parser gnparser.GNparser) *mlib.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
+		// TODO this is probably not efficient to use parser so many times
 		nsPart, parsed := newNameString(parser, name)
 		if !parsed.Parsed {
 			continue
 		}
-		isIn := m.isExactMatch(nsPart.CanonicalID, nsPart.CanonicalStem)
-		if isIn {
-			res := &mlib.Match{
+		matchType := vlib.PartialFuzzy
+		matches := m.exactStemMatches(nsPart.CanonicalStemID, nsPart.CanonicalStem)
+		if len(matches) > 0 {
+			matchItems := make([]mlib.MatchItem, 0, len(matches))
+			for _, v := range matches {
+				if v.MatchStr == nsPart.Canonical {
+					matchType = vlib.PartialExact
+				} else {
+					editDistance := fuzzy.EditDistance(nsPart.Canonical, v.MatchStr)
+					if v.EditDistance == -1 {
+						continue
+					}
+					v.EditDistance = editDistance
+					v.MatchType = vlib.PartialFuzzy
+				}
+				matchItems = append(matchItems, v)
+			}
+			if len(matchItems) == 0 {
+				return nil
+			}
+
+			return &mlib.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
-				MatchType:  vlib.PartialExact,
-				MatchItems: []mlib.MatchItem{{ID: nsPart.ID, MatchStr: name}},
+				MatchType:  matchType,
+				MatchItems: matchItems,
 			}
-			return res
 		}
 	}
 

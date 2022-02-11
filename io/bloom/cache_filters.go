@@ -15,7 +15,7 @@ import (
 // filtersFromcache unmarchals data from a file, and uses the data for the
 // filter creations.
 func (em *exactMatcher) filtersFromCache(path string) error {
-	cPath := filepath.Join(path, canonicalFile)
+	cPath := filepath.Join(path, canonicalStemFile)
 	sizesPath := filepath.Join(path, sizesFile)
 	cPathExists, err := gnsys.FileExists(cPath)
 	if err != nil {
@@ -44,7 +44,7 @@ func (em *exactMatcher) getFiltersFromCache(cPath, sizesPath string) error {
 	}
 
 	em.filters = &bloomFilters{
-		canonical: cFilter,
+		canonicalStem: cFilter,
 	}
 	return nil
 }

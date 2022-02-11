@@ -22,8 +22,8 @@ type nameString struct {
 	// Canonical is the simplest most common version of a canonical form of
 	// a name string.
 	Canonical string
-	// CanonicalID is UUID v5 generated from the Canonical field.
-	CanonicalID string
+	// CanonicalStemID is UUID v5 generated from the Canonical field.
+	CanonicalStemID string
 	// Canonical Stem is version of the Canonical field with suffixes removed
 	// and characters substituted according to rules of Latin grammar.
 	CanonicalStem string
@@ -60,12 +60,12 @@ func newNameString(
 	prsd := parser.ParseName(name)
 	if prsd.Parsed {
 		ns := nameString{
-			ID:            prsd.VerbatimID,
-			Name:          name,
-			Cardinality:   int(prsd.Cardinality),
-			Canonical:     prsd.Canonical.Simple,
-			CanonicalID:   gnuuid.New(prsd.Canonical.Simple).String(),
-			CanonicalStem: prsd.Canonical.Stemmed,
+			ID:              prsd.VerbatimID,
+			Name:            name,
+			Cardinality:     int(prsd.Cardinality),
+			Canonical:       prsd.Canonical.Simple,
+			CanonicalStemID: gnuuid.New(prsd.Canonical.Stemmed).String(),
+			CanonicalStem:   prsd.Canonical.Stemmed,
 		}
 
 		ns.newPartial(prsd)

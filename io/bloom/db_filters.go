@@ -12,21 +12,23 @@ import (
 
 func (em *exactMatcher) filtersFromDB(path string) error {
 	db := dbase.NewDB(em.cfg)
-	log.Info().Msg("Importing lookup data for simple canonicals")
-	cFilter, cSize, err := createFilter(db, "canonicals")
+	log.Info().Msg("Importing lookup data for stemmed canonicals")
+	cFilter, cSize, err := createFilter(db, "canonical_stems")
 	if err != nil {
 		return err
 	}
 	em.filters = &bloomFilters{
-		canonical:     cFilter,
+		canonicalStem: cFilter,
 		canonicalSize: cSize,
 	}
 	saveFilters(path, em.filters)
 	return db.Close()
 }
 
-func createFilter(db *sql.DB,
-	table string) (*baseBloomfilter.Bloomfilter, uint, error) {
+func createFilter(
+	db *sql.DB,
+	table string,
+) (*baseBloomfilter.Bloomfilter, uint, error) {
 	var err error
 	var nilFilter *baseBloomfilter.Bloomfilter
 
@@ -39,9 +41,6 @@ func createFilter(db *sql.DB,
 
 func getFilterSize(db *sql.DB, table string) (uint, error) {
 	q := fmt.Sprintf("SELECT COUNT(*) FROM %s", table)
-	if table == "name_strings" {
-		q = fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE virus = TRUE", table)
-	}
 	var num uint
 	row := db.QueryRow(q)
 	if err := row.Scan(&num); err != nil {
@@ -50,8 +49,11 @@ func getFilterSize(db *sql.DB, table string) (uint, error) {
 	return num, nil
 }
 
-func newFilter(db *sql.DB, table string,
-	filterSize uint) (*baseBloomfilter.Bloomfilter, uint, error) {
+func newFilter(
+	db *sql.DB,
+	table string,
+	filterSize uint,
+) (*baseBloomfilter.Bloomfilter, uint, error) {
 	var uuid string
 	cfg := bloomfilter.Config{
 		N:        filterSize,

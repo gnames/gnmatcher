@@ -23,6 +23,7 @@ func (m matcher) matchFuzzy(name, stem string,
 	}
 	for _, stemMatch := range stemMatches {
 		editDistanceStem := fuzzy.EditDistance(stemMatch, stem)
+		// -1 means edit distance got over threshold
 		if editDistanceStem == -1 {
 			continue
 		}
@@ -36,6 +37,7 @@ func (m matcher) matchFuzzy(name, stem string,
 			}
 			matchItem.EditDistance = editDistance
 			matchItem.EditDistanceStem = editDistanceStem
+			matchItem.MatchType = vlib.Fuzzy
 			res.MatchItems = append(res.MatchItems, matchItem)
 		}
 	}

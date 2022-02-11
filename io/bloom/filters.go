@@ -1,6 +1,7 @@
-// package bloom creates and serves bloom filters for canonical names, and names of viruses. The
-// filters are persistent throughout the life of the program. The filters are
-// used to find exact matches to the database data fast.
+// package bloom creates and serves bloom filters for stemmed canonical names,
+// and names of viruses. The filters are persistent throughout the life of the
+// program. The filters are used to find exact matches to the database data
+// fast.
 package bloom
 
 import (
@@ -12,15 +13,15 @@ import (
 
 // Names of the files to create cache of bloom filters.
 const (
-	canonicalFile = "canonicals.bf"
-	virusFile     = "viruses.bf"
-	sizesFile     = "canonical_sizes.csv"
+	canonicalStemFile = "canonical_stems.bf"
+	virusFile         = "viruses.bf"
+	sizesFile         = "canonical_sizes.csv"
 )
 
 // bloomFilters contain bloom filters data we use for matching.
 type bloomFilters struct {
-	// canonical is a filter for matching with canonical names.
-	canonical *baseBloomfilter.Bloomfilter
+	// canonicalStem is a filter for matching with canonicalStem names.
+	canonicalStem *baseBloomfilter.Bloomfilter
 
 	// canonicalSize is number of entries in 'simple' canonical filter. It is
 	// used as an option during Canonical filter creation.

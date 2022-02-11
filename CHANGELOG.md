@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+## [v0.8.0] - 2022-02-13 Sun
+
+- Add [#45]: exact match uses stem, and might return fuzzy match.
+
 ## [v0.7.5] - 2022-02-09
 
-- Add [#46]: Fix fuzzy match for `Isoetes longisima`.
+- Fix [#46]: fuzzy match for `Isoetes longisima`.
 
 ## [v0.7.4] - 2022-02-09
 

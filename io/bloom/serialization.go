@@ -13,8 +13,8 @@ func saveFilters(path string, filters *bloomFilters) {
 	var err error
 	var nilFilter *baseBloomfilter.Bloomfilter
 	files := map[string]*baseBloomfilter.Bloomfilter{
-		canonicalFile: filters.canonical,
-		sizesFile:     nilFilter,
+		canonicalStemFile: filters.canonicalStem,
+		sizesFile:         nilFilter,
 	}
 
 	for f, filter := range files {

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	// MaxNMaxNamesNum is the largest number of names that can be processed
+	// MaxMaxNamesNum is the largest number of names that can be processed
 	// per request. If input contains more names, it will be truncated.
 	MaxNamesNum = 10_000
 )
@@ -119,7 +119,7 @@ func (m matcher) matchWorker(
 				chOut <- matchOut{index: tsk.index, match: *abbrResult}
 				continue
 			}
-			matchResult = m.match(ns)
+			matchResult = m.matchStem(ns)
 			if ns.Cardinality < 2 {
 				if matchResult == nil {
 					matchResult = emptyResult(ns)
@@ -178,9 +178,15 @@ func detectAbbreviated(prsd *parsed.Parsed) *mlib.Match {
 	return nilResult
 }
 
-func (m matcher) isExactMatch(uuid, stem string) bool {
-	return m.exactMatcher.MatchCanonicalID(uuid) &&
-		m.fuzzyMatcher.MatchStemExact(stem)
+func (m matcher) exactStemMatches(stemUUID, stem string) []mlib.MatchItem {
+	if !m.exactMatcher.MatchCanonicalID(stemUUID) {
+		return nil
+	}
+	if m.fuzzyMatcher.MatchStemExact(stem) {
+		res := m.fuzzyMatcher.StemToMatchItems(stem)
+		return res
+	}
+	return nil
 }
 
 func emptyResult(ns nameString) *mlib.Match {

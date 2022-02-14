@@ -1,7 +1,6 @@
 package matcher
 
 import (
-	"fmt"
 	"sync"
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
@@ -132,7 +131,6 @@ func (m matcher) matchWorker(
 			matchResult = m.matchVirus(ns)
 		}
 		if matchResult == nil {
-			fmt.Printf("HERE_NS: %#v\n\n", ns)
 			matchResult = m.matchFuzzy(ns.Canonical, ns.CanonicalStem, ns)
 		}
 		if matchResult == nil {

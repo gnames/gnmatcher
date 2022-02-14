@@ -30,9 +30,9 @@ func Run(m MatcherService) {
 	}
 
 	e.GET("/", root)
-	e.GET("/api/v1/ping", ping(m))
-	e.GET("/api/v1/version", ver(m))
-	e.POST("/api/v1/matches", matchPOST(m))
+	e.GET("/api/v0/ping", ping(m))
+	e.GET("/api/v0/version", ver(m))
+	e.POST("/api/v0/matches", matchPOST(m))
 
 	addr := fmt.Sprintf(":%d", m.Port())
 	s := &http.Server{

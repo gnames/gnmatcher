@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.0] - 2022-02-14 Mon
+
+- move from `/api/v1` to `api/v0`
+
 ## [v0.8.1] - 2022-02-14 Mon
 
 - tweak fuzzy matching rules

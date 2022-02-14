@@ -1,6 +1,8 @@
 package matcher
 
 import (
+	"fmt"
+
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnmatcher/ent/fuzzy"
@@ -14,6 +16,8 @@ func (m matcher) matchFuzzy(name, stem string,
 	if len(stemMatches) == 0 {
 		return nilResult
 	}
+	fmt.Printf("STEM: %#v\n\n", stem)
+	fmt.Printf("MATCH: %#v\n\n", stemMatches)
 
 	res := &mlib.Match{
 		ID:         ns.ID,

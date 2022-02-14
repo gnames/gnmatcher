@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.8.1] - 2022-02-14 Mon
+
+- tweak fuzzy matching rules
+
 ## [v0.8.0] - 2022-02-13 Sun
 
 - Add [#45]: exact match uses stem, and might return fuzzy match.

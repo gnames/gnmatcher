@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	charsPerED      = 2
+	charsPerED      = 4
 	maxEditDistance = 6
 )
 

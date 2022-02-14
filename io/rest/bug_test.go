@@ -21,60 +21,60 @@ var bugs = []struct {
 	matchCanonical string
 	desc           string
 }{
-	// {
-	// 	name:           "Tillaudsia utriculata",
-	// 	matchType:      vlib.Fuzzy,
-	// 	matchCanonical: "Tillandsia utriculata",
-	// 	desc:           "#7 gnidump, Misspelling of Tillandsia",
-	// },
-	// {
-	// 	name:           "Drosohila melanogaster",
-	// 	matchType:      vlib.Fuzzy,
-	// 	matchCanonical: "Drosophila melanogaster",
-	// 	desc:           "#23 gnmatcher, Misspelling of Drosophila",
-	// },
-	// {
-	// 	name:           "Acacia horrida",
-	// 	matchType:      vlib.Exact,
-	// 	matchCanonical: "Acacia horrida",
-	// 	desc:           "#24 checking Exact match",
-	// },
+	{
+		name:           "Tillaudsia utriculata",
+		matchType:      vlib.Fuzzy,
+		matchCanonical: "Tillandsia utriculata",
+		desc:           "#7 gnidump, Misspelling of Tillandsia",
+	},
+	{
+		name:           "Drosohila melanogaster",
+		matchType:      vlib.Fuzzy,
+		matchCanonical: "Drosophila melanogaster",
+		desc:           "#23 gnmatcher, Misspelling of Drosophila",
+	},
+	{
+		name:           "Acacia horrida",
+		matchType:      vlib.Exact,
+		matchCanonical: "Acacia horrida",
+		desc:           "#24 checking Exact match",
+	},
 	{
 		name:           "Acacia horrida nur",
 		matchType:      vlib.PartialExact,
 		matchCanonical: "Acacia horrida",
 		desc:           "#24 PartialExact match does not work",
 	},
-	// {
-	// 	name:           "Acacia nur",
-	// 	matchType:      vlib.PartialExact,
-	// 	matchCanonical: "Acacia",
-	// 	desc:           "PartialExact 'Acacia nur'",
-	// },
-	// {
-	// 	name:           "Bubo bubo",
-	// 	matchType:      vlib.Exact,
-	// 	matchCanonical: "Bubo bubo",
-	// 	desc:           "#31 'Bubo bubo' matches partial instead of exact",
-	// },
-	// {
-	// 	name:           "Isoetes longisima",
-	// 	matchType:      vlib.Fuzzy,
-	// 	matchCanonical: "Isoetes longissima",
-	// 	desc:           "#45 'Isoetis longisima' fuzzy match is not found",
-	// },
-	// {
-	// 	name:           "Bubo",
-	// 	matchType:      vlib.Exact,
-	// 	matchCanonical: "Bubo",
-	// 	desc:           "#31 'Bubo' uninomials do not match",
-	// },
-	// {
-	// 	name:           "Acetothermia bacterium enrichment culture clone B13-B-61",
-	// 	matchType:      vlib.NoMatch,
-	// 	matchCanonical: "",
-	// 	desc:           "Should not be parsed",
-	// },
+	{
+		name:           "Acacia nur",
+		matchType:      vlib.PartialExact,
+		matchCanonical: "Acacia",
+		desc:           "PartialExact 'Acacia nur'",
+	},
+	{
+		name:           "Bubo bubo",
+		matchType:      vlib.Exact,
+		matchCanonical: "Bubo bubo",
+		desc:           "#31 'Bubo bubo' matches partial instead of exact",
+	},
+	{
+		name:           "Isoetes longisima",
+		matchType:      vlib.Fuzzy,
+		matchCanonical: "Isoetes longissima",
+		desc:           "#45 'Isoetis longisima' fuzzy match is not found",
+	},
+	{
+		name:           "Bubo",
+		matchType:      vlib.Exact,
+		matchCanonical: "Bubo",
+		desc:           "#31 'Bubo' uninomials do not match",
+	},
+	{
+		name:           "Acetothermia bacterium enrichment culture clone B13-B-61",
+		matchType:      vlib.NoMatch,
+		matchCanonical: "",
+		desc:           "Should not be parsed",
+	},
 }
 
 func TestBugs(t *testing.T) {

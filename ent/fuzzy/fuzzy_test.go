@@ -24,11 +24,11 @@ func TestDist(t *testing.T) {
 		{"Hello", "Hello", 0},
 		{"Pomatomus", "Pom-tomus", 1},
 		{"Pomatomus", "Pomщtomus", 1},
-		// ed = 3, too big
-		{"sitting", "kitten", 3},
-		// words are too small
 		{"Pom atomus", "Poma tomus", 2},
-		{"Acacia mal", "Acacia may", 1},
+		// ed = 3, too big
+		{"sitting", "kitten", -1},
+		// words are too small
+		{"Acacia mal", "Acacia may", -1},
 		// differnt number of words is not covered yet
 		{"Pomatomus", "Poma  tomus", 2},
 		// edge cases that should not happen

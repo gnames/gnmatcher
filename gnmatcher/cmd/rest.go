@@ -53,6 +53,9 @@ as well.`,
 		if err != nil {
 			log.Fatal().Err(err).Msg("Cannot get port flag")
 		}
+		log.Logger = log.With().
+			Str("gnApp", "gnmatcher-api-v1").
+			Logger()
 		cfg := gnmcnf.NewConfig(opts...)
 		em := bloom.NewExactMatcher(cfg)
 		fm := trie.NewFuzzyMatcher(cfg)

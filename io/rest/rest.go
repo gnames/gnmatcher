@@ -91,7 +91,7 @@ func setLogger(e *echo.Echo, m MatcherService) nsq.NSQ {
 	if nsqAddr != "" {
 		cfg := nsqcfg.Config{
 			StderrLogs: withLogs,
-			Topic:      "gnmatcher",
+			Topic:      "gnmatcher-api-v1",
 			Address:    nsqAddr,
 			Contains:   contains,
 			Regex:      regex,

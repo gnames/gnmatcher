@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/csv"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,6 +16,7 @@ import (
 	humanize "github.com/dustin/go-humanize"
 	"github.com/gnames/gnfmt"
 	mlib "github.com/gnames/gnlib/ent/matcher"
+	"github.com/rs/zerolog/log"
 )
 
 const batch = 10_000
@@ -46,15 +46,15 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		total := count * batch
 		req, err := enc.Encode(&request)
 		if err != nil {
-			log.Fatalf("Cannot marshall input: %v", err)
+			log.Fatal().Err(err).Msg("Cannot marshall input")
 		}
 		resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))
 		if err != nil {
-			log.Fatalf("Cannot send request: %v", err)
+			log.Fatal().Err(err).Msg("Cannot send request")
 		}
 		respBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatalf("Cannot get data: %v", err)
+			log.Fatal().Err(err).Msg("Cannot get data")
 		}
 		var response []mlib.Match
 		_ = enc.Decode(respBytes, &response)
@@ -67,7 +67,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 			if len(res.MatchItems) == 0 {
 				err = w.Write([]string{name, matchType, "", "", ""})
 				if err != nil {
-					log.Fatalf("Cannot write CSV file: %s", err)
+					log.Fatal().Err(err).Msg("Cannot write CSV file")
 				}
 			}
 			for _, v := range res.MatchItems {
@@ -78,7 +78,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 					name, matchType, match,
 					strconv.Itoa(editDist), strconv.Itoa(editDistStem)})
 				if err != nil {
-					log.Fatalf("Cannot write CSV file: %s", err)
+					log.Fatal().Err(err).Msg("Cannot write CSV file")
 				}
 			}
 		}
@@ -86,7 +86,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if total%10_000 == 0 {
 			timeSpent := float64(time.Now().UnixNano()-timeStart) / 1_000_000_000
 			speed := int64(float64(total) / timeSpent)
-			log.Printf("Verified %s names, %s names/sec",
+			log.Info().Msgf("Verified %s names, %s names/sec",
 				humanize.Comma(int64(total)), humanize.Comma(speed))
 		}
 	}
@@ -97,7 +97,7 @@ func namesToChannel(chNames chan<- []string) {
 	names := make([]string, 0, batch)
 	f, err := os.Open(path)
 	if err != nil {
-		log.Fatalf("Cannot open %s: %s", path, err)
+		log.Fatal().Err(err).Msgf("Cannot open %s", path)
 	}
 	defer f.Close()
 	r := csv.NewReader(f)
@@ -105,7 +105,7 @@ func namesToChannel(chNames chan<- []string) {
 	// skip header
 	_, err = r.Read()
 	if err != nil {
-		log.Fatalf("Cannot read from %s: %s", path, err)
+		log.Fatal().Err(err).Msgf("Cannot read from %s", path)
 	}
 	for {
 		row, err := r.Read()
@@ -113,7 +113,7 @@ func namesToChannel(chNames chan<- []string) {
 			break
 		}
 		if err != nil {
-			log.Fatalf("Cannot read body from %s: %s", path, err)
+			log.Fatal().Err(err).Msgf("Cannot read body from %s", path)
 		}
 		names = append(names, row[0])
 		if len(names) > batch-1 {

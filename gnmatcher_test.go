@@ -46,7 +46,8 @@ func (fm mockFuzzyMatcher) StemToMatchItems(s string) []mlib.MatchItem {
 func TestVersion(t *testing.T) {
 	em := mockExactMatcher{}
 	fm := mockFuzzyMatcher{}
-	gnm := gnmatcher.NewGNmatcher(em, fm, 1)
+	cfg := config.NewConfig()
+	gnm := gnmatcher.New(em, fm, cfg)
 	ver := gnm.GetVersion()
 	verRegex := regexp.MustCompile(`^v[\d]+\.[\d]+\.[\d]+$`)
 	assert.Regexp(t, verRegex, ver.Version)
@@ -63,7 +64,7 @@ func Example() {
 	cfg := config.NewConfig()
 	em := bloom.NewExactMatcher(cfg)
 	fm := trie.NewFuzzyMatcher(cfg)
-	gnm := gnmatcher.NewGNmatcher(em, fm, 1)
+	gnm := gnmatcher.New(em, fm, cfg)
 	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
 	for _, match := range res {
 		fmt.Println(match.Name)

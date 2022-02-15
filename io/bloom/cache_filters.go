@@ -2,7 +2,6 @@ package bloom
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -10,7 +9,7 @@ import (
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 	"github.com/gnames/gnsys"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // filtersFromcache unmarchals data from a file, and uses the data for the
@@ -36,7 +35,7 @@ func (em *exactMatcher) filtersFromCache(path string) error {
 }
 
 func (em *exactMatcher) getFiltersFromCache(cPath, vPath, sizesPath string) error {
-	log.Println("Geting lookup data from a cache on disk.")
+	log.Info().Msg("Geting lookup data from a cache on disk.")
 	cCfg, vCfg := restoreConfigs(sizesPath)
 	cFilter := baseBloomfilter.New(cCfg)
 	vFilter := baseBloomfilter.New(vCfg)
@@ -69,17 +68,17 @@ func restoreConfigs(sizeFile string) (bloomfilter.Config, bloomfilter.Config) {
 	var cCfg, vCfg bloomfilter.Config
 	f, err := os.Open(sizeFile)
 	if err != nil {
-		log.Warning(fmt.Sprintf("Could not open file %s: %s.", sizeFile, err))
+		log.Warn().Err(err).Msgf("Could not open file %s", sizeFile)
 	}
 	r := csv.NewReader(f)
 	rows, err := r.ReadAll()
 	if err != nil {
-		log.Warning(fmt.Sprintf("Could not read data from file %s: %s.", sizeFile, err))
+		log.Warn().Err(err).Msgf("Could not read data from file %s", sizeFile)
 	}
 	for _, v := range rows {
 		size, err := strconv.Atoi(v[1])
 		if err != nil {
-			log.Warning(fmt.Sprintf("Could not convert data size to int: %s.", err))
+			log.Warn().Err(err).Msg("Could not convert data size to int")
 		}
 		switch v[0] {
 		case "CanonicalSize":

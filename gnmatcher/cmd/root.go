@@ -3,6 +3,7 @@
 package cmd
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,29 +15,12 @@ import (
 
 	"github.com/gnames/gnmatcher/config"
 	homedir "github.com/mitchellh/go-homedir"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
-const configText = `# Path to keep working data and key-value stores
-WorkDir: ~/.local/share/gnmatcher
-
-# Postgresql host for gnames database
-PgHost: localhost
-
-# Postgresql user
-PgUser: postgres
-
-# Postgresql password
-PgPass:
-
-# Postgresql database
-PgDB: gnames
-
-# MaxEditDist is the maximal edit distance for fuzzy matching of
-# stemmed canonical forms. Can be 1 or 2, 2 is significantly slower.
-MaxEditDist: 1
-`
+//go:embed gnmatcher.yaml
+var configText string
 
 var (
 	opts []config.Option
@@ -45,14 +29,18 @@ var (
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	WorkDir     string
-	PgHost      string
-	PgPort      int
-	PgUser      string
-	PgPass      string
-	PgDB        string
-	MaxEditDist int
-	JobsNum     int
+	WorkDir            string
+	PgHost             string
+	PgPort             int
+	PgUser             string
+	PgPass             string
+	PgDB               string
+	MaxEditDist        int
+	JobsNum            int
+	NsqdTCPAddress     string
+	NsqdContainsFilter string
+	NsqdRegexFilter    string
+	WithWebLogs        bool
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -71,7 +59,7 @@ var rootCmd = &cobra.Command{
 // to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatalf("Cannot start gnmatcher: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot start gnmatcher")
 	}
 }
 
@@ -92,7 +80,7 @@ func initConfig() {
 	// Find home directory.
 	home, err = homedir.Dir()
 	if err != nil {
-		log.Fatalf("Cannot find home directory: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot find home directory")
 	}
 	home = filepath.Join(home, ".config")
 
@@ -110,6 +98,10 @@ func initConfig() {
 	_ = viper.BindEnv("PgDB", "GNM_PG_DB")
 	_ = viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
 	_ = viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
+	_ = viper.BindEnv("NsqdTCPAddress", "GNM_NSQD_TCP_ADDRESS")
+	_ = viper.BindEnv("NsqdContainsFilter", "GNM_NSQD_CONTAINS_FILTER")
+	_ = viper.BindEnv("NsqdRegexFilter", "GNM_NSQD_REGEX_FILTER")
+	_ = viper.BindEnv("WithWebLogs", "GNM_WITH_WEB_LOGS")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -118,7 +110,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Printf("Using config file: %s.", viper.ConfigFileUsed())
+		log.Info().Msgf("Using config file: %s.", viper.ConfigFileUsed())
 	}
 	getOpts()
 }
@@ -129,7 +121,7 @@ func getOpts() []config.Option {
 	cfg := &cfgData{}
 	err := viper.Unmarshal(cfg)
 	if err != nil {
-		log.Fatalf("Cannot deserialize config data: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot deserialize config data")
 	}
 
 	if cfg.WorkDir != "" {
@@ -156,6 +148,18 @@ func getOpts() []config.Option {
 	if cfg.JobsNum > 0 {
 		opts = append(opts, config.OptJobsNum(cfg.JobsNum))
 	}
+	if cfg.NsqdContainsFilter != "" {
+		opts = append(opts, config.OptNsqdContainsFilter(cfg.NsqdContainsFilter))
+	}
+	if cfg.NsqdRegexFilter != "" {
+		opts = append(opts, config.OptNsqdRegexFilter(cfg.NsqdRegexFilter))
+	}
+	if cfg.NsqdTCPAddress != "" {
+		opts = append(opts, config.OptNsqdTCPAddress(cfg.NsqdTCPAddress))
+	}
+	if cfg.WithWebLogs {
+		opts = append(opts, config.OptWithWebLogs(true))
+	}
 	return opts
 }
 
@@ -164,7 +168,7 @@ func getOpts() []config.Option {
 func showVersionFlag(cmd *cobra.Command) bool {
 	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatalf("Cannot get version flag: %s.", err)
+		log.Fatal().Err(err).Msg("Cannot get version flag")
 	}
 
 	if hasVersionFlag {
@@ -179,7 +183,7 @@ func touchConfigFile(configPath string, configFile string) {
 		return
 	}
 
-	log.Printf("Creating config file: %s.", configPath)
+	log.Info().Msgf("Creating config file: %s.", configPath)
 	createConfig(configPath, configFile)
 }
 
@@ -187,11 +191,11 @@ func touchConfigFile(configPath string, configFile string) {
 func createConfig(path string, file string) {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Fatalf("Cannot create dir %s: %s.", path, err)
+		log.Fatal().Err(err).Msgf("Cannot create dir %s", path)
 	}
 
 	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Fatalf("Cannot write to file %s: %s", path, err)
+		log.Fatal().Err(err).Msgf("Cannot write to file %s", path)
 	}
 }

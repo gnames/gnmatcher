@@ -4,8 +4,9 @@
 package bloom
 
 import (
-	log "github.com/sirupsen/logrus"
 	"sync"
+
+	"github.com/rs/zerolog/log"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 )
@@ -46,7 +47,7 @@ func (em *exactMatcher) getFilters() {
 
 	err = em.filtersFromCache(path)
 	if err != nil {
-		log.Fatalf("Cannot create filters at %s from cache: %s.", path, err)
+		log.Fatal().Err(err).Msgf("Cannot create filters at %s from cache", path)
 	}
 
 	if em.filters != nil {
@@ -55,6 +56,6 @@ func (em *exactMatcher) getFilters() {
 
 	err = em.filtersFromDB(path)
 	if err != nil {
-		log.Fatalf("Cannot create filters at %s from database: %s.", path, err)
+		log.Fatal().Err(err).Msgf("Cannot create filters at %s from database", path)
 	}
 }

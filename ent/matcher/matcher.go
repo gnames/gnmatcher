@@ -9,7 +9,7 @@ import (
 	"github.com/gnames/gnmatcher/ent/fuzzy"
 	"github.com/gnames/gnparser"
 	"github.com/gnames/gnparser/ent/parsed"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -66,7 +66,7 @@ func (m matcher) MatchNames(names []string) []mlib.Match {
 	wgOut.Add(1)
 
 	names = truncateNamesToMaxNumber(names)
-	log.Infof("Processing %d names.", len(names))
+	log.Info().Msgf("Processing %d names.", len(names))
 	res := make([]mlib.Match, len(names))
 
 	go loadNames(chIn, names)
@@ -137,7 +137,7 @@ func loadNames(chIn chan<- nameIn, names []string) {
 
 func truncateNamesToMaxNumber(names []string) []string {
 	if len(names) > MaxNamesNum {
-		log.Warnf("Too many names, truncating list to %d entries.", MaxNamesNum)
+		log.Warn().Msgf("Too many names, truncating list to %d entries.", MaxNamesNum)
 		names = names[0:MaxNamesNum]
 	}
 	return names

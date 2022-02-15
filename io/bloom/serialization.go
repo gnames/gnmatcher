@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func saveFilters(path string, filters *bloomFilters) {
@@ -24,23 +24,23 @@ func saveFilters(path string, filters *bloomFilters) {
 
 		file, err = createFile(filePath)
 		if err != nil {
-			log.Fatalf("Cannot create %s: %s", filePath, err)
+			log.Fatal().Err(err).Msgf("Cannot create %s", filePath)
 		}
 		if f == sizesFile {
 			err = saveSizesFile(file, filters)
 			if err != nil {
-				log.Fatalf("Cannot create sizesFile: %s", err)
+				log.Fatal().Err(err).Msg("Cannot create sizesFile")
 			}
 			continue
 		}
 		err = saveFilterFile(filePath, file, filter)
 		if err != nil {
-			log.Fatalf("Cannot create %s: %s", filePath, err)
+			log.Fatal().Err(err).Msgf("Cannot create %s", filePath)
 		}
 	}
 
 	if err == nil {
-		log.Print("Saved cached filters to disk.")
+		log.Info().Msg("Saved cached filters to disk.")
 	}
 }
 
@@ -48,7 +48,7 @@ func createFile(filePath string) (*os.File, error) {
 	file, err := os.Create(filePath)
 	if err != nil {
 		warn := fmt.Sprintf("Could not create file %s: %s.", filePath, err)
-		log.Warning(warn)
+		log.Warn().Msg(warn)
 	}
 	return file, err
 }
@@ -60,12 +60,12 @@ func saveFilterFile(filePath string, file *os.File,
 	bin, err = filter.MarshalBinary()
 	if err != nil {
 		warn := fmt.Sprintf("Could not serialize for %s: %s.", filePath, err)
-		log.Warning(warn)
+		log.Warn().Msg(warn)
 	}
 	_, err = file.Write(bin)
 	if err != nil {
 		warn := fmt.Sprintf("Could not save %s: %s.", filePath, err)
-		log.Warning(warn)
+		log.Warn().Msg(warn)
 	}
 	return err
 }
@@ -76,7 +76,7 @@ func saveSizesFile(file *os.File, filters *bloomFilters) error {
 		filters.canonicalSize, filters.virusSize)
 	if _, err = file.WriteString(sizes); err != nil {
 		warn := fmt.Sprintf("Could not save filter sizes to disk: %s.", err)
-		log.Warn(warn)
+		log.Warn().Msg(warn)
 	}
 	return err
 }

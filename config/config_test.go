@@ -5,7 +5,7 @@ import (
 
 	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnsys"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,7 +45,7 @@ func TestNewOpts(t *testing.T) {
 
 // 	MaxEditDist is limited to 1 or 2
 func TestMaxED(t *testing.T) {
-	log.SetLevel(log.PanicLevel)
+	zerolog.SetGlobalLevel(zerolog.Disabled)
 	cfg := config.NewConfig(config.OptMaxEditDist(5))
 	assert.Equal(t, cfg.MaxEditDist, 1)
 	cfg = config.NewConfig(config.OptMaxEditDist(0))
@@ -54,6 +54,7 @@ func TestMaxED(t *testing.T) {
 	assert.Equal(t, cfg.MaxEditDist, 1)
 	cfg = config.NewConfig(config.OptMaxEditDist(2))
 	assert.Equal(t, cfg.MaxEditDist, 2)
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 }
 
 func TestHelpers(t *testing.T) {

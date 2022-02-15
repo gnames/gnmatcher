@@ -9,18 +9,25 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
+	nsqcfg "github.com/sfgrp/lognsq/config"
+	"github.com/sfgrp/lognsq/ent/nsq"
+	"github.com/sfgrp/lognsq/io/nsqio"
 )
 
 // Run creates and runs a RESTful API service of gnmatcher.
 // this API is described by OpenAPI schema at
 // https://app.swaggerhub.com/apis/dimus/gnmatcher/1.0.0
 func Run(m MatcherService) {
-	log.Printf("Starting the HTTP API server on port %d.", m.Port())
+	log.Info().Msgf("Starting the HTTP API server on port %d.", m.Port())
 	e := echo.New()
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
-	// e.Use(middleware.Logger())
+
+	loggerNSQ := setLogger(e, m)
+	if loggerNSQ != nil {
+		defer loggerNSQ.Stop()
+	}
 
 	e.GET("/", root)
 	e.GET("/api/v1/ping", ping(m))
@@ -39,7 +46,7 @@ func Run(m MatcherService) {
 func root(c echo.Context) error {
 	return c.String(http.StatusOK,
 		`The OpenAPI is described at
-https://app.swaggerhub.com/apis/dimus/gnmatcher/1.0.0`)
+https://apidoc.globalnames.org/gnmatcher`)
 }
 
 func ping(m MatcherService) func(echo.Context) error {
@@ -63,6 +70,47 @@ func match(m MatcherService) func(echo.Context) error {
 			return err
 		}
 		result := m.MatchNames(names)
+		if l := len(names); l > 0 {
+			log.Info().
+				Int("namesNum", l).
+				Str("example", names[0]).
+				Str("method", "POST").
+				Msg("Name Match")
+		}
 		return c.JSON(http.StatusOK, result)
 	}
+}
+
+func setLogger(e *echo.Echo, m MatcherService) nsq.NSQ {
+	cfg := m.GetConfig()
+	nsqAddr := cfg.NsqdTCPAddress
+	withLogs := cfg.WithWebLogs
+	contains := cfg.NsqdContainsFilter
+	regex := cfg.NsqdRegexFilter
+
+	if nsqAddr != "" {
+		cfg := nsqcfg.Config{
+			StderrLogs: withLogs,
+			Topic:      "gnmatcher",
+			Address:    nsqAddr,
+			Contains:   contains,
+			Regex:      regex,
+		}
+		remote, err := nsqio.New(cfg)
+		logCfg := middleware.DefaultLoggerConfig
+		if err == nil {
+			logCfg.Output = remote
+			// set app logger too
+			log.Logger = log.Output(remote)
+		}
+		e.Use(middleware.LoggerWithConfig(logCfg))
+		if err != nil {
+			log.Warn().Err(err)
+		}
+		return remote
+	} else if withLogs {
+		e.Use(middleware.Logger())
+		return nil
+	}
+	return nil
 }

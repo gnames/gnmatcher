@@ -2,11 +2,11 @@
 package config
 
 import (
-	"fmt"
 	"path/filepath"
+	"regexp"
 
 	"github.com/gnames/gnsys"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // Config collects and stores external configuration data.
@@ -30,6 +30,32 @@ type Config struct {
 	PgPass string
 	// PgDB the database name where gnames data is located.
 	PgDB string
+
+	// NsqdTCPAddress provides an address to the NSQ messenger TCP service. If
+	// this value is set and valid, the web logs will be published to the NSQ.
+	// The option is ignored if `Port` is not set.
+	//
+	// If WithWebLogs option is set to `false`, but `NsqdTCPAddress` is set to a
+	// valid URL, the logs will be sent to the NSQ messanging service, but they
+	// wil not appear as STRERR output.
+	// Example: `127.0.0.1:4150`
+	NsqdTCPAddress string
+
+	// NsqdContainsFilter logs should match the filter to be sent to NSQ
+	// service.
+	// Examples:
+	// "api" - logs should contain "api"
+	// "!api" - logs should not contain "api"
+	NsqdContainsFilter string
+
+	// NsqdRegexFilter logs should match the regular expression to be sent to
+	// NSQ service.
+	// Example: `api\/v(0|1)`
+	NsqdRegexFilter *regexp.Regexp
+
+	// WithWebLogs flag enables logs when running web-service. This flag is
+	// ignored if `Port` value is not set.
+	WithWebLogs bool
 }
 
 // NewConfig is a Config constructor that takes external options to
@@ -79,7 +105,7 @@ func OptWorkDir(s string) Option {
 	return func(cfg *Config) {
 		workDir, err := gnsys.ConvertTilda(s)
 		if err != nil {
-			log.Warn(fmt.Sprintf("Cannot expand '%s': %v", s, err))
+			log.Warn().Err(err).Msgf("Cannot expand '%s'", s)
 		}
 		cfg.WorkDir = workDir
 	}
@@ -90,8 +116,8 @@ func OptWorkDir(s string) Option {
 func OptMaxEditDist(i int) Option {
 	return func(cfg *Config) {
 		if i < 1 || i > 2 {
-			log.Warn(fmt.Sprintf("MaxEditDist can only be 1 or 2, leaving it at %d.",
-				cfg.MaxEditDist))
+			log.Warn().Msgf("MaxEditDist can only be 1 or 2, leaving it at %d.",
+				cfg.MaxEditDist)
 		} else {
 			cfg.MaxEditDist = i
 		}
@@ -137,5 +163,35 @@ func OptPgDB(s string) Option {
 func OptJobsNum(i int) Option {
 	return func(cfg *Config) {
 		cfg.JobsNum = i
+	}
+}
+
+// OptNsqdTCPAddress provides an address of NSQ messanging service.
+func OptNsqdTCPAddress(s string) Option {
+	return func(cfg *Config) {
+		cfg.NsqdTCPAddress = s
+	}
+}
+
+// OptNsqdContainsFilter provides a filter for logs sent to NSQ service.
+func OptNsqdContainsFilter(s string) Option {
+	return func(cfg *Config) {
+		cfg.NsqdContainsFilter = s
+	}
+}
+
+// OptNsqdRegexFilter provides a regular expression filter for
+// logs sent to NSQ service.
+func OptNsqdRegexFilter(s string) Option {
+	return func(cfg *Config) {
+		r := regexp.MustCompile(s)
+		cfg.NsqdRegexFilter = r
+	}
+}
+
+// OptWithWebLogs sets the WithWebLogs field.
+func OptWithWebLogs(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithWebLogs = b
 	}
 }

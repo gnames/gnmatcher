@@ -13,6 +13,7 @@ package gnmatcher
 import (
 	"github.com/gnames/gnlib/ent/gnvers"
 	mlib "github.com/gnames/gnlib/ent/matcher"
+	"github.com/gnames/gnmatcher/config"
 )
 
 // GNmatcher is a public API to the project functionality.
@@ -30,6 +31,9 @@ type GNmatcher interface {
 	// The resulting output does provide canonical forms, but not the sources
 	// where they are registered.
 	MatchNames(names []string) []mlib.Match
+
+	// GetConfig provides configuration object of GNmatcher.
+	GetConfig() config.Config
 
 	// GetVersion returns version number and build timestamp
 	GetVersion() gnvers.Version

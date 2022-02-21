@@ -2,13 +2,15 @@
 
 ## Unreleased
 
+- add PgPort to config file.
+
 ## [v0.9.0] - 2022-02-14 Mon
 
-- move from `/api/v1` to `api/v0`
+- move from `/api/v1` to `api/v0`.
 
 ## [v0.8.1] - 2022-02-14 Mon
 
-- tweak fuzzy matching rules
+- tweak fuzzy matching rules.
 
 ## [v0.8.0] - 2022-02-13 Sun
 

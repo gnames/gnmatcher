@@ -22,6 +22,7 @@ func NewDB(cfg config.Config) *sql.DB {
 }
 
 func dbUrl(cfg config.Config) string {
-	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		cfg.PgUser, cfg.PgPass, cfg.PgHost, cfg.PgPort, cfg.PgDB)
+	return dbURL
 }

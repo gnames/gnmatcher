@@ -6,6 +6,10 @@
 #
 # PgHost: localhost
 
+# PgPort is the port of the PostgreSQL service.
+#
+# PgPort: 5432
+
 # PgUser is a PostgreSQL user with read permissions to `gnames` database.
 #
 # PgUser: postgres

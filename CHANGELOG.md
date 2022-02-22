@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- add PgPort to config file.
+- Add: PgPort to config file.
+
+- Fix: MatchType for PartialMatch
 
 ## [v0.9.0] - 2022-02-14 Mon
 

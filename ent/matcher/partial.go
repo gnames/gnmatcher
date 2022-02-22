@@ -58,6 +58,7 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 			for _, v := range matches {
 				if v.MatchStr == nsPart.Canonical {
 					matchType = vlib.PartialExact
+					v.MatchType = matchType
 				} else {
 					editDistance := fuzzy.EditDistance(nsPart.Canonical, v.MatchStr)
 					if v.EditDistance == -1 {

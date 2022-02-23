@@ -91,5 +91,5 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 		}
 	}
 
-	return nilResult
+	return nil
 }

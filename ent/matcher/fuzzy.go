@@ -12,7 +12,7 @@ func (m matcher) matchFuzzy(name, stem string,
 	ns nameString) *mlib.Match {
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
-		return nilResult
+		return nil
 	}
 
 	res := &mlib.Match{

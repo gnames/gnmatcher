@@ -19,8 +19,6 @@ const (
 	MaxNamesNum = 10_000
 )
 
-var nilResult *mlib.Match
-
 type matcher struct {
 	exactMatcher exact.ExactMatcher
 	fuzzyMatcher fuzzy.FuzzyMatcher
@@ -164,7 +162,7 @@ func truncateNamesToMaxNumber(names []string) []string {
 func detectAbbreviated(prsd *parsed.Parsed) *mlib.Match {
 	// Abbreviations belong to ParseQuality 4
 	if prsd.ParseQuality != 4 {
-		return nilResult
+		return nil
 	}
 	for _, v := range prsd.QualityWarnings {
 		if v.Warning == parsed.GenusAbbrWarn {
@@ -175,7 +173,7 @@ func detectAbbreviated(prsd *parsed.Parsed) *mlib.Match {
 			}
 		}
 	}
-	return nilResult
+	return nil
 }
 
 func (m matcher) exactStemMatches(stemUUID, stem string) []mlib.MatchItem {

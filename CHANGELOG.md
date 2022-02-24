@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.9.1] - 2022-02-24 Thu
+
 - Add: PgPort to config file.
 
 - Fix: MatchType for PartialMatch
@@ -176,6 +178,11 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.1]: https://github.com/gnames/gnmatcher/compare/v0.9.0...v0.9.1
+[v0.9.0]: https://github.com/gnames/gnmatcher/compare/v0.7.5...v0.9.0
+[v0.8.1]: https://github.com/gnames/gnmatcher/compare/v0.8.0...v0.8.1
+[v0.8.0]: https://github.com/gnames/gnmatcher/compare/v0.7.5...v0.8.0
+[v0.7.5]: https://github.com/gnames/gnmatcher/compare/v0.7.4...v0.7.5
 [v0.7.5]: https://github.com/gnames/gnmatcher/compare/v0.7.4...v0.7.5
 [v0.7.4]: https://github.com/gnames/gnmatcher/compare/v0.7.3...v0.7.4
 [v0.7.3]: https://github.com/gnames/gnmatcher/compare/v0.7.2...v0.7.3
@@ -211,6 +218,16 @@ This document follows [changelog guidelines]
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
 
+[#60]: https://github.com/gnames/gnmatcher/issues/60
+[#59]: https://github.com/gnames/gnmatcher/issues/59
+[#58]: https://github.com/gnames/gnmatcher/issues/58
+[#57]: https://github.com/gnames/gnmatcher/issues/57
+[#56]: https://github.com/gnames/gnmatcher/issues/56
+[#55]: https://github.com/gnames/gnmatcher/issues/55
+[#54]: https://github.com/gnames/gnmatcher/issues/54
+[#53]: https://github.com/gnames/gnmatcher/issues/53
+[#52]: https://github.com/gnames/gnmatcher/issues/52
+[#51]: https://github.com/gnames/gnmatcher/issues/51
 [#50]: https://github.com/gnames/gnmatcher/issues/50
 [#49]: https://github.com/gnames/gnmatcher/issues/49
 [#48]: https://github.com/gnames/gnmatcher/issues/48

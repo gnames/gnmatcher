@@ -18,7 +18,7 @@ func (m matcher) matchStem(ns nameString) *mlib.Match {
 			v.MatchType = vlib.Exact
 			matchType = vlib.Exact
 		} else {
-			editDistance := fuzzy.EditDistance(ns.Name, v.MatchStr)
+			editDistance := fuzzy.EditDistance(ns.Canonical, v.MatchStr)
 			// editDistance went over threshold
 			if editDistance == -1 {
 				continue

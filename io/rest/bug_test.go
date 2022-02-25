@@ -75,6 +75,12 @@ var bugs = []struct {
 		matchCanonical: "",
 		desc:           "Should not be parsed",
 	},
+	{
+		name:           "Teucrium pyrenaicum subsp. guarense",
+		matchType:      vlib.Fuzzy,
+		matchCanonical: "Teucrium pyrenaicum guarensis",
+		desc:           "#47 compares result with canonical simple",
+	},
 }
 
 func TestBugs(t *testing.T) {

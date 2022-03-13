@@ -25,8 +25,10 @@ func TestDist(t *testing.T) {
 		{"Pomatomus", "Pom-tomus", 1},
 		{"Pomatomus", "Pomщtomus", 1},
 		{"Pom atomus", "Poma tomus", 2},
-		// ed = 3, too big
-		{"sitting", "kitten", -1},
+		// ed = 3, it was not allowed before, it is now, because
+		// we assume that high edit distance comes from suffix of a stemmed
+		// match
+		{"sitting", "kitten", 3},
 		// words are too small
 		{"Acacia mal", "Acacia may", -1},
 		// differnt number of words is not covered yet
@@ -34,6 +36,7 @@ func TestDist(t *testing.T) {
 		// edge cases that should not happen
 		// more than one empty space
 		{"Pomatomus saltator", "Pomatomus  saltator", 1},
+		{"Vesicaria creticum", "Vesicaria cretica", 2},
 	}
 
 	for _, v := range testData {

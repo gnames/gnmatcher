@@ -32,6 +32,7 @@ func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 		return emptyResult(ns)
 	}
 	for i := range matchItems {
+		matchItems[i].InputStr = ns.Partial.Genus
 		matchItems[i].MatchType = vlib.PartialExact
 	}
 	return &mlib.Match{
@@ -56,12 +57,13 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 		if len(matches) > 0 {
 			matchItems := make([]mlib.MatchItem, 0, len(matches))
 			for _, v := range matches {
-				if v.MatchStr == nsPart.Canonical {
+				v.InputStr = nsPart.Canonical
+				if v.MatchStr == v.InputStr {
 					matchType = vlib.PartialExact
 					v.MatchType = matchType
 				} else {
-					editDistance := fuzzy.EditDistance(nsPart.Canonical, v.MatchStr)
-					if v.EditDistance == -1 {
+					editDistance := fuzzy.EditDistance(v.InputStr, v.MatchStr)
+					if editDistance == -1 {
 						continue
 					}
 					v.EditDistance = editDistance

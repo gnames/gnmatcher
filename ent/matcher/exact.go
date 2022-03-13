@@ -14,11 +14,12 @@ func (m matcher) matchStem(ns nameString) *mlib.Match {
 	matchType := vlib.Fuzzy
 	matchItems := make([]mlib.MatchItem, 0, len(matches))
 	for _, v := range matches {
-		if v.MatchStr == ns.Canonical {
+		v.InputStr = ns.Canonical
+		if v.MatchStr == v.InputStr {
 			v.MatchType = vlib.Exact
 			matchType = vlib.Exact
 		} else {
-			editDistance := fuzzy.EditDistance(ns.Canonical, v.MatchStr)
+			editDistance := fuzzy.EditDistance(v.InputStr, v.MatchStr)
 			// editDistance went over threshold
 			if editDistance == -1 {
 				continue

@@ -8,7 +8,7 @@ import (
 
 // matchFuzzy tries to get fuzzy matching of a stemmed name-string to canonical
 // forms from the gnames database.
-func (m matcher) matchFuzzy(name, stem string,
+func (m matcher) matchFuzzy(canonical, stem string,
 	ns nameString) *mlib.Match {
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
@@ -29,8 +29,9 @@ func (m matcher) matchFuzzy(name, stem string,
 		}
 		matchItems := m.fuzzyMatcher.StemToMatchItems(stemMatch)
 		for _, matchItem := range matchItems {
+			matchItem.InputStr = canonical
 			// runs edit distance with checks, returns -1 if checks failed.
-			editDistance := fuzzy.EditDistance(name, matchItem.MatchStr)
+			editDistance := fuzzy.EditDistance(matchItem.InputStr, matchItem.MatchStr)
 			// skip matches that failed edit distance checks.
 			if editDistance == -1 {
 				continue

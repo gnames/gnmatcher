@@ -47,7 +47,8 @@ func checkED(s1, s2 string, ed int) int {
 	}
 	for i, w := range words2 {
 		r := []rune(w)
-		if len(r)/ed < charsPerED {
+		// check short words if they do not have too many changes
+		if len(r) < 5 {
 			wordED, _, _ := editdist.ComputeDistance(w, words1[i], false)
 			if wordED > 0 && len(r)/wordED < charsPerED {
 				return -1

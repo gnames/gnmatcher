@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.2] - 2022-03-13 Sun
+
+- Fix[#48]: do not allow edit distance -1 in results
+
 ## [v0.9.1] - 2022-02-25 Fri
 
 - Add: PgPort to config file.

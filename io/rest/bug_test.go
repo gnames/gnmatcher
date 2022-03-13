@@ -16,70 +16,86 @@ import (
 const url = "http://:8080/api/v0/"
 
 var bugs = []struct {
-	name           string
-	matchType      vlib.MatchTypeValue
-	matchCanonical string
-	desc           string
+	msg, name, matchCanonical string
+	matchType                 vlib.MatchTypeValue
+	editDistance              int
 }{
 	{
+		msg:            "#7 gnidump, Misspelling of Tillandsia",
 		name:           "Tillaudsia utriculata",
-		matchType:      vlib.Fuzzy,
 		matchCanonical: "Tillandsia utriculata",
-		desc:           "#7 gnidump, Misspelling of Tillandsia",
+		matchType:      vlib.Fuzzy,
+		editDistance:   1,
 	},
 	{
+		msg:            "#23 gnmatcher, Misspelling of Drosophila",
 		name:           "Drosohila melanogaster",
-		matchType:      vlib.Fuzzy,
 		matchCanonical: "Drosophila melanogaster",
-		desc:           "#23 gnmatcher, Misspelling of Drosophila",
+		matchType:      vlib.Fuzzy,
+		editDistance:   1,
 	},
 	{
+		msg:            "#24 checking Exact match",
 		name:           "Acacia horrida",
-		matchType:      vlib.Exact,
 		matchCanonical: "Acacia horrida",
-		desc:           "#24 checking Exact match",
+		matchType:      vlib.Exact,
+		editDistance:   0,
 	},
 	{
+		msg:            "#24 PartialExact match does not work",
 		name:           "Acacia horrida nur",
-		matchType:      vlib.PartialExact,
 		matchCanonical: "Acacia horrida",
-		desc:           "#24 PartialExact match does not work",
-	},
-	{
-		name:           "Acacia nur",
 		matchType:      vlib.PartialExact,
+		editDistance:   0,
+	},
+	{
+		msg:            "PartialExact 'Acacia nur'",
+		name:           "Acacia nur",
 		matchCanonical: "Acacia",
-		desc:           "PartialExact 'Acacia nur'",
+		matchType:      vlib.PartialExact,
+		editDistance:   0,
 	},
 	{
+		msg:            "#31 'Bubo bubo' matches partial instead of exact",
 		name:           "Bubo bubo",
-		matchType:      vlib.Exact,
 		matchCanonical: "Bubo bubo",
-		desc:           "#31 'Bubo bubo' matches partial instead of exact",
-	},
-	{
-		name:           "Isoetes longisima",
-		matchType:      vlib.Fuzzy,
-		matchCanonical: "Isoetes longissima",
-		desc:           "#45 'Isoetis longisima' fuzzy match is not found",
-	},
-	{
-		name:           "Bubo",
 		matchType:      vlib.Exact,
-		matchCanonical: "Bubo",
-		desc:           "#31 'Bubo' uninomials do not match",
+		editDistance:   0,
 	},
 	{
-		name:           "Acetothermia bacterium enrichment culture clone B13-B-61",
-		matchType:      vlib.NoMatch,
-		matchCanonical: "",
-		desc:           "Should not be parsed",
-	},
-	{
-		name:           "Teucrium pyrenaicum subsp. guarense",
+		msg:            "#45 'Isoetis longisima' fuzzy match is not found",
+		name:           "Isoetes longisima",
+		matchCanonical: "Isoetes longissima",
 		matchType:      vlib.Fuzzy,
+		editDistance:   1,
+	},
+	{
+		msg:            "#31 'Bubo' uninomials do not match",
+		name:           "Bubo",
+		matchCanonical: "Bubo",
+		matchType:      vlib.Exact,
+		editDistance:   0,
+	},
+	{
+		msg:            "Should not be parsed",
+		name:           "Acetothermia bacterium enrichment culture clone B13-B-61",
+		matchCanonical: "",
+		matchType:      vlib.NoMatch,
+		editDistance:   0,
+	},
+	{
+		msg:            "#47 compares result with canonical simple",
+		name:           "Teucrium pyrenaicum subsp. guarense",
 		matchCanonical: "Teucrium pyrenaicum guarensis",
-		desc:           "#47 compares result with canonical simple",
+		matchType:      vlib.Fuzzy,
+		editDistance:   2,
+	},
+	{
+		msg:            "#48 should not have -1 edit distance",
+		name:           "Vesicaria deltoideum creticum",
+		matchCanonical: "Vesicaria cretica",
+		matchType:      vlib.PartialFuzzy,
+		editDistance:   2,
 	},
 }
 
@@ -105,14 +121,24 @@ func TestBugs(t *testing.T) {
 			continue
 		}
 		assert.Greater(t, len(mtch[i].MatchItems), 0, msg)
-		hasItem := false
+		var hasItem, hasEDist bool
+		ed := 100
 		for _, mi := range mtch[i].MatchItems {
 			if mi.MatchStr == v.matchCanonical {
 				hasItem = true
 			}
+			if mi.EditDistance < ed {
+				ed = mi.EditDistance
+			}
+			if mi.EditDistance == v.editDistance {
+				hasEDist = true
+			}
 		}
 		msg = fmt.Sprintf("%s -> %s", mtch[i].Name, v.matchCanonical)
+		msgEDist := fmt.Sprintf("%s, ed: %d instead of %d", msg, ed, v.editDistance)
 		assert.True(t, hasItem, msg)
+		assert.True(t, ed >= 0)
+		assert.True(t, hasEDist, msgEDist)
 
 	}
 }

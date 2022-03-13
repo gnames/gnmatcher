@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.3] - 2022-03-13 Sun
+
+- Fix: remove 'replace' statement from go.mod
+
 ## [v0.9.2] - 2022-03-13 Sun
 
 - Fix[#48]: do not allow edit distance -1 in results

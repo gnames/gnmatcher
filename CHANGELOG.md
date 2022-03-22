@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.4] - 2022-03-22 Tue
+
+- Add: Go 1.18, modules update
+
 ## [v0.9.3] - 2022-03-13 Sun
 
 - Fix: remove 'replace' statement from go.mod
@@ -52,9 +56,9 @@
 ## [v0.7.0] - 2022-02-03
 
 - Add [#42]: match viruses using suffixarray approach. Matches viruses from the
-             beginning of virus name. If input string is an exact substring
-             of a virus, it is a match. If there are more than 20 matches, the
-             result is truncated to the first 21 record.
+  beginning of virus name. If input string is an exact substring
+  of a virus, it is a match. If there are more than 20 matches, the
+  result is truncated to the first 21 record.
 
 ## [v0.6.1] - 2022-02-01
 
@@ -63,7 +67,7 @@
 ## [v0.6.0] - 2022-01-31
 
 - Add [#40]: return Virus data without matching (matching for viruses should
-       happen via database).
+  happen via database).
 
 ## [v0.5.10] - 2021-11-28
 
@@ -108,7 +112,7 @@
 
 ## [v0.5.0] - 2020-12-11
 
-- Add [#34]: change output/interfaces from []*Match to []Match.
+- Add [#34]: change output/interfaces from []\*Match to []Match.
 
 ## [v0.4.2] - 2020-12-09
 
@@ -176,7 +180,7 @@
 
 - Add [#7]: Create fuzzy matching workflow.
 - Add [#6]: Create exact matching workflow for canonical forms, canonical forms
-            with ranks, viruses.
+  with ranks, viruses.
 - Add [#5]: Setup gRPC framework and testing.
 - Add [#4]: Try to use Nats messaging (discarded for now).
 - Add [#3]: Setup bloom filters.
@@ -187,6 +191,8 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.4]: https://github.com/gnames/gnmatcher/compare/v0.9.3...v0.9.4
+[v0.9.3]: https://github.com/gnames/gnmatcher/compare/v0.9.2...v0.9.3
 [v0.9.2]: https://github.com/gnames/gnmatcher/compare/v0.9.1...v0.9.2
 [v0.9.1]: https://github.com/gnames/gnmatcher/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/gnames/gnmatcher/compare/v0.7.5...v0.9.0
@@ -227,7 +233,6 @@ This document follows [changelog guidelines]
 [v0.2.0]: https://github.com/gnames/gnmatcher/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
-
 [#60]: https://github.com/gnames/gnmatcher/issues/60
 [#59]: https://github.com/gnames/gnmatcher/issues/59
 [#58]: https://github.com/gnames/gnmatcher/issues/58
@@ -298,5 +303,4 @@ This document follows [changelog guidelines]
 [#3]: https://github.com/gnames/gnmatcher/issues/3
 [#2]: https://github.com/gnames/gnmatcher/issues/2
 [#1]: https://github.com/gnames/gnmatcher/issues/1
-
 [changelog guidelines]: https://github.com/olivierlacan/keep-a-changelog

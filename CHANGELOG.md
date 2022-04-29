@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.5] - 2022-04-28 Thu
+
+- Add: module update, gnlib v0.13.2
+
 ## [v0.9.4] - 2022-03-22 Tue
 
 - Add: Go 1.18, modules update
@@ -191,6 +195,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.5]: https://github.com/gnames/gnmatcher/compare/v0.9.4...v0.9.5
 [v0.9.4]: https://github.com/gnames/gnmatcher/compare/v0.9.3...v0.9.4
 [v0.9.3]: https://github.com/gnames/gnmatcher/compare/v0.9.2...v0.9.3
 [v0.9.2]: https://github.com/gnames/gnmatcher/compare/v0.9.1...v0.9.2

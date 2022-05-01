@@ -2,7 +2,10 @@
 // to known scientific names.
 package matcher
 
-import mlib "github.com/gnames/gnlib/ent/matcher"
+import (
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	"github.com/gnames/gnmatcher/config"
+)
 
 // Matcher is the interface that enables matching strings to known scientific
 // names.
@@ -12,5 +15,5 @@ type Matcher interface {
 	Init()
 	// MatchNames takes a slice of strings and returns back matches of these
 	// strings to known scientific names.
-	MatchNames(names []string) []mlib.Match
+	MatchNames(names []string, opt ...config.Option) []mlib.Output
 }

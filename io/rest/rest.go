@@ -1,12 +1,12 @@
 package rest
 
 import (
-
-	// "github.com/gorilla/mux"
 	"fmt"
 	"net/http"
 	"time"
 
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	"github.com/gnames/gnmatcher/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
@@ -65,15 +65,21 @@ func ver(m MatcherService) func(echo.Context) error {
 
 func matchPOST(m MatcherService) func(echo.Context) error {
 	return func(c echo.Context) error {
-		var names []string
-		if err := c.Bind(&names); err != nil {
+		var inp mlib.Input
+		var opts []config.Option
+
+		if err := c.Bind(&inp); err != nil {
 			return err
 		}
-		result := m.MatchNames(names)
-		if l := len(names); l > 0 {
+		if inp.WithSpeciesGroup {
+			opts = []config.Option{config.OptWithSpeciesGroup(true)}
+		}
+
+		result := m.MatchNames(inp.Names, opts...)
+		if l := len(inp.Names); l > 0 {
 			log.Info().
 				Int("namesNum", l).
-				Str("example", names[0]).
+				Str("example", inp.Names[0]).
 				Str("method", "POST").
 				Msg("Name Match")
 		}

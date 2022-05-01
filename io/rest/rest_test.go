@@ -2,6 +2,7 @@ package rest_test
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	"testing"
@@ -41,9 +42,9 @@ func TestVer(t *testing.T) {
 }
 
 func TestExact(t *testing.T) {
-	var response []mlib.Match
+	var response []mlib.Output
 	enc := gnfmt.GNjson{}
-	request := []string{
+	names := []string{
 		"Not name",
 		"Bubo bubo",
 		"Pomatomus",
@@ -54,6 +55,7 @@ func TestExact(t *testing.T) {
 		"Alb. alba",
 		"Candidatus Aenigmarchaeum subterraneum",
 	}
+	request := mlib.Input{Names: names}
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
 	r := bytes.NewReader(req)
@@ -107,8 +109,8 @@ func TestExact(t *testing.T) {
 }
 
 func TestFuzzy(t *testing.T) {
-	var response []mlib.Match
-	request := []string{
+	var response []mlib.Output
+	names := []string{
 		"Not name", "Pomatomusi",
 		"Pardosa moeste", "Pardosamoeste",
 		"Accanthurus glaucopareus",
@@ -116,6 +118,7 @@ func TestFuzzy(t *testing.T) {
 		"Drosohila melanogaster",
 		"Acanthobolhrium crassicolle",
 	}
+	request := mlib.Input{Names: names}
 	enc := gnfmt.GNjson{}
 	req, err := enc.Encode(request)
 	assert.Nil(t, err)
@@ -184,9 +187,9 @@ func TestFuzzy(t *testing.T) {
 // Related to issue #43. Send a name with one suffix and get back not only
 // names with the same suffix, but also ones with another suffix if available.
 func TestStem(t *testing.T) {
-	var response []mlib.Match
-	request := []string{
-		"Isoetes longissimum",
+	var response []mlib.Output
+	request := mlib.Input{
+		Names: []string{"Isoetes longissimum"},
 	}
 	enc := gnfmt.GNjson{}
 	req, err := enc.Encode(request)
@@ -198,5 +201,40 @@ func TestStem(t *testing.T) {
 
 	err = enc.Decode(respBytes, &response)
 	assert.Nil(t, err)
-	assert.Equal(t, len(response[0].MatchItems), 2)
+	assert.Equal(t, 2, len(response[0].MatchItems))
+}
+
+// Related to issue #49. Optional search inside of species group.
+func TestSpeciesGroup(t *testing.T) {
+	assert := assert.New(t)
+	var response []mlib.Output
+	tests := []struct {
+		msg              string
+		withSpeciesGroup bool
+		itemsNum         int
+	}{
+		{"with SpGroup", true, 2},
+		{"without SpGroup", false, 1},
+	}
+	for _, v := range tests {
+		request := mlib.Input{
+			Names:            []string{"Narcissus minor"},
+			WithSpeciesGroup: v.withSpeciesGroup,
+		}
+		enc := gnfmt.GNjson{}
+		req, err := enc.Encode(request)
+		assert.Nil(err)
+		resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))
+		assert.Nil(err)
+		respBytes, err := io.ReadAll(resp.Body)
+		assert.Nil(err)
+
+		err = enc.Decode(respBytes, &response)
+		assert.Nil(err)
+		fmt.Printf("RESP: %#v\n\n", response[0])
+		for _, v := range response[0].MatchItems {
+			fmt.Printf("ITEM: %#v\n\n", v)
+		}
+		assert.Equal(v.itemsNum, len(response[0].MatchItems))
+	}
 }

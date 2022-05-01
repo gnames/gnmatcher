@@ -18,9 +18,9 @@ import (
 
 // GNmatcher is a public API to the project functionality.
 type GNmatcher interface {
-	// MatchNames takes a slice of scientific name-strings and returns back
-	// matches to canonical forms of known scientific names. The following
-	// matches are attempted:
+	// MatchNames takes a slice of scientific name-strings with options and
+	// returns back matches to canonical forms of known scientific names. The
+	// following matches are attempted:
 	// - Exact string match for viruses
 	// - Exact match of the name-string's canonical form
 	// - Fuzzy match of the canonical form
@@ -34,7 +34,7 @@ type GNmatcher interface {
 	//
 	// The resulting output does provide canonical forms, but not the sources
 	// where they are registered.
-	MatchNames(names []string) []mlib.Match
+	MatchNames(names []string, opts ...config.Option) []mlib.Output
 
 	// GetConfig provides configuration object of GNmatcher.
 	GetConfig() config.Config

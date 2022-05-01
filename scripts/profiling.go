@@ -41,9 +41,10 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 	}()
 	count := 0
 	timeStart := time.Now().UnixNano()
-	for request := range chNames {
+	for names := range chNames {
 		count++
 		total := count * batch
+		request := mlib.Input{Names: names}
 		req, err := enc.Encode(&request)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Cannot marshall input")
@@ -56,7 +57,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if err != nil {
 			log.Fatal().Err(err).Msg("Cannot get data")
 		}
-		var response []mlib.Match
+		var response []mlib.Output
 		_ = enc.Decode(respBytes, &response)
 
 		var name, match, matchType string

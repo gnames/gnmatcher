@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.6] - 2022-05-02 Mon
+
+- Add [#49]: option to search within species group.
+
 ## [v0.9.5] - 2022-04-28 Thu
 
 - Add: module update, gnlib v0.13.2

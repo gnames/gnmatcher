@@ -3,6 +3,8 @@ package matcher
 import (
 	"strings"
 
+	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnparser"
 	"github.com/gnames/gnparser/ent/parsed"
 	"github.com/gnames/gnuuid"
@@ -14,21 +16,28 @@ import (
 type nameString struct {
 	// ID is UUID v5 generated from the verbatim name-string.
 	ID string
+
 	// Name is a verbatim name-string.
 	Name string
+
 	// Cardinality is the apparent number of elemenents in a name. Uninomial
 	// corresponds to cardinality 1, bionmial to 2, trinomial to 3 etc.
 	Cardinality int
+
 	// Canonical is the simplest most common version of a canonical form of
 	// a name string.
 	Canonical string
+
 	// CanonicalStemID is UUID v5 generated from the Canonical field.
 	CanonicalStemID string
+
 	// Canonical Stem is version of the Canonical field with suffixes removed
 	// and characters substituted according to rules of Latin grammar.
 	CanonicalStem string
+
 	// IsVirus is true if parsed name seem to be a virus
 	IsVirus bool
+
 	// Partial contains truncated versions of Canonical form. It is important
 	// for matching names that could not be matched for all specific epithets.
 	Partial *partial
@@ -77,6 +86,44 @@ func newNameString(
 		Name:    name,
 		IsVirus: prsd.Virus,
 	}, &prsd
+}
+
+func (ns *nameString) spGroupString(parser gnparser.GNparser) *nameString {
+	switch ns.Cardinality {
+	case 2:
+		return ns.getTrinomial(parser)
+	case 3:
+		return ns.getBinomial(parser)
+	}
+	return nil
+}
+
+func (ns *nameString) getTrinomial(parser gnparser.GNparser) *nameString {
+	words := strings.Split(ns.Canonical, " ")
+	if len(words) != 2 {
+		return nil
+	}
+	words = append(words, words[len(words)-1])
+	name := strings.Join(words, " ")
+	res, _ := newNameString(parser, name)
+	return &res
+}
+
+func (ns *nameString) getBinomial(parser gnparser.GNparser) *nameString {
+	words := strings.Split(ns.Canonical, " ")
+	if len(words) != 3 {
+		return nil
+	}
+	name := strings.Join(words[0:2], " ")
+	res, _ := newNameString(parser, name)
+	return &res
+}
+
+func (ns *nameString) fixSpGrResult(r *mlib.Output) *mlib.Output {
+	r.ID = ns.ID
+	r.Name = ns.Name
+	r.MatchType = vlib.ExactSpeciesGroup
+	return r
 }
 
 func (ns *nameString) newPartial(prsd parsed.Parsed) {

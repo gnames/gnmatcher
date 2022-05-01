@@ -9,13 +9,13 @@ import (
 // matchFuzzy tries to get fuzzy matching of a stemmed name-string to canonical
 // forms from the gnames database.
 func (m matcher) matchFuzzy(canonical, stem string,
-	ns nameString) *mlib.Match {
+	ns nameString) *mlib.Output {
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
 		return nil
 	}
 
-	res := &mlib.Match{
+	res := &mlib.Output{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  vlib.Fuzzy,

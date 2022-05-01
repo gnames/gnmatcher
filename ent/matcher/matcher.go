@@ -5,6 +5,7 @@ import (
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
+	"github.com/gnames/gnmatcher/config"
 	"github.com/gnames/gnmatcher/ent/exact"
 	"github.com/gnames/gnmatcher/ent/fuzzy"
 	"github.com/gnames/gnmatcher/ent/virus"
@@ -23,7 +24,7 @@ type matcher struct {
 	exactMatcher exact.ExactMatcher
 	fuzzyMatcher fuzzy.FuzzyMatcher
 	virusMatcher virus.VirusMatcher
-	jobsNum      int
+	cfg          config.Config
 }
 
 // NewMatcher returns Matcher object. It takes interfaces to ExactMatcher
@@ -32,12 +33,13 @@ func NewMatcher(
 	em exact.ExactMatcher,
 	fm fuzzy.FuzzyMatcher,
 	vm virus.VirusMatcher,
-	j int) Matcher {
+	cfg config.Config) Matcher {
 	return matcher{
 		exactMatcher: em,
 		fuzzyMatcher: fm,
 		virusMatcher: vm,
-		jobsNum:      j}
+		cfg:          cfg,
+	}
 }
 
 func (m matcher) Init() {
@@ -65,23 +67,27 @@ type nameIn struct {
 
 type matchOut struct {
 	index int
-	match mlib.Match
+	match mlib.Output
 }
 
-func (m matcher) MatchNames(names []string) []mlib.Match {
+func (m matcher) MatchNames(names []string, opts ...config.Option) []mlib.Output {
 	names = truncateNamesToMaxNumber(names)
 	chIn := make(chan nameIn)
 	chOut := make(chan matchOut)
 	var wgIn sync.WaitGroup
 	var wgOut sync.WaitGroup
-	wgIn.Add(m.jobsNum)
+	wgIn.Add(m.cfg.JobsNum)
 	wgOut.Add(1)
 
+	for _, opt := range opts {
+		opt(&m.cfg)
+	}
+
 	names = truncateNamesToMaxNumber(names)
-	res := make([]mlib.Match, len(names))
+	res := make([]mlib.Output, len(names))
 
 	go loadNames(chIn, names)
-	for i := 0; i < m.jobsNum; i++ {
+	for i := 0; i < m.cfg.JobsNum; i++ {
 		go m.matchWorker(chIn, chOut, &wgIn)
 	}
 
@@ -110,14 +116,35 @@ func (m matcher) matchWorker(
 	defer wg.Done()
 
 	for tsk := range chIn {
-		var matchResult *mlib.Match
+		var matchResult *mlib.Output
 		ns, prsd := newNameString(parser, tsk.name)
+
+		var nsSpGr *nameString
+		if m.cfg.WithSpeciesGroup {
+			nsSpGr = ns.spGroupString(parser)
+		}
+
 		if prsd.Parsed {
 			if abbrResult := detectAbbreviated(prsd); abbrResult != nil {
 				chOut <- matchOut{index: tsk.index, match: *abbrResult}
 				continue
 			}
 			matchResult = m.matchStem(ns)
+
+			// if we matching whole species group, add group's
+			// data to the match.
+			if nsSpGr != nil {
+				spGrResult := m.matchStem(*nsSpGr)
+				if matchResult == nil {
+					matchResult = ns.fixSpGrResult(spGrResult)
+				} else {
+					matchResult.MatchItems = append(
+						matchResult.MatchItems,
+						spGrResult.MatchItems...,
+					)
+				}
+			}
+
 			if ns.Cardinality < 2 {
 				if matchResult == nil {
 					matchResult = emptyResult(ns)
@@ -159,14 +186,14 @@ func truncateNamesToMaxNumber(names []string) []string {
 // detectAbbreviated checks if parsed name is abbreviated. If name is not
 // abbreviated the function returns nil. If it is abbreviated, it returns
 // result with the MatchType 'NONE'.
-func detectAbbreviated(prsd *parsed.Parsed) *mlib.Match {
+func detectAbbreviated(prsd *parsed.Parsed) *mlib.Output {
 	// Abbreviations belong to ParseQuality 4
 	if prsd.ParseQuality != 4 {
 		return nil
 	}
 	for _, v := range prsd.QualityWarnings {
 		if v.Warning == parsed.GenusAbbrWarn {
-			return &mlib.Match{
+			return &mlib.Output{
 				ID:        prsd.VerbatimID,
 				Name:      prsd.Verbatim,
 				MatchType: vlib.NoMatch,
@@ -187,8 +214,8 @@ func (m matcher) exactStemMatches(stemUUID, stem string) []mlib.MatchItem {
 	return nil
 }
 
-func emptyResult(ns nameString) *mlib.Match {
-	return &mlib.Match{
+func emptyResult(ns nameString) *mlib.Output {
+	return &mlib.Output{
 		ID:        ns.ID,
 		Name:      ns.Name,
 		MatchType: vlib.NoMatch,

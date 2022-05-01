@@ -109,7 +109,7 @@ func TestBugs(t *testing.T) {
 	respBytes, err := io.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
-	var mtch []mlib.Match
+	var mtch []mlib.Output
 	err = enc.Decode(respBytes, &mtch)
 	assert.Nil(t, err)
 
@@ -143,10 +143,10 @@ func TestBugs(t *testing.T) {
 	}
 }
 
-func params() []string {
+func params() mlib.Input {
 	ns := make([]string, len(bugs))
 	for i, v := range bugs {
 		ns[i] = v.name
 	}
-	return ns
+	return mlib.Input{Names: ns}
 }

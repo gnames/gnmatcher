@@ -60,30 +60,32 @@ func TestVirus(t *testing.T) {
 			matchlen:  21,
 		},
 	}
-	var response []mlib.Match
+	assert := assert.New(t)
+	var response []mlib.Output
 	enc := gnfmt.GNjson{}
-	request := make([]string, len(tests))
+	names := make([]string, len(tests))
 	for i := range tests {
-		request[i] = tests[i].name
+		names[i] = tests[i].name
 	}
+	request := mlib.Input{Names: names}
 	req, err := enc.Encode(request)
-	assert.Nil(t, err)
+	assert.Nil(err)
 	r := bytes.NewReader(req)
 	resp, err := http.Post(url+"matches", "application/json", r)
-	assert.Nil(t, err)
+	assert.Nil(err)
 	respBytes, err := io.ReadAll(resp.Body)
-	assert.Nil(t, err)
+	assert.Nil(err)
 
 	_ = enc.Decode(respBytes, &response)
-	assert.Equal(t, 6, len(response))
+	assert.Equal(6, len(response))
 
 	for i, v := range tests {
 		res := response[i]
-		assert.Equal(t, v.name, res.Name, v.msg)
-		assert.Equal(t, v.matchType, res.MatchType, v.msg)
-		assert.Equal(t, v.matchlen, len(res.MatchItems))
+		assert.Equal(v.name, res.Name, v.msg)
+		assert.Equal(v.matchType, res.MatchType, v.msg)
+		assert.Equal(v.matchlen, len(res.MatchItems))
 		if len(res.MatchItems) > 0 {
-			assert.Equal(t, v.matchStr, res.MatchItems[0].MatchStr)
+			assert.Equal(v.matchStr, res.MatchItems[0].MatchStr)
 		}
 	}
 }

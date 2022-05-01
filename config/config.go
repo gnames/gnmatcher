@@ -53,13 +53,17 @@ type Config struct {
 	// service.
 	// Examples:
 	// "api" - logs should contain "api"
-	// "!api" - logs should not contain "api"
+	// "!api" - logs should not contain "apim
 	NsqdContainsFilter string
 
 	// NsqdRegexFilter logs should match the regular expression to be sent to
 	// NSQ service.
 	// Example: `api\/v(0|1)`
 	NsqdRegexFilter *regexp.Regexp
+
+	// WithSpeciesGroup is true when searching for "Aus bus" also searches for
+	// "Aus bus bus".
+	WithSpeciesGroup bool
 
 	// WithWebLogs flag enables logs when running web-service. This flag is
 	// ignored if `Port` value is not set.
@@ -181,6 +185,13 @@ func OptNsqdRegexFilter(s string) Option {
 	return func(cfg *Config) {
 		r := regexp.MustCompile(s)
 		cfg.NsqdRegexFilter = r
+	}
+}
+
+// OptWithSpeciesGroup sets the WithSpeciesGroup field
+func OptWithSpeciesGroup(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithSpeciesGroup = b
 	}
 }
 

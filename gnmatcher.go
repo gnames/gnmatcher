@@ -25,13 +25,13 @@ func New(
 	cfg config.Config,
 ) GNmatcher {
 	gnm := gnmatcher{cfg: cfg}
-	gnm.matcher = matcher.NewMatcher(em, fm, vm, cfg.JobsNum)
+	gnm.matcher = matcher.NewMatcher(em, fm, vm, cfg)
 	gnm.matcher.Init()
 	return gnm
 }
 
-func (gnm gnmatcher) MatchNames(names []string) []mlib.Match {
-	return gnm.matcher.MatchNames(names)
+func (gnm gnmatcher) MatchNames(names []string, opts ...config.Option) []mlib.Output {
+	return gnm.matcher.MatchNames(names, opts...)
 }
 
 func (gnm gnmatcher) GetVersion() gnvers.Version {

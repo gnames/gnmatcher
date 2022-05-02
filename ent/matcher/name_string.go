@@ -119,11 +119,13 @@ func (ns *nameString) getBinomial(parser gnparser.GNparser) *nameString {
 	return &res
 }
 
-func (ns *nameString) fixSpGrResult(r *mlib.Output) *mlib.Output {
+func (ns *nameString) fixSpGrResult(r *mlib.Output) {
 	r.ID = ns.ID
 	r.Name = ns.Name
 	r.MatchType = vlib.ExactSpeciesGroup
-	return r
+	for i := range r.MatchItems {
+		r.MatchItems[i].MatchType = vlib.ExactSpeciesGroup
+	}
 }
 
 func (ns *nameString) newPartial(prsd parsed.Parsed) {

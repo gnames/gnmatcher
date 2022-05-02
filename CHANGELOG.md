@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.7] - 2022-05-02 Mon
+
+- Fix: match type for species group results.
+
 ## [v0.9.6] - 2022-05-02 Mon
 
 - Add [#49]: option to search within species group.

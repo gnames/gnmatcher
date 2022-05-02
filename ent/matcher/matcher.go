@@ -135,8 +135,9 @@ func (m matcher) matchWorker(
 			// data to the match.
 			if nsSpGr != nil {
 				spGrResult := m.matchStem(*nsSpGr)
+				ns.fixSpGrResult(spGrResult)
 				if matchResult == nil {
-					matchResult = ns.fixSpGrResult(spGrResult)
+					matchResult = spGrResult
 				} else {
 					matchResult.MatchItems = append(
 						matchResult.MatchItems,

@@ -2,9 +2,9 @@ package rest_test
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"net/http"
+	"sort"
 	"testing"
 
 	"github.com/gnames/gnfmt"
@@ -212,9 +212,10 @@ func TestSpeciesGroup(t *testing.T) {
 		msg              string
 		withSpeciesGroup bool
 		itemsNum         int
+		matchTypes       []string
 	}{
-		{"with SpGroup", true, 2},
-		{"without SpGroup", false, 1},
+		{"with SpGroup", true, 2, []string{"Exact", "ExactSpeciesGroup"}},
+		{"without SpGroup", false, 1, []string{"Exact"}},
 	}
 	for _, v := range tests {
 		request := mlib.Input{
@@ -231,10 +232,13 @@ func TestSpeciesGroup(t *testing.T) {
 
 		err = enc.Decode(respBytes, &response)
 		assert.Nil(err)
-		fmt.Printf("RESP: %#v\n\n", response[0])
-		for _, v := range response[0].MatchItems {
-			fmt.Printf("ITEM: %#v\n\n", v)
-		}
 		assert.Equal(v.itemsNum, len(response[0].MatchItems))
+
+		mts := make([]string, len(response[0].MatchItems))
+		for i, v := range response[0].MatchItems {
+			mts[i] = v.MatchType.String()
+		}
+		sort.Strings(mts)
+		assert.Equal(v.matchTypes, mts)
 	}
 }

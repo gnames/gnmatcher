@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.9.8] - 2022-05-03 Tue
+
+- Fix: handle nill species group results correctly
+
 ## [v0.9.7] - 2022-05-02 Mon
 
 - Fix: match type for species group results.
@@ -203,6 +207,9 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.8]: https://github.com/gnames/gnmatcher/compare/v0.9.7...v0.9.8
+[v0.9.7]: https://github.com/gnames/gnmatcher/compare/v0.9.6...v0.9.7
+[v0.9.6]: https://github.com/gnames/gnmatcher/compare/v0.9.5...v0.9.6
 [v0.9.5]: https://github.com/gnames/gnmatcher/compare/v0.9.4...v0.9.5
 [v0.9.4]: https://github.com/gnames/gnmatcher/compare/v0.9.3...v0.9.4
 [v0.9.3]: https://github.com/gnames/gnmatcher/compare/v0.9.2...v0.9.3

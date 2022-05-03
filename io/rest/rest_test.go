@@ -209,17 +209,19 @@ func TestSpeciesGroup(t *testing.T) {
 	assert := assert.New(t)
 	var response []mlib.Output
 	tests := []struct {
-		msg              string
+		msg, name        string
 		withSpeciesGroup bool
 		itemsNum         int
 		matchTypes       []string
 	}{
-		{"with SpGroup", true, 2, []string{"Exact", "ExactSpeciesGroup"}},
-		{"without SpGroup", false, 1, []string{"Exact"}},
+		{"with SpGroup", "Narcissus minor", true, 2, []string{"Exact", "ExactSpeciesGroup"}},
+		{"without SpGroup", "Narcissus minor", false, 1, []string{"Exact"}},
+		{"with nil SpGroup", "Pardosa moesta", true, 1, []string{"Exact"}},
+		{"without nil SpGroup", "Pardosa moesta", false, 1, []string{"Exact"}},
 	}
 	for _, v := range tests {
 		request := mlib.Input{
-			Names:            []string{"Narcissus minor"},
+			Names:            []string{v.name},
 			WithSpeciesGroup: v.withSpeciesGroup,
 		}
 		enc := gnfmt.GNjson{}

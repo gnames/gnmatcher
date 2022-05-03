@@ -120,6 +120,9 @@ func (ns *nameString) getBinomial(parser gnparser.GNparser) *nameString {
 }
 
 func (ns *nameString) fixSpGrResult(r *mlib.Output) {
+	if r == nil {
+		return
+	}
 	r.ID = ns.ID
 	r.Name = ns.Name
 	r.MatchType = vlib.ExactSpeciesGroup

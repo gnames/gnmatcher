@@ -138,7 +138,7 @@ func (m matcher) matchWorker(
 				ns.fixSpGrResult(spGrResult)
 				if matchResult == nil {
 					matchResult = spGrResult
-				} else {
+				} else if spGrResult != nil {
 					matchResult.MatchItems = append(
 						matchResult.MatchItems,
 						spGrResult.MatchItems...,

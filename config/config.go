@@ -16,6 +16,14 @@ type Config struct {
 	// bloom filters levenshtein automata trees, key-value stores etc.
 	CacheDir string
 
+	// DataSources can limit matching to provided dataSources. Such approach
+	// helps to provide more accurate matches. For example if a searched name
+	// `Aus bus bus` exists somewhere but not in a data-source with ID 5,
+	// however this data-source contains 'Aus bus'. Setting DataSources to
+	// []int{5} will ignore results from other sources, and will set
+	// partial match, finding 'Aus bus' as with a MatchType of PartialMatch.
+	DataSources []int
+
 	// JobsNum is the number of jobs to run in parallel
 	JobsNum int
 
@@ -104,6 +112,13 @@ func OptCacheDir(s string) Option {
 			log.Warn().Err(err).Msgf("Cannot expand '~' in '%s'", s)
 		}
 		cfg.CacheDir = cacheDir
+	}
+}
+
+// OptDataSources sets ids to use for matching.
+func OptDataSources(ints []int) Option {
+	return func(cfg *Config) {
+		cfg.DataSources = ints
 	}
 }
 

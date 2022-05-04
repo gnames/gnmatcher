@@ -222,3 +222,20 @@ func emptyResult(ns nameString) *mlib.Output {
 		MatchType: vlib.NoMatch,
 	}
 }
+
+func (m matcher) filterDataSources(mis []mlib.MatchItem) []mlib.MatchItem {
+	if len(mis) == 0 || len(m.cfg.DataSources) == 0 {
+		return mis
+	}
+
+	var res []mlib.MatchItem
+	for i := range mis {
+		for _, dsID := range m.cfg.DataSources {
+			if _, ok := mis[i].DataSources[dsID]; ok {
+				res = append(res, mis[i])
+				break
+			}
+		}
+	}
+	return res
+}

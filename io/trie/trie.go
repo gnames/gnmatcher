@@ -24,7 +24,7 @@ const trieFile = "stem.trie"
 type fuzzyMatcher struct {
 	cfg     config.Config
 	trie    *levenshtein.MinTree
-	keyVal  *badger.DB
+	kvStems *badger.DB
 	encoder gnfmt.Encoder
 }
 
@@ -42,7 +42,7 @@ func (fm *fuzzyMatcher) Init() {
 	defer db.Close()
 	fm.trie = getTrie(fm.cfg.TrieDir(), db)
 	initStemsKV(fm.cfg.StemsDir(), db)
-	fm.keyVal = connectKeyVal(fm.cfg.StemsDir())
+	fm.kvStems = connectKeyVal(fm.cfg.StemsDir())
 }
 
 func (fm *fuzzyMatcher) MatchStem(stem string) []string {
@@ -56,7 +56,7 @@ func (fm *fuzzyMatcher) MatchStemExact(stem string) bool {
 
 func (fm *fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
 	var res []mlib.MatchItem
-	misGob := bytes.NewBuffer(getValue(fm.keyVal, stem))
+	misGob := bytes.NewBuffer(getValue(fm.kvStems, stem))
 	err := fm.encoder.Decode(misGob.Bytes(), &res)
 	if err != nil {
 		log.Warn().Err(err).

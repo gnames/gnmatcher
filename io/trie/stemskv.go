@@ -27,44 +27,51 @@ func initStemsKV(path string, db *sql.DB) {
 	kv := connectKeyVal(path)
 	defer kv.Close()
 
-	q := `SELECT s.name as name_stem, c.name, c.id
+	q := `SELECT s.name as name_stem, c.name, c.id, nsi.data_source_id
           FROM canonical_stems s
             JOIN name_strings ns
               ON ns.canonical_stem_id = s.id
             JOIN canonicals c
               ON ns.canonical_id = c.id
-        GROUP BY c.name, c.id, s.name
+            JOIN name_string_indices nsi
+              ON ns.id = nsi.name_string_id
+        GROUP BY c.name, c.id, s.name, nsi.data_source_id
           ORDER BY name_stem`
 
 	rows, err := db.Query(q)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Cannot get stems from DB")
 	}
-
+	log.Info().Msg("Setting Stems Key-Value store")
 	kvTxn := kv.NewTransaction(true)
 	var stemRes []mlib.MatchItem
-	var currentStem, stem, name, id string
+	var dsMap map[int]struct{}
+	var dsID int
+	var currentStem, currentID, currentName, stem, name, id string
 	count := 0
 	for rows.Next() {
-		if err = rows.Scan(&stem, &name, &id); err != nil {
+		if err = rows.Scan(&stem, &name, &id, &dsID); err != nil {
 			log.Fatal().Err(err).Msg("Cannot read stem data from query")
 		}
 		if currentStem == "" {
 			currentStem = stem
 		}
+		if currentID == "" {
+			currentID = id
+			currentName = name
+			dsMap = make(map[int]struct{})
+		}
+
 		if stem != currentStem {
 			count += 1
 
-			key := []byte(currentStem)
-			var b bytes.Buffer
-			enc := gob.NewEncoder(&b)
-			if err = enc.Encode(stemRes); err != nil {
-				log.Fatal().Err(err).Msg("Cannot marshal canonicals")
-			}
-			val := b.Bytes()
-			if err = kvTxn.Set(key, val); err != nil {
-				log.Fatal().Err(err).Msg("Transaction failed to set key")
-			}
+			stemRes = append(stemRes,
+				mlib.MatchItem{
+					ID:          currentID,
+					MatchStr:    currentName,
+					DataSources: dsMap,
+				})
+			setKeyVal(kvTxn, currentStem, stemRes)
 			if count > 10_000 {
 				err = kvTxn.Commit()
 				if err != nil {
@@ -74,13 +81,53 @@ func initStemsKV(path string, db *sql.DB) {
 				kvTxn = kv.NewTransaction(true)
 			}
 			currentStem = stem
+			currentID = id
+			currentName = name
 			stemRes = nil
+			dsMap = make(map[int]struct{})
 		}
-		stemRes = append(stemRes, mlib.MatchItem{ID: id, MatchStr: name})
+
+		if id != currentID {
+			stemRes = append(stemRes,
+				mlib.MatchItem{
+					ID:          currentID,
+					MatchStr:    currentName,
+					DataSources: dsMap,
+				})
+			currentID = id
+			currentName = name
+			dsMap = make(map[int]struct{})
+		}
+		dsMap[dsID] = struct{}{}
+
 	}
+	stemRes = append(stemRes,
+		mlib.MatchItem{
+			ID:          currentID,
+			MatchStr:    currentName,
+			DataSources: dsMap,
+		})
+	setKeyVal(kvTxn, currentStem, stemRes)
 	err = kvTxn.Commit()
 	if err != nil {
 		log.Fatal().Err(err)
+	}
+}
+
+func setKeyVal(kvTxn *badger.Txn,
+	stem string,
+	stemRes []mlib.MatchItem,
+) {
+	var err error
+	key := []byte(stem)
+	var b bytes.Buffer
+	enc := gob.NewEncoder(&b)
+	if err = enc.Encode(stemRes); err != nil {
+		log.Fatal().Err(err).Msg("Cannot marshal canonicals")
+	}
+	val := b.Bytes()
+	if err = kvTxn.Set(key, val); err != nil {
+		log.Fatal().Err(err).Msg("Transaction failed to set key")
 	}
 }
 

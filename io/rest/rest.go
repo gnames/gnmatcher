@@ -72,7 +72,10 @@ func matchPOST(m MatcherService) func(echo.Context) error {
 			return err
 		}
 		if inp.WithSpeciesGroup {
-			opts = []config.Option{config.OptWithSpeciesGroup(true)}
+			opts = append(opts, config.OptWithSpeciesGroup(true))
+		}
+		if len(inp.DataSources) > 0 {
+			opts = append(opts, config.OptDataSources(inp.DataSources))
 		}
 
 		result := m.MatchNames(inp.Names, opts...)

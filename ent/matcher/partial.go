@@ -21,16 +21,18 @@ func (m matcher) matchPartial(ns nameString, parser gnparser.GNparser) *mlib.Out
 			return res
 		}
 	}
-
 	return m.processPartialGenus(ns)
 }
 
 func (m matcher) processPartialGenus(ns nameString) *mlib.Output {
 	gID := gnuuid.New(ns.Partial.Genus).String()
 	matchItems := m.exactStemMatches(gID, ns.Partial.Genus)
+
+	matchItems = m.filterDataSources(matchItems)
 	if len(matchItems) == 0 {
 		return emptyResult(ns)
 	}
+
 	for i := range matchItems {
 		matchItems[i].InputStr = ns.Partial.Genus
 		matchItems[i].MatchType = vlib.PartialExact
@@ -71,6 +73,8 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 				}
 				matchItems = append(matchItems, v)
 			}
+
+			matchItems = m.filterDataSources(matchItems)
 			if len(matchItems) == 0 {
 				return nil
 			}
@@ -88,6 +92,12 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 	for _, name := range names {
 		stem := stemmer.Stem(name).Stem
 		if res := m.matchFuzzy(name, stem, ns); res != nil {
+
+			res.MatchItems = m.filterDataSources(res.MatchItems)
+			if len(res.MatchItems) == 0 {
+				return nil
+			}
+
 			res.MatchType = vlib.PartialFuzzy
 			return res
 		}

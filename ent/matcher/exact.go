@@ -29,6 +29,12 @@ func (m matcher) matchStem(ns nameString) *mlib.Output {
 		}
 		matchItems = append(matchItems, v)
 	}
+
+	matchItems = m.filterDataSources(matchItems)
+	if len(matchItems) == 0 {
+		return nil
+	}
+
 	return &mlib.Output{
 		ID:         ns.ID,
 		Name:       ns.Name,

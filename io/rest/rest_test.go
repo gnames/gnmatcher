@@ -244,3 +244,42 @@ func TestSpeciesGroup(t *testing.T) {
 		assert.Equal(v.matchTypes, mts)
 	}
 }
+
+func TestDataSources(t *testing.T) {
+	assert := assert.New(t)
+	var response []mlib.Output
+	enc := gnfmt.GNjson{}
+	tests := []struct {
+		msg, name  string
+		dss        []int
+		itemsNum   int
+		matchTypes []string
+	}{
+		{"no ds", "Narcissus minor minor", []int{}, 1, []string{"Exact"}},
+		{"grin txmy", "Narcissus minor minor", []int{6}, 1, []string{"PartialExact"}},
+	}
+
+	for _, v := range tests {
+		request := mlib.Input{
+			Names:       []string{v.name},
+			DataSources: v.dss,
+		}
+		req, err := enc.Encode(request)
+		assert.Nil(err)
+		resp, err := http.Post(url+"matches", "application/json", bytes.NewReader(req))
+		assert.Nil(err)
+		respBytes, err := io.ReadAll(resp.Body)
+		assert.Nil(err)
+
+		err = enc.Decode(respBytes, &response)
+		assert.Nil(err)
+		assert.Equal(v.itemsNum, len(response[0].MatchItems))
+
+		mts := make([]string, len(response[0].MatchItems))
+		for i, v := range response[0].MatchItems {
+			mts[i] = v.MatchType.String()
+		}
+		sort.Strings(mts)
+		assert.Equal(v.matchTypes, mts)
+	}
+}

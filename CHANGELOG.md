@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+## [v0.9.9] - 2022-05-05 Thu
+
+- Add [#50]: data-source option in input.
+
 ## [v0.9.8] - 2022-05-03 Tue
 
-- Fix: handle nill species group results correctly
+- Fix: handle nill species group results correctly.
 
 ## [v0.9.7] - 2022-05-02 Mon
 
@@ -207,6 +211,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.9.9]: https://github.com/gnames/gnmatcher/compare/v0.9.8...v0.9.9
 [v0.9.8]: https://github.com/gnames/gnmatcher/compare/v0.9.7...v0.9.8
 [v0.9.7]: https://github.com/gnames/gnmatcher/compare/v0.9.6...v0.9.7
 [v0.9.6]: https://github.com/gnames/gnmatcher/compare/v0.9.5...v0.9.6

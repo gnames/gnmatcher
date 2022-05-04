@@ -8,8 +8,11 @@ import (
 
 // matchFuzzy tries to get fuzzy matching of a stemmed name-string to canonical
 // forms from the gnames database.
-func (m matcher) matchFuzzy(canonical, stem string,
-	ns nameString) *mlib.Output {
+func (m matcher) matchFuzzy(
+	canonical,
+	stem string,
+	ns nameString,
+) *mlib.Output {
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
 		return nil
@@ -42,8 +45,11 @@ func (m matcher) matchFuzzy(canonical, stem string,
 			res.MatchItems = append(res.MatchItems, matchItem)
 		}
 	}
+
+	res.MatchItems = m.filterDataSources(res.MatchItems)
 	if len(res.MatchItems) == 0 {
 		return nil
 	}
+
 	return res
 }

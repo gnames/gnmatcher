@@ -119,7 +119,7 @@ func (ns *nameString) getBinomial(parser gnparser.GNparser) *nameString {
 	return &res
 }
 
-func (ns *nameString) fixSpGrResult(r *mlib.Output) {
+func (ns *nameString) fixSpGrResult(r *mlib.Match) {
 	if r == nil {
 		return
 	}

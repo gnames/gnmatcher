@@ -67,9 +67,9 @@ func initStemsKV(path string, db *sql.DB) {
 
 			stemRes = append(stemRes,
 				mlib.MatchItem{
-					ID:          currentID,
-					MatchStr:    currentName,
-					DataSources: dsMap,
+					ID:             currentID,
+					MatchStr:       currentName,
+					DataSourcesMap: dsMap,
 				})
 			setKeyVal(kvTxn, currentStem, stemRes)
 			if count > 10_000 {
@@ -90,9 +90,9 @@ func initStemsKV(path string, db *sql.DB) {
 		if id != currentID {
 			stemRes = append(stemRes,
 				mlib.MatchItem{
-					ID:          currentID,
-					MatchStr:    currentName,
-					DataSources: dsMap,
+					ID:             currentID,
+					MatchStr:       currentName,
+					DataSourcesMap: dsMap,
 				})
 			currentID = id
 			currentName = name
@@ -103,9 +103,9 @@ func initStemsKV(path string, db *sql.DB) {
 	}
 	stemRes = append(stemRes,
 		mlib.MatchItem{
-			ID:          currentID,
-			MatchStr:    currentName,
-			DataSources: dsMap,
+			ID:             currentID,
+			MatchStr:       currentName,
+			DataSourcesMap: dsMap,
 		})
 	setKeyVal(kvTxn, currentStem, stemRes)
 	err = kvTxn.Commit()

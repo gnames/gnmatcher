@@ -61,7 +61,7 @@ func TestVirus(t *testing.T) {
 		},
 	}
 	assert := assert.New(t)
-	var response []mlib.Output
+	var response mlib.Output
 	enc := gnfmt.GNjson{}
 	names := make([]string, len(tests))
 	for i := range tests {
@@ -77,10 +77,10 @@ func TestVirus(t *testing.T) {
 	assert.Nil(err)
 
 	_ = enc.Decode(respBytes, &response)
-	assert.Equal(6, len(response))
+	assert.Equal(6, len(response.Matches))
 
 	for i, v := range tests {
-		res := response[i]
+		res := response.Matches[i]
 		assert.Equal(v.name, res.Name, v.msg)
 		assert.Equal(v.matchType, res.MatchType, v.msg)
 		assert.Equal(v.matchlen, len(res.MatchItems))

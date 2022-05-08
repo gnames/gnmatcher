@@ -11,7 +11,7 @@ import (
 
 // matchPartial tries to match all patial variants of a name-string. The
 // process stops as soon as a match was found.
-func (m matcher) matchPartial(ns nameString, parser gnparser.GNparser) *mlib.Output {
+func (m matcher) matchPartial(ns nameString, parser gnparser.GNparser) *mlib.Match {
 	if ns.Partial == nil {
 		return emptyResult(ns)
 	}
@@ -24,7 +24,7 @@ func (m matcher) matchPartial(ns nameString, parser gnparser.GNparser) *mlib.Out
 	return m.processPartialGenus(ns)
 }
 
-func (m matcher) processPartialGenus(ns nameString) *mlib.Output {
+func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 	gID := gnuuid.New(ns.Partial.Genus).String()
 	matchItems := m.exactStemMatches(gID, ns.Partial.Genus)
 
@@ -37,7 +37,7 @@ func (m matcher) processPartialGenus(ns nameString) *mlib.Output {
 		matchItems[i].InputStr = ns.Partial.Genus
 		matchItems[i].MatchType = vlib.PartialExact
 	}
-	return &mlib.Output{
+	return &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  vlib.PartialExact,
@@ -46,7 +46,7 @@ func (m matcher) processPartialGenus(ns nameString) *mlib.Output {
 }
 
 func (m matcher) processPartial(p multinomial, ns nameString,
-	parser gnparser.GNparser) *mlib.Output {
+	parser gnparser.GNparser) *mlib.Match {
 	names := []string{p.Tail, p.Head}
 	for _, name := range names {
 		// TODO this is probably not efficient to use parser so many times
@@ -79,7 +79,7 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 				return nil
 			}
 
-			return &mlib.Output{
+			return &mlib.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
 				MatchType:  matchType,

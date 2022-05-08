@@ -16,7 +16,7 @@ tell which datasets provided found canonical name. For this purpose use
 The [GNmatcher] takes an array of strings and returns back zero or more
 [canonical names] for each string. If it is not important which biodiversity
 repositories provided matched [canonical names], the project can be used as
-a stand-alone [RESTful service][OpenAPI specification]. If such information is
+a stand-alone [RESTful service][RESTful API documentation]. If such information is
 important, the project is used as a component of a scientific names
 verification  service ([GNames API]).
 
@@ -35,13 +35,13 @@ name for species, a synonym, or a discarded one.
 
 The `gnmatcher` app functions as an HTTP service. A client access it wia
 HTTP protocol.  The API's methods and structures are described in
-by the [OpenAPI specification].
+by the [RESTful API documentation].
 
 ## Input and Output
 
 A user calls HTTP resource `/match` sending an array of strings to the service
 and gets back matched canonical names, the match type, as well as other
-metadata described as a `Match` object in the [OpenAPI specification].
+metadata described as a `Match` object in the [RESTful API documentation].
 
 The optimal size of the input is 5-10 thousand strings per array. Note
 that 10,000 is the maximal size, and larger arrays will be truncated.
@@ -93,7 +93,7 @@ are "real", you should see an even higher performance.
 
 * Run ``gnmatcher rest -p 1234``
 
-The service will run on the given port.
+The service will run on the given port (the default port is 8080).
 
 ### Usage as a library
 
@@ -106,28 +106,30 @@ import (
   "github.com/gnames/gnmatcher/config"
   "github.com/gnames/gnmatcher/io/bloom"
   "github.com/gnames/gnmatcher/io/trie"
+	"github.com/gnames/gnmatcher/io/virusio"
 )
 
 func Example() {
-  // Note that it takes several minutes to initialize lookup data structures.
-  // Requirement for initialization: Postgresql database with loaded
-  // http://opendata.globalnames.org/dumps/gnames-latest.sql.gz
-  //
-  // If data are imported already, it still takes several seconds to
-  // load lookup data into memory.
-  cfg := config.New()
-  em := bloom.NewExactMatcher(cfg)
-  fm := trie.NewFuzzyMatcher(cfg)
-  gnm := gnmatcher.New(em, fm, cfg)
-  res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
-  for _, match := range res {
-    fmt.Println(match.Name)
-    fmt.Println(match.MatchType)
-    for _, item := range match.MatchItems {
-      fmt.Println(item.MatchStr)
-      fmt.Println(item.EditDistance)
-    }
-  }
+	// Note that it takes several minutes to initialize lookup data structures.
+	// Requirement for initialization: Postgresql database with loaded
+	// http://opendata.globalnames.org/dumps/gnames-latest.sql.gz
+	//
+	// If data are imported already, it still takes several seconds to
+	// load lookup data into memory.
+	cfg := config.New()
+	em := bloom.New(cfg)
+	fm := trie.New(cfg)
+	vm := virusio.New(cfg)
+	gnm := gnmatcher.New(em, fm, vm, cfg)
+	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
+	for _, match := range res.Matches {
+		fmt.Println(match.Name)
+		fmt.Println(match.MatchType)
+		for _, item := range match.MatchItems {
+			fmt.Println(item.MatchStr)
+			fmt.Println(item.EditDistance)
+		}
+	}
 }
 ```
 
@@ -163,7 +165,7 @@ are also environment variables that override configuration file values.
 A user can find an example of a client for the service in this
 [test file][rest-client].
 
-The API is formally described in the [OpenAPI specification]
+The API is formally described in the [RESTful API documentation]
 
 ## Development
 
@@ -181,7 +183,7 @@ it to the following:
 
 [.env.example]: https://raw.githubusercontent.com/gnames/gnmatcher/master/.env.example
 [BDD]: https://en.wikipedia.org/wiki/Behavior-driven_development
-[OpenAPI specification]: https://apidoc.globalnames.org/gnmatcher
+[RESTful API documentation]: https://apidoc.globalnames.org/gnmatcher-beta
 [biodiversity datasets]: https://verifier.globalnames.org/data_sources
 [canonical names]: https://globalnames.org/docs/glossary/#canonical-name
 [gnames dump]: https://opendata.globalnames.org/dumps/gnames-latest.sql.gz

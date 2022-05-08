@@ -109,21 +109,22 @@ func TestBugs(t *testing.T) {
 	respBytes, err := io.ReadAll(resp.Body)
 	assert.Nil(t, err)
 
-	var mtch []mlib.Output
-	err = enc.Decode(respBytes, &mtch)
+	var res mlib.Output
+	err = enc.Decode(respBytes, &res)
 	assert.Nil(t, err)
+	matches := res.Matches
 
 	for i, v := range bugs {
 		msg := fmt.Sprintf("%s -> %s", v.name, v.matchCanonical)
-		assert.Equal(t, v.matchType.String(), mtch[i].MatchType.String(), msg)
-		if mtch[i].MatchType == vlib.NoMatch {
-			assert.Empty(t, mtch[i].MatchItems)
+		assert.Equal(t, v.matchType.String(), matches[i].MatchType.String(), msg)
+		if matches[i].MatchType == vlib.NoMatch {
+			assert.Empty(t, matches[i].MatchItems)
 			continue
 		}
-		assert.Greater(t, len(mtch[i].MatchItems), 0, msg)
+		assert.Greater(t, len(matches[i].MatchItems), 0, msg)
 		var hasItem, hasEDist bool
 		ed := 100
-		for _, mi := range mtch[i].MatchItems {
+		for _, mi := range matches[i].MatchItems {
 			if mi.MatchStr == v.matchCanonical {
 				hasItem = true
 			}
@@ -134,7 +135,7 @@ func TestBugs(t *testing.T) {
 				hasEDist = true
 			}
 		}
-		msg = fmt.Sprintf("%s -> %s", mtch[i].Name, v.matchCanonical)
+		msg = fmt.Sprintf("%s -> %s", matches[i].Name, v.matchCanonical)
 		msgEDist := fmt.Sprintf("%s, ed: %d instead of %d", msg, ed, v.editDistance)
 		assert.True(t, hasItem, msg)
 		assert.True(t, ed >= 0)

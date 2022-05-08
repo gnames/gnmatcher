@@ -6,7 +6,7 @@ import (
 	"github.com/gnames/gnmatcher/ent/fuzzy"
 )
 
-func (m matcher) matchStem(ns nameString) *mlib.Output {
+func (m matcher) matchStem(ns nameString) *mlib.Match {
 	matches := m.exactStemMatches(ns.CanonicalStemID, ns.CanonicalStem)
 	if len(matches) == 0 {
 		return nil
@@ -35,7 +35,7 @@ func (m matcher) matchStem(ns nameString) *mlib.Output {
 		return nil
 	}
 
-	return &mlib.Output{
+	return &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  matchType,
@@ -44,13 +44,13 @@ func (m matcher) matchStem(ns nameString) *mlib.Output {
 }
 
 // matchVirus returns the "virus" name the way it was given, without matching.
-func (m matcher) matchVirus(ns nameString) *mlib.Output {
+func (m matcher) matchVirus(ns nameString) *mlib.Match {
 	matchItems := m.virusMatcher.MatchVirus(ns.Name)
 	matchType := vlib.Virus
 	if len(matchItems) == 0 {
 		matchType = vlib.NoMatch
 	}
-	return &mlib.Output{
+	return &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  matchType,

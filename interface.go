@@ -34,7 +34,7 @@ type GNmatcher interface {
 	//
 	// The resulting output does provide canonical forms, but not the sources
 	// where they are registered.
-	MatchNames(names []string, opts ...config.Option) []mlib.Output
+	MatchNames(names []string, opts ...config.Option) mlib.Output
 
 	// GetConfig provides configuration object of GNmatcher.
 	GetConfig() config.Config

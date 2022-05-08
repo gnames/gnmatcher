@@ -1,6 +1,7 @@
 package matcher
 
 import (
+	"sort"
 	"sync"
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
@@ -67,10 +68,13 @@ type nameIn struct {
 
 type matchOut struct {
 	index int
-	match mlib.Output
+	match mlib.Match
 }
 
-func (m matcher) MatchNames(names []string, opts ...config.Option) []mlib.Output {
+func (m matcher) MatchNames(
+	names []string,
+	opts ...config.Option,
+) mlib.Output {
 	names = truncateNamesToMaxNumber(names)
 	chIn := make(chan nameIn)
 	chOut := make(chan matchOut)
@@ -84,7 +88,7 @@ func (m matcher) MatchNames(names []string, opts ...config.Option) []mlib.Output
 	}
 
 	names = truncateNamesToMaxNumber(names)
-	res := make([]mlib.Output, len(names))
+	res := make([]mlib.Match, len(names))
 
 	go loadNames(chIn, names)
 	for i := 0; i < m.cfg.JobsNum; i++ {
@@ -101,6 +105,48 @@ func (m matcher) MatchNames(names []string, opts ...config.Option) []mlib.Output
 	wgIn.Wait()
 	close(chOut)
 	wgOut.Wait()
+
+	return m.prepareOutput(res)
+}
+
+func (m matcher) prepareOutput(ms []mlib.Match) mlib.Output {
+	res := mlib.Output{
+		Meta: mlib.Meta{
+			NamesNum:         len(ms),
+			WithSpeciesGroup: m.cfg.WithSpeciesGroup,
+			DataSources:      m.cfg.DataSources,
+		},
+	}
+	for i := range ms {
+		for ii := range ms[i].MatchItems {
+			ms[i].MatchItems[ii].DataSources =
+				m.convertDataSources(ms[i].MatchItems[ii])
+		}
+	}
+	res.Matches = ms
+	return res
+}
+
+func (m matcher) convertDataSources(mi mlib.MatchItem) []int {
+	if len(m.cfg.DataSources) == 0 {
+		res := make([]int, len(mi.DataSourcesMap))
+		var i int
+		for k := range mi.DataSourcesMap {
+			res[i] = k
+			i++
+		}
+
+		sort.Ints(res)
+		return res
+	}
+
+	var res []int
+	for _, i := range m.cfg.DataSources {
+		if _, ok := mi.DataSourcesMap[i]; ok {
+			res = append(res, i)
+		}
+	}
+	sort.Ints(res)
 	return res
 }
 
@@ -116,7 +162,7 @@ func (m matcher) matchWorker(
 	defer wg.Done()
 
 	for tsk := range chIn {
-		var matchResult *mlib.Output
+		var matchResult *mlib.Match
 		ns, prsd := newNameString(parser, tsk.name)
 
 		var nsSpGr *nameString
@@ -187,14 +233,14 @@ func truncateNamesToMaxNumber(names []string) []string {
 // detectAbbreviated checks if parsed name is abbreviated. If name is not
 // abbreviated the function returns nil. If it is abbreviated, it returns
 // result with the MatchType 'NONE'.
-func detectAbbreviated(prsd *parsed.Parsed) *mlib.Output {
+func detectAbbreviated(prsd *parsed.Parsed) *mlib.Match {
 	// Abbreviations belong to ParseQuality 4
 	if prsd.ParseQuality != 4 {
 		return nil
 	}
 	for _, v := range prsd.QualityWarnings {
 		if v.Warning == parsed.GenusAbbrWarn {
-			return &mlib.Output{
+			return &mlib.Match{
 				ID:        prsd.VerbatimID,
 				Name:      prsd.Verbatim,
 				MatchType: vlib.NoMatch,
@@ -215,8 +261,8 @@ func (m matcher) exactStemMatches(stemUUID, stem string) []mlib.MatchItem {
 	return nil
 }
 
-func emptyResult(ns nameString) *mlib.Output {
-	return &mlib.Output{
+func emptyResult(ns nameString) *mlib.Match {
+	return &mlib.Match{
 		ID:        ns.ID,
 		Name:      ns.Name,
 		MatchType: vlib.NoMatch,
@@ -230,11 +276,22 @@ func (m matcher) filterDataSources(mis []mlib.MatchItem) []mlib.MatchItem {
 
 	var res []mlib.MatchItem
 	for i := range mis {
-		for _, dsID := range m.cfg.DataSources {
-			if _, ok := mis[i].DataSources[dsID]; ok {
-				res = append(res, mis[i])
-				break
-			}
+		dataSourcesMap := m.matchDataSources(mis[i])
+		if len(dataSourcesMap) > 0 {
+			mis[i].DataSourcesMap = dataSourcesMap
+			res = append(res, mis[i])
+
+		}
+	}
+	return res
+}
+
+func (m matcher) matchDataSources(mi mlib.MatchItem) map[int]struct{} {
+	res := make(map[int]struct{})
+	var ok bool
+	for _, dsID := range m.cfg.DataSources {
+		if _, ok = mi.DataSourcesMap[dsID]; ok {
+			res[dsID] = struct{}{}
 		}
 	}
 	return res

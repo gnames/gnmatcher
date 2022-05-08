@@ -77,7 +77,7 @@ func Example() {
 	vm := virusio.New(cfg)
 	gnm := gnmatcher.New(em, fm, vm, cfg)
 	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
-	for _, match := range res {
+	for _, match := range res.Matches {
 		fmt.Println(match.Name)
 		fmt.Println(match.MatchType)
 		for _, item := range match.MatchItems {

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.0.0-RC1]
+
+- Add [#51]: metadata for output to make it more future proof.
+
 ## [v0.9.9] - 2022-05-05 Thu
 
 - Add [#50]: data-source option in input.

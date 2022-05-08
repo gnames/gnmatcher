@@ -12,13 +12,13 @@ func (m matcher) matchFuzzy(
 	canonical,
 	stem string,
 	ns nameString,
-) *mlib.Output {
+) *mlib.Match {
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
 		return nil
 	}
 
-	res := &mlib.Output{
+	res := &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  vlib.Fuzzy,

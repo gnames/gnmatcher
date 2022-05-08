@@ -42,7 +42,7 @@ func TestVer(t *testing.T) {
 }
 
 func TestExact(t *testing.T) {
-	var response []mlib.Output
+	var response mlib.Output
 	enc := gnfmt.GNjson{}
 	names := []string{
 		"Not name",
@@ -65,41 +65,42 @@ func TestExact(t *testing.T) {
 	assert.Nil(t, err)
 
 	_ = enc.Decode(respBytes, &response)
-	assert.Equal(t, 9, len(response))
+	matches := response.Matches
+	assert.Equal(t, 9, len(matches))
 
-	bad := response[0]
+	bad := matches[0]
 	assert.Equal(t, "Not name", bad.Name)
 	assert.Equal(t, vlib.NoMatch, bad.MatchType)
 	assert.Nil(t, bad.MatchItems)
 
-	good := response[1]
+	good := matches[1]
 	assert.Equal(t, "Bubo bubo", good.Name)
 	assert.Equal(t, vlib.Exact, good.MatchType)
 	assert.Equal(t, "Bubo bubo", good.MatchItems[0].MatchStr)
 	assert.Equal(t, 0, good.MatchItems[0].EditDistance)
 	assert.Equal(t, 0, good.MatchItems[0].EditDistanceStem)
 
-	full := response[4]
+	full := matches[4]
 	assert.Equal(t, "Plantago major var major", full.Name)
 	assert.Equal(t, vlib.Exact, full.MatchType)
 	assert.Equal(t, "Plantago major major", full.MatchItems[0].MatchStr)
 
-	virus := response[5]
+	virus := matches[5]
 	assert.Equal(t, "Cytospora ribis mitovirus 2", virus.Name)
 	assert.Equal(t, vlib.Virus, virus.MatchType)
 	assert.Equal(t, "Cytospora ribis mitovirus 2", virus.MatchItems[0].MatchStr)
 
-	noParse := response[6]
+	noParse := matches[6]
 	assert.Equal(t, "A-shaped rods", noParse.Name)
 	assert.Equal(t, vlib.NoMatch, noParse.MatchType)
 	assert.Nil(t, noParse.MatchItems)
 
-	abbr := response[7]
+	abbr := matches[7]
 	assert.Equal(t, "Alb. alba", abbr.Name)
 	assert.Equal(t, vlib.NoMatch, abbr.MatchType)
 	assert.Nil(t, abbr.MatchItems)
 
-	cand := response[8]
+	cand := matches[8]
 	assert.Equal(t, "Candidatus Aenigmarchaeum subterraneum", cand.Name)
 	assert.Equal(t, vlib.Exact, cand.MatchType)
 	assert.Equal(t,
@@ -109,7 +110,7 @@ func TestExact(t *testing.T) {
 }
 
 func TestFuzzy(t *testing.T) {
-	var response []mlib.Output
+	var response mlib.Output
 	names := []string{
 		"Not name", "Pomatomusi",
 		"Pardosa moeste", "Pardosamoeste",
@@ -130,17 +131,18 @@ func TestFuzzy(t *testing.T) {
 	err = enc.Decode(respBytes, &response)
 	assert.Nil(t, err)
 
-	bad := response[0]
+	matches := response.Matches
+	bad := matches[0]
 	assert.Equal(t, "Not name", bad.Name)
 	assert.Equal(t, vlib.NoMatch, bad.MatchType)
 	assert.Nil(t, bad.MatchItems)
 
-	uni := response[1]
+	uni := matches[1]
 	assert.Equal(t, "Pomatomusi", uni.Name)
 	assert.Equal(t, vlib.NoMatch, uni.MatchType)
 	assert.Nil(t, uni.MatchItems)
 
-	suffix := response[2]
+	suffix := matches[2]
 	assert.Equal(t, "Pardosa moeste", suffix.Name)
 	assert.Equal(t, vlib.Fuzzy, suffix.MatchType)
 	assert.Equal(t, 1, len(suffix.MatchItems))
@@ -148,12 +150,12 @@ func TestFuzzy(t *testing.T) {
 	assert.Equal(t, 0, suffix.MatchItems[0].EditDistanceStem)
 
 	// We do not have yet support for lost spaces.
-	space := response[3]
+	space := matches[3]
 	assert.Equal(t, "Pardosamoeste", space.Name)
 	assert.Equal(t, vlib.NoMatch, space.MatchType)
 	assert.Nil(t, space.MatchItems)
 
-	fuzzy := response[4]
+	fuzzy := matches[4]
 	assert.Equal(t, "Accanthurus glaucopareus", fuzzy.Name)
 	assert.Equal(t, vlib.Fuzzy, fuzzy.MatchType)
 	assert.Equal(t, 2, len(fuzzy.MatchItems))
@@ -162,7 +164,7 @@ func TestFuzzy(t *testing.T) {
 	// Added because stem was missing in canonicals table.
 	// Still not sure why it was possible, the solution is in
 	// creating canonical_stems if they are empty.
-	fuzzy2 := response[5]
+	fuzzy2 := matches[5]
 	assert.Equal(t, "Tillaudsia utriculata", fuzzy2.Name)
 	assert.Equal(t, vlib.Fuzzy, fuzzy2.MatchType)
 	assert.Equal(t, 1, len(fuzzy2.MatchItems))
@@ -170,13 +172,13 @@ func TestFuzzy(t *testing.T) {
 
 	// Added because stem for Drosophila melanogaster was missing.
 	// It was missing because canonical and stem are the same.
-	fuzzy3 := response[6]
+	fuzzy3 := matches[6]
 	assert.Equal(t, "Drosohila melanogaster", fuzzy3.Name)
 	assert.Equal(t, vlib.Fuzzy, fuzzy3.MatchType)
 	assert.Equal(t, 2, len(fuzzy3.MatchItems))
 	assert.Equal(t, 1, fuzzy3.MatchItems[0].EditDistanceStem)
 
-	fuzzy4 := response[7]
+	fuzzy4 := matches[7]
 	assert.Equal(t, "Acanthobolhrium crassicolle", fuzzy4.Name)
 	assert.Equal(t, vlib.Fuzzy, fuzzy4.MatchType)
 	assert.Equal(t, 2, len(fuzzy4.MatchItems))
@@ -187,7 +189,7 @@ func TestFuzzy(t *testing.T) {
 // Related to issue #43. Send a name with one suffix and get back not only
 // names with the same suffix, but also ones with another suffix if available.
 func TestStem(t *testing.T) {
-	var response []mlib.Output
+	var response mlib.Output
 	request := mlib.Input{
 		Names: []string{"Isoetes longissimum"},
 	}
@@ -201,13 +203,13 @@ func TestStem(t *testing.T) {
 
 	err = enc.Decode(respBytes, &response)
 	assert.Nil(t, err)
-	assert.Equal(t, 2, len(response[0].MatchItems))
+	assert.Equal(t, 2, len(response.Matches[0].MatchItems))
 }
 
 // Related to issue #49. Optional search inside of species group.
 func TestSpeciesGroup(t *testing.T) {
 	assert := assert.New(t)
-	var response []mlib.Output
+	var response mlib.Output
 	tests := []struct {
 		msg, name        string
 		withSpeciesGroup bool
@@ -234,10 +236,11 @@ func TestSpeciesGroup(t *testing.T) {
 
 		err = enc.Decode(respBytes, &response)
 		assert.Nil(err)
-		assert.Equal(v.itemsNum, len(response[0].MatchItems))
+		matches := response.Matches
+		assert.Equal(v.itemsNum, len(matches[0].MatchItems))
 
-		mts := make([]string, len(response[0].MatchItems))
-		for i, v := range response[0].MatchItems {
+		mts := make([]string, len(matches[0].MatchItems))
+		for i, v := range matches[0].MatchItems {
 			mts[i] = v.MatchType.String()
 		}
 		sort.Strings(mts)
@@ -247,16 +250,17 @@ func TestSpeciesGroup(t *testing.T) {
 
 func TestDataSources(t *testing.T) {
 	assert := assert.New(t)
-	var response []mlib.Output
+	var response mlib.Output
 	enc := gnfmt.GNjson{}
 	tests := []struct {
 		msg, name  string
 		dss        []int
+		matchDss   []int
 		itemsNum   int
 		matchTypes []string
 	}{
-		{"no ds", "Narcissus minor minor", []int{}, 1, []string{"Exact"}},
-		{"grin txmy", "Narcissus minor minor", []int{6}, 1, []string{"PartialExact"}},
+		{"no ds", "Narcissus minor minor", []int{}, []int{165, 169}, 1, []string{"Exact"}},
+		{"grin txmy", "Narcissus minor minor", []int{6}, []int{6}, 1, []string{"PartialExact"}},
 	}
 
 	for _, v := range tests {
@@ -273,10 +277,12 @@ func TestDataSources(t *testing.T) {
 
 		err = enc.Decode(respBytes, &response)
 		assert.Nil(err)
-		assert.Equal(v.itemsNum, len(response[0].MatchItems))
+		matches := response.Matches
+		assert.Equal(v.itemsNum, len(matches[0].MatchItems))
+		assert.Equal(v.matchDss, matches[0].MatchItems[0].DataSources)
 
-		mts := make([]string, len(response[0].MatchItems))
-		for i, v := range response[0].MatchItems {
+		mts := make([]string, len(matches[0].MatchItems))
+		for i, v := range matches[0].MatchItems {
 			mts[i] = v.MatchType.String()
 		}
 		sort.Strings(mts)

@@ -57,12 +57,12 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 		if err != nil {
 			log.Fatal().Err(err).Msg("Cannot get data")
 		}
-		var response []mlib.Output
+		var response mlib.Output
 		_ = enc.Decode(respBytes, &response)
 
 		var name, match, matchType string
 		var editDist, editDistStem int
-		for _, res := range response {
+		for _, res := range response.Matches {
 			name = res.Name
 			matchType = res.MatchType.String()
 			if len(res.MatchItems) == 0 {

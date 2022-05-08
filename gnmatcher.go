@@ -30,7 +30,7 @@ func New(
 	return gnm
 }
 
-func (gnm gnmatcher) MatchNames(names []string, opts ...config.Option) []mlib.Output {
+func (gnm gnmatcher) MatchNames(names []string, opts ...config.Option) mlib.Output {
 	return gnm.matcher.MatchNames(names, opts...)
 }
 

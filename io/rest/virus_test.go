@@ -86,6 +86,8 @@ func TestVirus(t *testing.T) {
 		assert.Equal(v.matchlen, len(res.MatchItems))
 		if len(res.MatchItems) > 0 {
 			assert.Equal(v.matchStr, res.MatchItems[0].MatchStr)
+			assert.Equal(v.matchType, res.MatchItems[0].MatchType, v.msg)
+			assert.Equal(v.name, res.MatchItems[0].InputStr, v.msg)
 		}
 	}
 }

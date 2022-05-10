@@ -6,6 +6,7 @@
 
 - Add [#51]: metadata for output to make it more future proof.
 - Add [#35]: GET method for /matches in REST API.
+- Fix [#52]: improve MatchItem for virusees.
 
 ## [v0.9.9] - 2022-05-05 Thu
 
@@ -216,6 +217,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.0.0-rc1]: https://github.com/gnames/gnmatcher/compare/v0.9.9...v1.0.0-RC1
 [v0.9.9]: https://github.com/gnames/gnmatcher/compare/v0.9.8...v0.9.9
 [v0.9.8]: https://github.com/gnames/gnmatcher/compare/v0.9.7...v0.9.8
 [v0.9.7]: https://github.com/gnames/gnmatcher/compare/v0.9.6...v0.9.7

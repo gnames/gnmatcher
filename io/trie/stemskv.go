@@ -103,8 +103,8 @@ func initStemsKV(path string, db *sql.DB) {
 	}
 	stemRes = append(stemRes,
 		mlib.MatchItem{
-			ID:             currentID,
-			MatchStr:       currentName,
+			ID:             id,
+			MatchStr:       name,
 			DataSourcesMap: dsMap,
 		})
 	setKeyVal(kvTxn, currentStem, stemRes)

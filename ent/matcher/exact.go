@@ -50,6 +50,9 @@ func (m matcher) matchVirus(ns nameString) *mlib.Match {
 	if len(matchItems) == 0 {
 		matchType = vlib.NoMatch
 	}
+	for i := range matchItems {
+		matchItems[i].InputStr = ns.Name
+	}
 	return &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,

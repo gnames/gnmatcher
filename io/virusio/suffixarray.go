@@ -7,6 +7,7 @@ import (
 
 	"github.com/gnames/gnfmt"
 	mlib "github.com/gnames/gnlib/ent/matcher"
+	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnmatcher/io/dbase"
 	"github.com/rs/zerolog/log"
 )
@@ -22,8 +23,8 @@ func (v *virusio) prepareData() {
 
 	err = v.dataFromCache(path)
 	if err != nil {
-		log.Info().Msgf("Cache for viruses at '%s' is empty", path)
-		log.Info().Msg("Virus data will be received from the database")
+		log.Info().Msgf("Cache for viruses at '%s' is empty.", path)
+		log.Info().Msg("Virus data will be received from the database.")
 	}
 
 	if v.sufary != nil {
@@ -34,14 +35,15 @@ func (v *virusio) prepareData() {
 	data, err = v.dataFromDB(path)
 	if err != nil {
 		log.Fatal().Err(err).
-			Msgf("Cannot create filters at %s from database", path)
+			Msgf("Cannot create filters at %s from database.", path)
 	}
 	bs := v.processData(data)
 	err = v.saveData(bs)
 	if err != nil {
 		log.Fatal().Err(err).
-			Msgf("Cannot save virus data to disk at '%s'", path)
+			Msgf("Cannot save virus data to disk at '%s'.", path)
 	}
+	log.Info().Msg("Finished saving Virus data.")
 }
 
 func (v *virusio) saveData(bs []byte) error {
@@ -87,7 +89,7 @@ func (v *virusio) dataFromDB(path string) ([]mlib.MatchItem, error) {
 	db := dbase.NewDB(v.cfg)
 	log.Info().Msg("Importing lookup data for viruses")
 
-	q := `SELECT name_string_id, name
+	q := `SELECT name_string_id, name, ds.id
   FROM verification v
     JOIN data_sources ds ON ds.id = v.data_source_id
   WHERE virus='true'
@@ -97,14 +99,41 @@ func (v *virusio) dataFromDB(path string) ([]mlib.MatchItem, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Info().Msg("Setting Viruses Key-Value store")
 
-	var uuid, name string
+	var uuid, name, currentID, currentName string
+	var dsID int
+	var dsMap map[int]struct{}
 	for rows.Next() {
-		if err = rows.Scan(&uuid, &name); err != nil {
+		if err = rows.Scan(&uuid, &name, &dsID); err != nil {
 			return nil, err
 		}
-		res = append(res, mlib.MatchItem{ID: uuid, MatchStr: name})
+
+		if currentID == "" {
+			currentID = uuid
+			currentName = name
+			dsMap = make(map[int]struct{})
+		}
+
+		if uuid != currentID {
+			res = append(res,
+				mlib.MatchItem{
+					ID:             currentID,
+					MatchStr:       currentName,
+					MatchType:      vlib.Virus,
+					DataSourcesMap: dsMap,
+				})
+			currentID = uuid
+			currentName = name
+			dsMap = make(map[int]struct{})
+		}
+		dsMap[dsID] = struct{}{}
 	}
+	res = append(res,
+		mlib.MatchItem{ID: uuid,
+			MatchStr:  name,
+			MatchType: vlib.Virus,
+		})
 	return res, err
 }
 

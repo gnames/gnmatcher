@@ -3,6 +3,9 @@ package rest
 import (
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
@@ -14,6 +17,8 @@ import (
 	"github.com/sfgrp/lognsq/ent/nsq"
 	"github.com/sfgrp/lognsq/io/nsqio"
 )
+
+var apiPath = "/api/v0/"
 
 // Run creates and runs a RESTful API service of gnmatcher.
 // this API is described by OpenAPI schema at
@@ -30,9 +35,10 @@ func Run(m MatcherService) {
 	}
 
 	e.GET("/", root)
-	e.GET("/api/v0/ping", ping(m))
-	e.GET("/api/v0/version", ver(m))
-	e.POST("/api/v0/matches", matchPOST(m))
+	e.GET(apiPath+"ping", ping(m))
+	e.GET(apiPath+"version", ver(m))
+	e.POST(apiPath+"matches", matchPOST(m))
+	e.GET(apiPath+"matches/:names", matchGET(m))
 
 	addr := fmt.Sprintf(":%d", m.Port())
 	s := &http.Server{
@@ -59,6 +65,39 @@ func ping(m MatcherService) func(echo.Context) error {
 func ver(m MatcherService) func(echo.Context) error {
 	return func(c echo.Context) error {
 		result := m.GetVersion()
+		return c.JSON(http.StatusOK, result)
+	}
+}
+
+func matchGET(m MatcherService) func(echo.Context) error {
+	fmt.Println("HERE")
+	return func(c echo.Context) error {
+		nameStr, _ := url.QueryUnescape(c.Param("names"))
+		names := strings.Split(nameStr, "|")
+		dsStr, _ := url.QueryUnescape(c.QueryParam("data_sources"))
+		var ds []int
+		for _, v := range strings.Split(dsStr, "|") {
+			if id, err := strconv.Atoi(v); err == nil {
+				ds = append(ds, id)
+			}
+		}
+		var opts []config.Option
+		spGrp := c.QueryParam("species_group") == "true"
+		if spGrp {
+			opts = append(opts, config.OptWithSpeciesGroup(true))
+		}
+		if len(ds) > 0 {
+			opts = append(opts, config.OptDataSources(ds))
+		}
+
+		result := m.MatchNames(names, opts...)
+		if l := len(names); l > 0 {
+			log.Info().
+				Int("namesNum", l).
+				Str("example", names[0]).
+				Str("method", "POST").
+				Msg("Name Match")
+		}
 		return c.JSON(http.StatusOK, result)
 	}
 }

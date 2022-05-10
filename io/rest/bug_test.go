@@ -1,4 +1,4 @@
-package rest
+package rest_test
 
 import (
 	"bytes"
@@ -12,8 +12,6 @@ import (
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/stretchr/testify/assert"
 )
-
-const url = "http://:8080/api/v0/"
 
 var bugs = []struct {
 	msg, name, matchCanonical string

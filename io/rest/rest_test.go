@@ -289,3 +289,21 @@ func TestDataSources(t *testing.T) {
 		assert.Equal(v.matchTypes, mts)
 	}
 }
+
+func TestGet(t *testing.T) {
+	assert := assert.New(t)
+	resp, err := http.Get(url + "matches/Narcissus+minor+minor?data_sources=6|7&species_group=true")
+	assert.Nil(err)
+
+	respBytes, err := io.ReadAll(resp.Body)
+	assert.Nil(err)
+
+	var response mlib.Output
+	err = gnfmt.GNjson{}.Decode(respBytes, &response)
+	assert.Nil(err)
+	assert.Equal(true, response.Meta.WithSpeciesGroup)
+	assert.Equal([]int{6, 7}, response.Meta.DataSources)
+	assert.Equal(1, response.Meta.NamesNum)
+	matches := response.Matches
+	assert.Equal("Narcissus minor minor", matches[0].Name)
+}

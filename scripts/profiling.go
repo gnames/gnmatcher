@@ -21,7 +21,7 @@ import (
 
 const batch = 10_000
 
-const url = "http://:8080/api/v0/"
+const url = "http://:8080/api/v1/"
 
 func main() {
 	var wgRes sync.WaitGroup

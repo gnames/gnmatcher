@@ -1,6 +1,6 @@
 # gnmatcher
 
-[![API](https://img.shields.io/badge/OpenAPI3-1.0.0-89bf04)](https://app.swaggerhub.com/apis-docs/dimus/gnmatcher/1.0.0)
+[![API](https://img.shields.io/badge/OpenAPI3-1.0.0-89bf04)](https://apidoc.globalnames.org/gnmatcher)
 [![GoDoc](https://godoc.org/github.com/gnames/gnmatcher?status.svg)](https://pkg.go.dev/github.com/gnames/gnmatcher)
 
 ``import "github.com/gnames/gnmatcher"``
@@ -183,7 +183,7 @@ it to the following:
 
 [.env.example]: https://raw.githubusercontent.com/gnames/gnmatcher/master/.env.example
 [BDD]: https://en.wikipedia.org/wiki/Behavior-driven_development
-[RESTful API documentation]: https://apidoc.globalnames.org/gnmatcher-beta
+[RESTful API documentation]: https://apidoc.globalnames.org/gnmatcher
 [biodiversity datasets]: https://verifier.globalnames.org/data_sources
 [canonical names]: https://globalnames.org/docs/glossary/#canonical-name
 [gnames dump]: https://opendata.globalnames.org/dumps/gnames-latest.sql.gz
@@ -194,4 +194,4 @@ it to the following:
 [testdata]: https://github.com/gnames/gnmatcher/blob/master/testdata/testdata.csv
 [GNmatcher]: https://github.com/gnames/gnmatcher
 [GNames]: https://github.com/gnames/gnames
-[GNames API]: https://apidoc.globalnames.org/gnames-beta
+[GNames API]: https://apidoc.globalnames.org/gnames

@@ -18,11 +18,11 @@ import (
 	"github.com/sfgrp/lognsq/io/nsqio"
 )
 
-var apiPath = "/api/v0/"
+var apiPath = "/api/v1/"
 
 // Run creates and runs a RESTful API service of gnmatcher.
 // this API is described by OpenAPI schema at
-// https://app.swaggerhub.com/apis/dimus/gnmatcher/1.0.0
+// https://apidoc.gnames.org/gnmatcher
 func Run(m MatcherService) {
 	log.Info().Int("port", m.Port()).Msg("Starting HTTP API server")
 	e := echo.New()

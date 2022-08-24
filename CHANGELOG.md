@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.0.0]
+
+- Add: prepare for v1.0.0 release
+
 ## [v1.0.0-RC1]
 
 - Add [#51]: metadata for output to make it more future proof.

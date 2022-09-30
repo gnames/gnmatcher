@@ -14,7 +14,7 @@ require (
 	github.com/gnames/gnuuid v0.1.1
 	github.com/gnames/levenshtein v0.2.1
 	github.com/jinzhu/gorm v1.9.16
-	github.com/labstack/echo/v4 v4.7.2
+	github.com/labstack/echo/v4 v4.9.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/zerolog v1.26.1
 	github.com/sfgrp/lognsq v0.1.1

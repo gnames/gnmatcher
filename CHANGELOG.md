@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.0.1]
+
+- Add: updates for all modules.
+
 ## [v1.0.0]
 
 - Add: prepare for v1.0.0 release

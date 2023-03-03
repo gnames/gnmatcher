@@ -2,15 +2,18 @@
 
 ## Unreleased
 
-## [v1.0.1]
+- Add [#57]: refactor code into a better file structure.
+- Add: updates for all modules.
+
+## [v1.0.1] - 2022-09-05 Fri
 
 - Add: updates for all modules.
 
-## [v1.0.0]
+## [v1.0.0] - 2022-08-24 Wed
 
 - Add: prepare for v1.0.0 release
 
-## [v1.0.0-RC1]
+  ## [v1.0.0-RC1] - 2022-05-10 Tue
 
 - Add [#51]: metadata for output to make it more future proof.
 - Add [#35]: GET method for /matches in REST API.
@@ -225,6 +228,9 @@
 
 This document follows [changelog guidelines]
 
+[v1.0.2]: https://github.com/gnames/gnmatcher/compare/v1.0.1...v1.0.2
+[v1.0.1]: https://github.com/gnames/gnmatcher/compare/v1.0.0...v1.0.1
+[v1.0.0]: https://github.com/gnames/gnmatcher/compare/v1.0.0-RC1...v1.0.0
 [v1.0.0-rc1]: https://github.com/gnames/gnmatcher/compare/v0.9.9...v1.0.0-RC1
 [v0.9.9]: https://github.com/gnames/gnmatcher/compare/v0.9.8...v0.9.9
 [v0.9.8]: https://github.com/gnames/gnmatcher/compare/v0.9.7...v0.9.8

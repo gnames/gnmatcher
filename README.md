@@ -102,11 +102,11 @@ package main
 
 import (
   "fmt"
-  "github.com/gnames/gnmatcher"
-  "github.com/gnames/gnmatcher/config"
-  "github.com/gnames/gnmatcher/io/bloom"
-  "github.com/gnames/gnmatcher/io/trie"
-	"github.com/gnames/gnmatcher/io/virusio"
+  gnmatcher "github.com/gnames/gnmatcher/pkg"
+  "github.com/gnames/gnmatcher/pkg/config"
+  "github.com/gnames/gnmatcher/pkg/io/bloom"
+  "github.com/gnames/gnmatcher/pkg/io/trie"
+	"github.com/gnames/gnmatcher/pkg/io/virusio"
 )
 
 func Example() {

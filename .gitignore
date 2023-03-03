@@ -14,5 +14,5 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-gnmatcher/gnmatcher
+gnmatcher
 testdata/profiling-res.csv

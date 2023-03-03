@@ -1,3 +1,5 @@
+PROJ_NAME = gnmatcher
+
 VERSION = $(shell git describe --tags)
 VER = $(shell git describe --tags --abbrev=0)
 DATE = $(shell date -u '+%Y-%m-%d_%H:%M:%S%Z')
@@ -5,49 +7,57 @@ DATE = $(shell date -u '+%Y-%m-%d_%H:%M:%S%Z')
 FLAGS_LINUX = $(FLAGS_SHARED) GOOS=linux
 FLAGS_MAC = $(FLAGS_SHARED) GOOS=darwin
 FLAGS_WIN = $(FLAGS_SHARED) GOOS=windows
-FLAG_MODULE = GO111MODULE=on
 NO_C = CGO_ENABLED=0
 
-FLAGS_SHARED = $(FLAG_MODULE) CGO_ENABLED=0 GOARCH=amd64
-FLAGS_LD=-ldflags "-X github.com/gnames/gnmatcher.Build=${DATE} \
-                  -X github.com/gnames/gnmatcher.Version=${VERSION}"
+FLAGS_SHARED =  $(NO_C) GOARCH=amd64
+FLAGS_LD = -ldflags "-X github.com/gnames/$(PROJ_NAME)/pkg.Build=$(DATE) \
+                  -X github.com/gnames/$(PROJ_NAME)/pkg.Version=$(VERSION)"
+FLAGS_REL = -trimpath -ldflags "-s -w \
+						-X github.com/gnames/$(PROJ_NAME)/pkg.Build=$(DATE)"
+
 GOCMD=go
-GOINSTALL=$(GOCMD) install $(FLAGS_LD)
-GOBUILD=$(GOCMD) build $(FLAGS_LD)
-GOCLEAN=$(GOCMD) clean
+GOINSTALL = $(GOCMD) install $(FLAGS_LD)
+GOBUILD = $(GOCMD) build $(FLAGS_LD)
+GORELEASE = $(GOCMD) build $(FLAGS_REL)
+GOCLEAN  = $(GOCMD) clean
 GOGET = $(GOCMD) get
 
 all: install
 
 test: deps install
-	$(FLAG_MODULE) go test ./...
+	go test -shuffle=on -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+tools: deps
+	@echo Installing tools from tools.go
+	@cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
 
 deps:
-	$(FLAG_MODULE) $(GOGET) github.com/spf13/cobra/cobra@f2b07da; \
-	$(FLAG_MODULE) $(GOGET) github.com/onsi/ginkgo/ginkgo@505cc35; \
-	$(FLAG_MODULE) $(GOGET) github.com/onsi/gomega@ce690c5; \
+	@echo Download go.mod dependencies
+	$(GOCMD) mod download;
 
 build:
-	cd gnmatcher; \
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
+
 dc: build
 	docker-compose build;
 
-release: build dockerhub
-	cd gnmatcher; \
-	tar zcvf /tmp/gnmatcher-${VER}-linux.tar.gz gnmatcher; \
+buildrel:
+	$(GOCLEAN); \
+	$(FLAGS_SHARED) $(GORELEASE);
+
+release: buildrel dockerhub
+	tar zcvf /tmp/$(PROJ_NAME)-$(VER)-linux.tar.gz $(PROJ_NAME); \
 	$(GOCLEAN);
 
 install:
-	cd gnmatcher; \
 	$(FLAGS_SHARED) $(GOINSTALL);
 
-docker: build
-	docker build -t gnames/gnmatcher:latest -t gnames/gnmatcher:${VERSION} .; \
-	cd gnmatcher; \
+docker: buildrel
+	docker buildx build -t gnames/$(PROJ_NAME):latest -t gnames/$(PROJ_NAME):$(VERSION) .; \
+	$(GOCLEAN);
 
 dockerhub: docker
-	docker push gnames/gnmatcher; \
-	docker push gnames/gnmatcher:${VERSION}
+	docker push gnames/$(PROJ_NAME); \
+	docker push gnames/$(PROJ_NAME):$(VERSION)
 

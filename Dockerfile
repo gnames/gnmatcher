@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3.17
 
 LABEL maintainer="Dmitry Mozzherin"
 
@@ -9,7 +9,7 @@ WORKDIR /bin
 ENV LANG en_US.UTF-8
 ENV LC_COLLATE C
 
-COPY ./gnmatcher/gnmatcher /bin
+COPY ./gnmatcher /bin
 
 ENTRYPOINT [ "gnmatcher" ]
 

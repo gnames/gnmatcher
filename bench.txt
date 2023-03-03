@@ -1,2 +1,0 @@
-PASS
-ok  	github.com/gnames/gnmatcher	0.005s

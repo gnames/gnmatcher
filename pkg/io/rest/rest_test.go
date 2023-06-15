@@ -248,6 +248,39 @@ func TestSpeciesGroup(t *testing.T) {
 	}
 }
 
+// related to issue #58, add an option too fuzzy match uninomials.
+func TestFuzzyUninomial(t *testing.T) {
+	assert := assert.New(t)
+	params := mlib.Input{
+		Names:                   []string{"Simulidae"},
+		DataSources:             []int{3},
+		WithUninomialFuzzyMatch: true,
+	}
+	enc := gnfmt.GNjson{}
+	req, err := enc.Encode(params)
+	assert.Nil(err)
+	r := bytes.NewReader(req)
+	resp, err := http.Post(url+"matches", "application/json", r)
+	assert.Nil(err)
+	respBytes, err := io.ReadAll(resp.Body)
+	assert.Nil(err)
+
+	var res mlib.Output
+	err = enc.Decode(respBytes, &res)
+	assert.Nil(err)
+	matches := res.Matches
+	assert.GreaterOrEqual(3, len(matches[0].MatchItems))
+	var isFuzzy bool
+	for _, v := range matches[0].MatchItems {
+		if v.MatchStr == "Simuliidae" {
+			assert.Equal(1, v.EditDistance)
+			assert.Equal(vlib.Fuzzy, v.MatchType)
+			isFuzzy = true
+		}
+	}
+	assert.True(isFuzzy)
+}
+
 func TestDataSources(t *testing.T) {
 	assert := assert.New(t)
 	var response mlib.Output

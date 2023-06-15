@@ -27,10 +27,14 @@ type Config struct {
 	// JobsNum is the number of jobs to run in parallel
 	JobsNum int
 
-	// MaxEditDist is the maximal allowed edit distance for levenshtein automata.
-	// The number cannot exceed 2, default number is 1. The speed of execution
-	// slows down dramatically with the MaxEditDist > 1.
+	// MaxEditDist is the maximal allowed edit distance for levenshtein
+	// automata. The number cannot exceed 2, default number is 1. The speed of
+	// execution slows down dramatically with the MaxEditDist > 1.
 	MaxEditDist int
+
+	// UninomialFuzzyMatch is true when it is allowed to use fuzzy match for
+	// uninomial names.
+	UninomialFuzzyMatch bool
 
 	// PgDB the database name where gnames data is located.
 	PgDB string
@@ -142,6 +146,14 @@ func OptMaxEditDist(i int) Option {
 		} else {
 			cfg.MaxEditDist = i
 		}
+	}
+}
+
+// OptUninomialFuzzyMatch sets an option that allows to fuzzy-match
+// uninomial name-strings.
+func OptUninomialFuzzyMatch(b bool) Option {
+	return func(cfg *Config) {
+		cfg.UninomialFuzzyMatch = b
 	}
 }
 

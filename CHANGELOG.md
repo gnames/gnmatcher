@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v1.1.0] - 2023-06-15 Thu
+
+- Add [#58]: add an option to fuzzy-match uninomials.
+
+## [v1.0.2] - 2023-03-7 Tue
+
 - Add [#57]: refactor code into a better file structure.
 - Add: updates for all modules.
 
@@ -228,6 +234,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.0]: https://github.com/gnames/gnmatcher/compare/v1.0.2...v1.1.0
 [v1.0.2]: https://github.com/gnames/gnmatcher/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/gnames/gnmatcher/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/gnames/gnmatcher/compare/v1.0.0-RC1...v1.0.0

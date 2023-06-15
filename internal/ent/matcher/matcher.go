@@ -177,7 +177,7 @@ func (m matcher) matchWorker(
 			}
 			matchResult = m.matchStem(ns)
 
-			// if we matching whole species group, add group's
+			// if we are matching a whole species group, add group's
 			// data to the match.
 			if nsSpGr != nil {
 				spGrResult := m.matchStem(*nsSpGr)
@@ -192,7 +192,7 @@ func (m matcher) matchWorker(
 				}
 			}
 
-			if ns.Cardinality < 2 {
+			if ns.Cardinality < 2 && !m.cfg.UninomialFuzzyMatch {
 				if matchResult == nil {
 					matchResult = emptyResult(ns)
 				}

@@ -17,7 +17,7 @@ type FuzzyMatcher interface {
 	// input stem within the edit distance constraint.
 	MatchStem(stem string) []string
 
-	// MatchStemExact takes a stem and returns true if the is the exact
+	// MatchStemExact takes a stem and returns true if there is the exact
 	// match of the stem is found.
 	MatchStemExact(stem string) bool
 

@@ -86,6 +86,10 @@ func matchGET(m MatcherService) func(echo.Context) error {
 		if spGrp {
 			opts = append(opts, config.OptWithSpeciesGroup(true))
 		}
+		fuzzyUni := c.QueryParam("fuzzy_uninomial") == "true"
+		if fuzzyUni {
+			opts = append(opts, config.OptUninomialFuzzyMatch(true))
+		}
 		if len(ds) > 0 {
 			opts = append(opts, config.OptDataSources(ds))
 		}
@@ -95,7 +99,7 @@ func matchGET(m MatcherService) func(echo.Context) error {
 			log.Info().
 				Int("namesNum", l).
 				Str("example", names[0]).
-				Str("method", "POST").
+				Str("method", "GET").
 				Msg("Name Match")
 		}
 		return c.JSON(http.StatusOK, result)
@@ -112,6 +116,9 @@ func matchPOST(m MatcherService) func(echo.Context) error {
 		}
 		if inp.WithSpeciesGroup {
 			opts = append(opts, config.OptWithSpeciesGroup(true))
+		}
+		if inp.WithUninomialFuzzyMatch {
+			opts = append(opts, config.OptUninomialFuzzyMatch(true))
 		}
 		if len(inp.DataSources) > 0 {
 			opts = append(opts, config.OptDataSources(inp.DataSources))

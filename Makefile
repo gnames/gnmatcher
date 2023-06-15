@@ -46,7 +46,7 @@ buildrel:
 	$(GOCLEAN); \
 	$(FLAGS_SHARED) $(GORELEASE);
 
-release: buildrel dockerhub
+release: dockerhub
 	tar zcvf /tmp/$(PROJ_NAME)-$(VER)-linux.tar.gz $(PROJ_NAME); \
 	$(GOCLEAN);
 
@@ -55,7 +55,6 @@ install:
 
 docker: buildrel
 	docker buildx build -t gnames/$(PROJ_NAME):latest -t gnames/$(PROJ_NAME):$(VERSION) .; \
-	$(GOCLEAN);
 
 dockerhub: docker
 	docker push gnames/$(PROJ_NAME); \

@@ -82,13 +82,6 @@ var bugs = []struct {
 		editDistance:   0,
 	},
 	{
-		msg:            "#47 compares result with canonical simple",
-		name:           "Teucrium pyrenaicum subsp. guarense",
-		matchCanonical: "Teucrium pyrenaicum guarensis",
-		matchType:      vlib.Fuzzy,
-		editDistance:   2,
-	},
-	{
 		msg:            "#48 should not have -1 edit distance",
 		name:           "Vesicaria deltoideum creticum",
 		matchCanonical: "Vesicaria cretica",
@@ -140,6 +133,35 @@ func TestBugs(t *testing.T) {
 		assert.True(t, hasEDist, msgEDist)
 
 	}
+}
+
+// Test #47: Make sure that infraspecies do match as fuzzy even if their
+// stems are the same as matched name.
+func TestFuzzyInfrasp(t *testing.T) {
+	assert := assert.New(t)
+	params := mlib.Input{
+		Names:       []string{"Teucrium pyrenaicum subsp. guarense"},
+		DataSources: []int{196},
+	}
+	enc := gnfmt.GNjson{}
+	req, err := enc.Encode(params)
+	assert.Nil(err)
+	r := bytes.NewReader(req)
+	resp, err := http.Post(url+"matches", "application/json", r)
+	assert.Nil(err)
+	respBytes, err := io.ReadAll(resp.Body)
+	assert.Nil(err)
+
+	var res mlib.Output
+	err = enc.Decode(respBytes, &res)
+	assert.Nil(err)
+	matches := res.Matches
+	assert.Equal(
+		"Teucrium pyrenaicum guarensis",
+		matches[0].MatchItems[0].MatchStr,
+	)
+	assert.Equal(2, matches[0].MatchItems[0].EditDistance)
+	assert.Equal(vlib.Fuzzy, matches[0].MatchItems[0].MatchType)
 }
 
 func params() mlib.Input {

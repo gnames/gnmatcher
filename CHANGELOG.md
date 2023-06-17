@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.1] - 2023-06-17 Sat
+
+- Add: update gnparser and other modules
+
 ## [v1.1.0] - 2023-06-15 Thu
 
 - Add [#58]: add an option to fuzzy-match uninomials.

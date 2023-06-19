@@ -29,6 +29,20 @@ func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 	matchItems := m.exactStemMatches(gID, ns.Partial.Genus)
 
 	matchItems = m.filterDataSources(matchItems)
+
+	if len(matchItems) == 0 && m.cfg.WithUninomialFuzzyMatch {
+		gen := ns.Partial.Genus
+		res := m.matchFuzzy(gen, gen, ns)
+		if len(res.MatchItems) == 0 {
+			return nil
+		}
+		res.MatchType = vlib.PartialFuzzy
+		for i := range res.MatchItems {
+			res.MatchItems[i].MatchType = vlib.PartialFuzzy
+		}
+		return res
+	}
+
 	if len(matchItems) == 0 {
 		return emptyResult(ns)
 	}

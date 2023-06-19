@@ -70,7 +70,6 @@ func ver(m MatcherService) func(echo.Context) error {
 }
 
 func matchGET(m MatcherService) func(echo.Context) error {
-	fmt.Println("HERE")
 	return func(c echo.Context) error {
 		nameStr, _ := url.QueryUnescape(c.Param("names"))
 		names := strings.Split(nameStr, "|")

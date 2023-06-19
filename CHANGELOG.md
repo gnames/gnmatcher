@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.2] - 2023-06-19 Mon
+
+- Fix: config name for uninomial fuzzy match.
+
 ## [v1.1.1] - 2023-06-17 Sat
 
 - Add: update gnparser and other modules

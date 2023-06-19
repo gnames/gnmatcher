@@ -32,10 +32,6 @@ type Config struct {
 	// execution slows down dramatically with the MaxEditDist > 1.
 	MaxEditDist int
 
-	// UninomialFuzzyMatch is true when it is allowed to use fuzzy match for
-	// uninomial names.
-	UninomialFuzzyMatch bool
-
 	// PgDB the database name where gnames data is located.
 	PgDB string
 
@@ -76,6 +72,10 @@ type Config struct {
 	// WithSpeciesGroup is true when searching for "Aus bus" also searches for
 	// "Aus bus bus".
 	WithSpeciesGroup bool
+
+	// WithUninomialFuzzyMatch is true when it is allowed to use fuzzy match for
+	// uninomial names.
+	WithUninomialFuzzyMatch bool
 
 	// WithWebLogs flag enables logs when running web-service. This flag is
 	// ignored if `Port` value is not set.
@@ -149,11 +149,11 @@ func OptMaxEditDist(i int) Option {
 	}
 }
 
-// OptUninomialFuzzyMatch sets an option that allows to fuzzy-match
+// OptWithUninomialFuzzyMatch sets an option that allows to fuzzy-match
 // uninomial name-strings.
-func OptUninomialFuzzyMatch(b bool) Option {
+func OptWithUninomialFuzzyMatch(b bool) Option {
 	return func(cfg *Config) {
-		cfg.UninomialFuzzyMatch = b
+		cfg.WithUninomialFuzzyMatch = b
 	}
 }
 

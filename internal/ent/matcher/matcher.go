@@ -192,7 +192,7 @@ func (m matcher) matchWorker(
 				}
 			}
 
-			if ns.Cardinality < 2 && !m.cfg.UninomialFuzzyMatch {
+			if ns.Cardinality < 2 && !m.cfg.WithUninomialFuzzyMatch {
 				if matchResult == nil {
 					matchResult = emptyResult(ns)
 				}

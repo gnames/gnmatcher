@@ -88,7 +88,7 @@ func matchGET(m MatcherService) func(echo.Context) error {
 		}
 		fuzzyUni := c.QueryParam("fuzzy_uninomial") == "true"
 		if fuzzyUni {
-			opts = append(opts, config.OptUninomialFuzzyMatch(true))
+			opts = append(opts, config.OptWithUninomialFuzzyMatch(true))
 		}
 		if len(ds) > 0 {
 			opts = append(opts, config.OptDataSources(ds))
@@ -118,7 +118,7 @@ func matchPOST(m MatcherService) func(echo.Context) error {
 			opts = append(opts, config.OptWithSpeciesGroup(true))
 		}
 		if inp.WithUninomialFuzzyMatch {
-			opts = append(opts, config.OptUninomialFuzzyMatch(true))
+			opts = append(opts, config.OptWithUninomialFuzzyMatch(true))
 		}
 		if len(inp.DataSources) > 0 {
 			opts = append(opts, config.OptDataSources(inp.DataSources))

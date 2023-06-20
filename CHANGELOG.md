@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.3] - 2023-06-20 Tue
+
+- update uninomial fuzzy matching
+
 ## [v1.1.2] - 2023-06-19 Mon
 
 - Fix: config name for uninomial fuzzy match.

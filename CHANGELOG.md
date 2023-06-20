@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.4] - 2023-06-20 Tue
+
+- fix missing module
+
 ## [v1.1.3] - 2023-06-20 Tue
 
 - update uninomial fuzzy matching
@@ -246,7 +250,11 @@
 
 This document follows [changelog guidelines]
 
-[v1.1.0]: https://github.com/gnames/gnmatcher/compare/v1.0.2...v1.1.0
+[v1.1.4]: https://github.com/gnames/gnmatcher/compare/v1.1.3...v1.1.4
+[v1.1.3]: https://github.com/gnames/gnmatcher/compare/v1.1.2...v1.1.3
+[v1.1.2]: https://github.com/gnames/gnmatcher/compare/v1.1.1...v1.1.2
+[v1.1.1]: https://github.com/gnames/gnmatcher/compare/v1.1.0...v1.1.1
+[v1.1.0]: https://github.com/gnames/gnmatcher/compare/v1.0.1...v1.1.0
 [v1.0.2]: https://github.com/gnames/gnmatcher/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/gnames/gnmatcher/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/gnames/gnmatcher/compare/v1.0.0-RC1...v1.0.0
@@ -298,6 +306,16 @@ This document follows [changelog guidelines]
 [v0.2.0]: https://github.com/gnames/gnmatcher/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
+[#70]: https://github.com/gnames/gnmatcher/issues/70
+[#69]: https://github.com/gnames/gnmatcher/issues/69
+[#68]: https://github.com/gnames/gnmatcher/issues/68
+[#67]: https://github.com/gnames/gnmatcher/issues/67
+[#66]: https://github.com/gnames/gnmatcher/issues/66
+[#65]: https://github.com/gnames/gnmatcher/issues/65
+[#64]: https://github.com/gnames/gnmatcher/issues/64
+[#63]: https://github.com/gnames/gnmatcher/issues/63
+[#62]: https://github.com/gnames/gnmatcher/issues/62
+[#61]: https://github.com/gnames/gnmatcher/issues/61
 [#60]: https://github.com/gnames/gnmatcher/issues/60
 [#59]: https://github.com/gnames/gnmatcher/issues/59
 [#58]: https://github.com/gnames/gnmatcher/issues/58

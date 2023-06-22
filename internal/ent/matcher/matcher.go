@@ -112,9 +112,10 @@ func (m matcher) MatchNames(
 func (m matcher) prepareOutput(ms []mlib.Match) mlib.Output {
 	res := mlib.Output{
 		Meta: mlib.Meta{
-			NamesNum:         len(ms),
-			WithSpeciesGroup: m.cfg.WithSpeciesGroup,
-			DataSources:      m.cfg.DataSources,
+			NamesNum:                len(ms),
+			WithSpeciesGroup:        m.cfg.WithSpeciesGroup,
+			WithUninomialFuzzyMatch: m.cfg.WithUninomialFuzzyMatch,
+			DataSources:             m.cfg.DataSources,
 		},
 	}
 	for i := range ms {

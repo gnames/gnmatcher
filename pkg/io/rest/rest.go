@@ -35,6 +35,8 @@ func Run(m MatcherService) {
 	}
 
 	e.GET("/", root)
+	e.GET("/api/v1", root)
+	e.GET("/api/v1/", root)
 	e.GET(apiPath+"ping", ping(m))
 	e.GET(apiPath+"version", ver(m))
 	e.POST(apiPath+"matches", matchPOST(m))
@@ -52,7 +54,15 @@ func Run(m MatcherService) {
 func root(c echo.Context) error {
 	return c.String(http.StatusOK,
 		`The OpenAPI is described at
-https://apidoc.globalnames.org/gnmatcher`)
+https://apidoc.globalnames.org/gnmatcher
+
+API path: /api/v1/
+		
+Endpoints:
+    ping/
+    version/
+    matches/
+`)
 }
 
 func ping(m MatcherService) func(echo.Context) error {

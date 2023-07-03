@@ -88,6 +88,13 @@ var bugs = []struct {
 		matchType:      vlib.PartialFuzzy,
 		editDistance:   2,
 	},
+	{
+		msg:            "#59 should provide correct match type",
+		name:           "Pleurotoma gomphoidea avita F. Edwards, 1860",
+		matchCanonical: "Pleurotoma anita",
+		matchType:      vlib.PartialFuzzy,
+		editDistance:   1,
+	},
 }
 
 func TestBugs(t *testing.T) {

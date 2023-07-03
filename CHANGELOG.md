@@ -2,17 +2,21 @@
 
 ## Unreleased
 
+## [v1.1.6] - 2023-07-03 Mon
+
+- Fix [#59]: show correct match type for all partial fuzzy matches.
+
 ## [v1.1.5] - 2023-06-22 Thu
 
-- add metadata about uninomial fuzzy matching
+- Add: metadata about uninomial fuzzy matching
 
 ## [v1.1.4] - 2023-06-20 Tue
 
-- fix missing module
+- Fix: missing module.
 
 ## [v1.1.3] - 2023-06-20 Tue
 
-- update uninomial fuzzy matching
+- Add: update uninomial fuzzy matching.
 
 ## [v1.1.2] - 2023-06-19 Mon
 
@@ -254,6 +258,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.6]: https://github.com/gnames/gnmatcher/compare/v1.1.5...v1.1.6
 [v1.1.5]: https://github.com/gnames/gnmatcher/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/gnames/gnmatcher/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/gnames/gnmatcher/compare/v1.1.2...v1.1.3

@@ -106,10 +106,13 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 	for _, name := range names {
 		stem := stemmer.Stem(name).Stem
 		if res := m.matchFuzzy(name, stem, ns); res != nil {
-
 			res.MatchItems = m.filterDataSources(res.MatchItems)
 			if len(res.MatchItems) == 0 {
 				return nil
+			}
+
+			for i := range res.MatchItems {
+				res.MatchItems[i].MatchType = vlib.PartialFuzzy
 			}
 
 			res.MatchType = vlib.PartialFuzzy

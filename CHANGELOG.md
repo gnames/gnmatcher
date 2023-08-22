@@ -2,13 +2,17 @@
 
 ## Unreleased
 
+## [v1.1.7.] - 2023-08-22 Tue
+
+- Add: update gnparser and other modules.
+
 ## [v1.1.6] - 2023-07-03 Mon
 
 - Fix [#59]: show correct match type for all partial fuzzy matches.
 
 ## [v1.1.5] - 2023-06-22 Thu
 
-- Add: metadata about uninomial fuzzy matching
+- Add: metadata about uninomial fuzzy matching.
 
 ## [v1.1.4] - 2023-06-20 Tue
 
@@ -24,7 +28,7 @@
 
 ## [v1.1.1] - 2023-06-17 Sat
 
-- Add: update gnparser and other modules
+- Add: update gnparser and other modules.
 
 ## [v1.1.0] - 2023-06-15 Thu
 

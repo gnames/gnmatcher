@@ -1,28 +1,28 @@
 module github.com/gnames/gnmatcher
 
-go 1.20
+go 1.21
 
 require (
 	github.com/devopsfaith/bloomfilter v1.4.0
 	github.com/dgraph-io/badger/v2 v2.2007.4
 	github.com/dustin/go-humanize v1.0.1
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
-	github.com/gnames/gnfmt v0.4.1
-	github.com/gnames/gnlib v0.19.0
-	github.com/gnames/gnparser v1.7.4
+	github.com/gnames/gnfmt v0.4.2
+	github.com/gnames/gnlib v0.20.0
+	github.com/gnames/gnparser v1.7.5
 	github.com/gnames/gnsys v0.2.2
 	github.com/gnames/gnuuid v0.1.1
 	github.com/gnames/levenshtein v0.3.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.11.1
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/rs/zerolog v1.30.0
+	github.com/rs/zerolog v1.31.0
 	github.com/sfgrp/lognsq v0.1.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/cobra-cli v1.3.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/perf v0.0.0-20230822165715-3c60af34b3f4
+	golang.org/x/perf v0.0.0-20230906145419-e9dd5d2713ed
 )
 
 require (
@@ -39,7 +39,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
-	github.com/google/uuid v1.2.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -70,12 +70,12 @@ require (
 	github.com/tmthrgd/go-popcount v0.0.0-20180111143836-3918361d3e97 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/net v0.12.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/crypto v0.13.0 // indirect
+	golang.org/x/net v0.15.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

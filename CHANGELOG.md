@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.8] - 2023-09-26 Tue
+
+- Add: update gnparser and other modules.
+
 ## [v1.1.7.] - 2023-08-22 Tue
 
 - Add: update gnparser and other modules.

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"io"
 	"net/http"
-	"sort"
+	"slices"
 	"testing"
 
 	"github.com/gnames/gnfmt"
@@ -243,7 +243,7 @@ func TestSpeciesGroup(t *testing.T) {
 		for i, v := range matches[0].MatchItems {
 			mts[i] = v.MatchType.String()
 		}
-		sort.Strings(mts)
+		slices.Sort(mts)
 		assert.Equal(v.matchTypes, mts)
 	}
 }
@@ -342,7 +342,7 @@ func TestDataSources(t *testing.T) {
 		for i, v := range matches[0].MatchItems {
 			mts[i] = v.MatchType.String()
 		}
-		sort.Strings(mts)
+		slices.Sort(mts)
 		assert.Equal(v.matchTypes, mts)
 	}
 }

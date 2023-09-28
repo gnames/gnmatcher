@@ -1,7 +1,7 @@
 package matcher
 
 import (
-	"sort"
+	"slices"
 	"sync"
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
@@ -137,7 +137,7 @@ func (m matcher) convertDataSources(mi mlib.MatchItem) []int {
 			i++
 		}
 
-		sort.Ints(res)
+		slices.Sort(res)
 		return res
 	}
 
@@ -147,7 +147,7 @@ func (m matcher) convertDataSources(mi mlib.MatchItem) []int {
 			res = append(res, i)
 		}
 	}
-	sort.Ints(res)
+	slices.Sort(res)
 	return res
 }
 

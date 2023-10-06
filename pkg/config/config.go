@@ -243,7 +243,7 @@ func New(opts ...Option) Config {
 		CacheDir:       cacheDir,
 		MaxEditDist:    1,
 		JobsNum:        1,
-		PgHost:         "localhost",
+		PgHost:         "0.0.0.0",
 		PgPort:         5432,
 		PgUser:         "postgres",
 		PgPass:         "postgres",

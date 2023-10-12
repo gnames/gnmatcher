@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add: update modules, gnparser v1.9.0.
 - Add: use `slices` package for sorting.
 
 ## [v1.1.8] - 2023-09-26 Tue

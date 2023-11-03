@@ -2,8 +2,11 @@
 
 ## Unreleased
 
+## [v1.1.9] - 2023-11-03 Fri
+
 - Add: update modules, gnparser v1.9.0.
 - Add: use `slices` package for sorting.
+- Fix: update gnlib, fixes match type bug.
 
 ## [v1.1.8] - 2023-09-26 Tue
 

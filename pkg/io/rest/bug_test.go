@@ -90,7 +90,7 @@ var bugs = []struct {
 	},
 	{
 		msg:            "#59 should provide correct match type",
-		name:           "Pleurotoma gomphoidea avita F. Edwards, 1860",
+		name:           "Pleurotoma godiea avita F. Edwards, 1860",
 		matchCanonical: "Pleurotoma anita",
 		matchType:      vlib.PartialFuzzy,
 		editDistance:   1,

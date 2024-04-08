@@ -27,6 +27,11 @@ func (em *exactMatcher) Init() {
 	em.getFilters()
 }
 
+// SetConfig updates configuration of the matcher.
+func (em *exactMatcher) SetConfig(cfg config.Config) {
+	em.cfg = cfg
+}
+
 func (em *exactMatcher) MatchCanonicalID(uuid string) bool {
 	em.filters.mux.Lock()
 	isIn := em.filters.canonicalStem.Check([]byte(uuid))

@@ -62,6 +62,7 @@ func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
 func (m matcher) processPartial(p multinomial, ns nameString,
 	parser gnparser.GNparser) *mlib.Match {
 	names := []string{p.Tail, p.Head}
+	relax := m.cfg.WithRelaxedFuzzyMatch
 	for _, name := range names {
 		// TODO this is probably not efficient to use parser so many times
 		nsPart, parsed := newNameString(parser, name)
@@ -78,7 +79,7 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 					matchType = vlib.PartialExact
 					v.MatchType = matchType
 				} else {
-					editDistance := fuzzy.EditDistance(v.InputStr, v.MatchStr)
+					editDistance := fuzzy.EditDistance(v.InputStr, v.MatchStr, relax)
 					if editDistance == -1 {
 						continue
 					}

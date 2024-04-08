@@ -180,8 +180,8 @@ github.com/gin-gonic/gin v1.1.5-0.20170702092826-d459835d2b07/go.mod h1:7cKuhb5q
 github.com/gnames/gnfmt v0.1.0/go.mod h1:WG9c3CoiVrGc1SDsxLk7zjmv2B4UIzI00m4K5Khc/d0=
 github.com/gnames/gnfmt v0.4.3 h1:TUbqT+2KsC7qdo2lUICw9vOx2tBDF80ehvBrLZaMMR0=
 github.com/gnames/gnfmt v0.4.3/go.mod h1:Nnxb1w0jh+8cit4gVkfSKqH2lA2chImkvSiDvAFhJes=
-github.com/gnames/gnlib v0.36.0 h1:urkqCb4Pu2H4iFkx5UfiNNotsSUPZypSLNyXjKf5P7w=
-github.com/gnames/gnlib v0.36.0/go.mod h1:MbAXGtgFwWakNImNqCXrU36mNeP1mu8zDhOI6Tq38fk=
+github.com/gnames/gnlib v0.42.0 h1:Lb4KA6UFKJLwq36ApciJLxoNGNugeoAgoisBwDqlqe8=
+github.com/gnames/gnlib v0.42.0/go.mod h1:MbAXGtgFwWakNImNqCXrU36mNeP1mu8zDhOI6Tq38fk=
 github.com/gnames/gnparser v1.9.1 h1:iS/ZbpZhaVFvbVccKx78BC4K2KI0HDYGswqQLxFjRaA=
 github.com/gnames/gnparser v1.9.1/go.mod h1:exCKQdEEtXObMT4meCVacWvumpneXfanm674EpEuEog=
 github.com/gnames/gnstats v0.2.1 h1:JAzDwcws6L9xTsHD9uMr1OaUNh9vN+Ghnn2CFRd3Ilo=

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
+	"github.com/gnames/gnmatcher/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,6 +35,8 @@ var stemToMatchItemsMock = map[string][]mlib.MatchItem{
 type fuzzyMatcherMock struct{}
 
 func (fuzzyMatcherMock) Init() {}
+
+func (fuzzyMatcherMock) SetConfig(cfg config.Config) {}
 
 func (fuzzyMatcherMock) MatchStem(stem string) []string {
 	if stems, ok := matchStemMock[stem]; ok {

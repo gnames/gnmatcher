@@ -18,7 +18,8 @@ import (
 const (
 	// MaxMaxNamesNum is the largest number of names that can be processed
 	// per request. If input contains more names, it will be truncated.
-	MaxNamesNum = 10_000
+	MaxNamesNum      = 10_000
+	MaxRelaxFuzzyNum = 50
 )
 
 type matcher struct {
@@ -75,7 +76,6 @@ func (m matcher) MatchNames(
 	names []string,
 	opts ...config.Option,
 ) mlib.Output {
-	names = truncateNamesToMaxNumber(names)
 	chIn := make(chan nameIn)
 	chOut := make(chan matchOut)
 	var wgIn sync.WaitGroup
@@ -87,7 +87,16 @@ func (m matcher) MatchNames(
 		opt(&m.cfg)
 	}
 
-	names = truncateNamesToMaxNumber(names)
+	m.exactMatcher.SetConfig(m.cfg)
+	m.fuzzyMatcher.SetConfig(m.cfg)
+	m.virusMatcher.SetConfig(m.cfg)
+
+	maxNum := MaxNamesNum
+	if m.cfg.WithRelaxedFuzzyMatch {
+		maxNum = MaxRelaxFuzzyNum
+	}
+
+	names = truncateNamesToMaxNumber(names, maxNum)
 	res := make([]mlib.Match, len(names))
 
 	go loadNames(chIn, names)
@@ -221,12 +230,12 @@ func loadNames(chIn chan<- nameIn, names []string) {
 	close(chIn)
 }
 
-func truncateNamesToMaxNumber(names []string) []string {
-	if l := len(names); l > MaxNamesNum {
+func truncateNamesToMaxNumber(names []string, maxNum int) []string {
+	if l := len(names); l > maxNum {
 		log.Warn().Int("namesNum", l).
 			Str("example", names[0]).
-			Msgf("Too many names, truncating list to %d entries", MaxNamesNum)
-		names = names[0:MaxNamesNum]
+			Msgf("Too many names, truncating list to %d entries", maxNum)
+		names = names[0:maxNum]
 	}
 	return names
 }

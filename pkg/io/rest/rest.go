@@ -95,6 +95,12 @@ func matchGET(m MatcherService) func(echo.Context) error {
 		if spGrp {
 			opts = append(opts, config.OptWithSpeciesGroup(true))
 		}
+
+		fuzzyRelaxed := c.QueryParam("fuzzy_relaxed") == "true"
+		if fuzzyRelaxed {
+			opts = append(opts, config.OptWithRelaxedFuzzyMatch(true))
+		}
+
 		fuzzyUni := c.QueryParam("fuzzy_uninomial") == "true"
 		if fuzzyUni {
 			opts = append(opts, config.OptWithUninomialFuzzyMatch(true))
@@ -125,6 +131,9 @@ func matchPOST(m MatcherService) func(echo.Context) error {
 		}
 		if inp.WithSpeciesGroup {
 			opts = append(opts, config.OptWithSpeciesGroup(true))
+		}
+		if inp.WithRelaxedFuzzyMatch {
+			opts = append(opts, config.OptWithRelaxedFuzzyMatch(true))
 		}
 		if inp.WithUninomialFuzzyMatch {
 			opts = append(opts, config.OptWithUninomialFuzzyMatch(true))

@@ -77,6 +77,10 @@ type Config struct {
 	// uninomial names.
 	WithUninomialFuzzyMatch bool
 
+	// WithRelaxedFuzzyMatch is true when it is allowed to use relaxed fuzzy
+	// match.
+	WithRelaxedFuzzyMatch bool
+
 	// WithWebLogs flag enables logs when running web-service. This flag is
 	// ignored if `Port` value is not set.
 	WithWebLogs bool
@@ -146,6 +150,15 @@ func OptMaxEditDist(i int) Option {
 		} else {
 			cfg.MaxEditDist = i
 		}
+	}
+}
+
+// OptWithRelaxedFuzzyMatch sets an option that allows to fuzzy-match
+// uninomial name-strings.
+func OptWithRelaxedFuzzyMatch(b bool) Option {
+	return func(cfg *Config) {
+		cfg.WithRelaxedFuzzyMatch = b
+		cfg.MaxEditDist = 2
 	}
 }
 

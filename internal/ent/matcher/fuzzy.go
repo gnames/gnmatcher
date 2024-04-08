@@ -13,6 +13,7 @@ func (m matcher) matchFuzzy(
 	stem string,
 	ns nameString,
 ) *mlib.Match {
+	relax := m.cfg.WithRelaxedFuzzyMatch
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
 		return nil
@@ -25,7 +26,7 @@ func (m matcher) matchFuzzy(
 		MatchItems: make([]mlib.MatchItem, 0, len(stemMatches)*2),
 	}
 	for _, stemMatch := range stemMatches {
-		editDistanceStem := fuzzy.EditDistance(stemMatch, stem)
+		editDistanceStem := fuzzy.EditDistance(stemMatch, stem, relax)
 		// -1 means edit distance got over threshold
 		if editDistanceStem == -1 {
 			continue
@@ -34,7 +35,11 @@ func (m matcher) matchFuzzy(
 		for _, matchItem := range matchItems {
 			matchItem.InputStr = canonical
 			// runs edit distance with checks, returns -1 if checks failed.
-			editDistance := fuzzy.EditDistance(matchItem.InputStr, matchItem.MatchStr)
+			editDistance := fuzzy.EditDistance(
+				matchItem.InputStr,
+				matchItem.MatchStr,
+				relax,
+			)
 			// skip matches that failed edit distance checks.
 			if editDistance == -1 {
 				continue

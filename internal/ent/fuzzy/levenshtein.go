@@ -19,15 +19,19 @@ const (
 // - number of characters divided by ed should be bigger than charsPerED
 //
 // It assumes that checks have to be applied only to the second string:
-//  EditDistance("Pomatomus", "Pom atomus")
+//
+//	EditDistance("Pomatomus", "Pom atomus")
+//
 // returns -1
-//  EditDistance("Pom atomus", "Pomatomus")
+//
+//	EditDistance("Pom atomus", "Pomatomus")
+//
 // returns 1
 //
 // It also assumes that number os spaces between words was already
 // normalized to 1 space, and that s1 and s2 always have the same number of
 // words.
-func EditDistance(s1, s2 string) int {
+func EditDistance(s1, s2 string, relax bool) int {
 	ed, _, _ := editdist.ComputeDistance(s1, s2, false)
 	if ed == 0 {
 		return ed
@@ -36,13 +40,13 @@ func EditDistance(s1, s2 string) int {
 	if ed > maxEditDistance {
 		return -1
 	}
-	return checkED(s1, s2, ed)
+	return checkED(s1, s2, ed, relax)
 }
 
-func checkED(s1, s2 string, ed int) int {
+func checkED(s1, s2 string, ed int, relax bool) int {
 	words1 := strings.Split(s1, " ")
 	words2 := strings.Split(s2, " ")
-	if len(words1) != len(words2) {
+	if len(words1) != len(words2) || relax {
 		return ed
 	}
 	for i, w := range words2 {

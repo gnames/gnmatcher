@@ -32,6 +32,11 @@ func (v *virusio) Init() {
 	v.prepareData()
 }
 
+// SetConfig updates configuration of the matcher.
+func (v *virusio) SetConfig(cfg config.Config) {
+	v.cfg = cfg
+}
+
 func (v *virusio) MatchVirus(s string) []mlib.MatchItem {
 	bs := v.NameToBytes(s)
 	idxs := v.sufary.Lookup(bs, 21)

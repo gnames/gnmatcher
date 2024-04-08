@@ -18,6 +18,8 @@ type mockExactMatcher struct{}
 
 func (em mockExactMatcher) Init() {}
 
+func (em mockExactMatcher) SetConfig(cfg config.Config) {}
+
 func (em mockExactMatcher) MatchCanonicalID(s string) bool {
 	return false
 }
@@ -29,6 +31,8 @@ func (em mockExactMatcher) MatchNameStringID(s string) bool {
 type mockFuzzyMatcher struct{}
 
 func (fm mockFuzzyMatcher) Init() {}
+
+func (fm mockFuzzyMatcher) SetConfig(cfg config.Config) {}
 
 func (fm mockFuzzyMatcher) MatchStem(s string) []string {
 	var res []string
@@ -47,6 +51,8 @@ func (fm mockFuzzyMatcher) StemToMatchItems(s string) []mlib.MatchItem {
 type mockVirusMatcher struct{}
 
 func (vm mockVirusMatcher) Init() {}
+
+func (vm mockVirusMatcher) SetConfig(cfg config.Config) {}
 
 func (vm mockVirusMatcher) MatchVirus(s string) []mlib.MatchItem { return nil }
 

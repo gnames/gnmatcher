@@ -2,8 +2,9 @@
 
 ## Unreleased
 
-## [v1.1.10] - 2024-04-06 Sat
+## [v1.1.10] - 2024-04-09 Tue
 
+- Add [#60]: add relaxed fuzzy matching.
 - Add: update modules, gnparser v1.9.1. Update to Go 1.22.
 
 ## [v1.1.9] - 2023-11-03 Fri

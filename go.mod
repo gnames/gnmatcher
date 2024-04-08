@@ -1,6 +1,6 @@
 module github.com/gnames/gnmatcher
 
-go 1.22.1
+go 1.22.2
 
 require (
 	github.com/devopsfaith/bloomfilter v1.4.0
@@ -8,7 +8,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/gnames/gnfmt v0.4.3
-	github.com/gnames/gnlib v0.36.0
+	github.com/gnames/gnlib v0.42.0
 	github.com/gnames/gnparser v1.9.1
 	github.com/gnames/gnsys v0.3.2
 	github.com/gnames/gnuuid v0.1.2

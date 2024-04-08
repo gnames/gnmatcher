@@ -186,6 +186,37 @@ func TestFuzzy(t *testing.T) {
 	assert.Equal(t, 1, fuzzy4.MatchItems[1].EditDistance)
 }
 
+func TestRelaxedFuzzy(t *testing.T) {
+	assert := assert.New(t)
+	tests := []struct {
+		msg, name, res string
+		editDist       int
+	}{
+		{"bubo", "Bbo bbo", "Bubo bubo", 2},
+	}
+
+	for _, v := range tests {
+		params := mlib.Input{
+			Names:                 []string{v.name},
+			WithRelaxedFuzzyMatch: true,
+		}
+		enc := gnfmt.GNjson{}
+		req, err := enc.Encode(params)
+		assert.Nil(err)
+		r := bytes.NewReader(req)
+		resp, err := http.Post(url+"matches", "application/json", r)
+		assert.Nil(err)
+		respBytes, err := io.ReadAll(resp.Body)
+		assert.Nil(err)
+
+		var res mlib.Output
+		err = enc.Decode(respBytes, &res)
+		assert.Nil(err)
+		matches := res.Matches
+		assert.GreaterOrEqual(len(matches[0].MatchItems), 1)
+	}
+}
+
 // Related to issue #43. Send a name with one suffix and get back not only
 // names with the same suffix, but also ones with another suffix if available.
 func TestStem(t *testing.T) {

@@ -45,6 +45,11 @@ func (fm *fuzzyMatcher) Init() {
 	fm.kvStems = connectKeyVal(fm.cfg.StemsDir())
 }
 
+// SetConfig updates configuration of the matcher.
+func (fm *fuzzyMatcher) SetConfig(cfg config.Config) {
+	fm.cfg = cfg
+}
+
 func (fm *fuzzyMatcher) MatchStem(stem string) []string {
 	return fm.trie.FuzzyMatches(stem, fm.cfg.MaxEditDist)
 }

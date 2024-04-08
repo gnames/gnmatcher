@@ -41,7 +41,7 @@ func TestDist(t *testing.T) {
 
 	for _, v := range testData {
 		msg := fmt.Sprintf("'%s' vs '%s'", v.str1, v.str2)
-		dist := fuzzy.EditDistance(v.str1, v.str2)
+		dist := fuzzy.EditDistance(v.str1, v.str2, false)
 		assert.Equal(t, v.dist, dist, msg)
 	}
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
@@ -54,7 +54,7 @@ func BenchmarkDist(b *testing.B) {
 	var out int
 	b.Run("CompareOnce", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			out = fuzzy.EditDistance("Pomatomus solatror", "Pomatomus saltator")
+			out = fuzzy.EditDistance("Pomatomus solatror", "Pomatomus saltator", false)
 		}
 		_ = fmt.Sprintf("%d\n", out)
 	})

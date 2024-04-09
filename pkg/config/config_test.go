@@ -1,12 +1,11 @@
 package config_test
 
 import (
+	"log/slog"
 	"testing"
 
 	"github.com/gnames/gnmatcher/pkg/config"
 	"github.com/gnames/gnsys"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -46,9 +45,8 @@ func TestNewOpts(t *testing.T) {
 
 // MaxEditDist is limited to 1 or 2
 func TestMaxED(t *testing.T) {
-	logLevel := log.Logger.GetLevel()
-	zerolog.SetGlobalLevel(zerolog.Disabled)
-	defer zerolog.SetGlobalLevel(logLevel)
+	slog.SetLogLoggerLevel(10)
+	defer slog.SetLogLoggerLevel(0)
 
 	cfg := config.New(config.OptMaxEditDist(5))
 	assert.Equal(t, 1, cfg.MaxEditDist)

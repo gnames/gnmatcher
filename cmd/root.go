@@ -5,6 +5,7 @@ package cmd
 import (
 	_ "embed"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -15,7 +16,6 @@ import (
 	gnmatcher "github.com/gnames/gnmatcher/pkg"
 	"github.com/gnames/gnmatcher/pkg/config"
 	homedir "github.com/mitchellh/go-homedir"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
@@ -29,18 +29,14 @@ var (
 // cfgData purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type cfgData struct {
-	CacheDir           string
-	JobsNum            int
-	MaxEditDist        int
-	PgHost             string
-	PgPort             int
-	PgUser             string
-	PgPass             string
-	PgDB               string
-	NsqdTCPAddress     string
-	NsqdContainsFilter string
-	NsqdRegexFilter    string
-	WithWebLogs        bool
+	CacheDir    string
+	JobsNum     int
+	MaxEditDist int
+	PgHost      string
+	PgPort      int
+	PgUser      string
+	PgPass      string
+	PgDB        string
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -60,7 +56,8 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal().Err(err).Msg("Cannot start gnmatcher")
+		slog.Error("Cannot start gnmatcher", "error", err)
+		os.Exit(1)
 	}
 }
 
@@ -81,7 +78,8 @@ func initConfig() {
 	// Find home directory.
 	homePath, err = homedir.Dir()
 	if err != nil {
-		log.Fatal().Err(err).Msg("Cannot find home directory")
+		slog.Error("Cannot find home directory", "error", err)
+		os.Exit(1)
 	}
 	cfgPath = filepath.Join(homePath, ".config")
 
@@ -93,16 +91,11 @@ func initConfig() {
 	// config file settings
 	_ = viper.BindEnv("CacheDir", "GNM_CACHE_DIR")
 	_ = viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
-	_ = viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
 	_ = viper.BindEnv("PgDB", "GNM_PG_DB")
 	_ = viper.BindEnv("PgHost", "GNM_PG_HOST")
 	_ = viper.BindEnv("PgPass", "GNM_PG_PASS")
 	_ = viper.BindEnv("PgPort", "GNM_PG_PORT")
 	_ = viper.BindEnv("PgUser", "GNM_PG_USER")
-	_ = viper.BindEnv("NsqdTCPAddress", "GNM_NSQD_TCP_ADDRESS")
-	_ = viper.BindEnv("NsqdContainsFilter", "GNM_NSQD_CONTAINS_FILTER")
-	_ = viper.BindEnv("NsqdRegexFilter", "GNM_NSQD_REGEX_FILTER")
-	_ = viper.BindEnv("WithWebLogs", "GNM_WITH_WEB_LOGS")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -111,7 +104,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		log.Info().Msgf("Using config file: %s", viper.ConfigFileUsed())
+		slog.Info("Using config file", "file", viper.ConfigFileUsed())
 	}
 	getOpts()
 }
@@ -122,7 +115,7 @@ func getOpts() []config.Option {
 	cfg := &cfgData{}
 	err := viper.Unmarshal(cfg)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Cannot deserialize config data")
+		slog.Error("Cannot deserialize config data", "error", err)
 	}
 
 	if cfg.CacheDir != "" {
@@ -149,18 +142,6 @@ func getOpts() []config.Option {
 	if cfg.PgUser != "" {
 		opts = append(opts, config.OptPgUser(cfg.PgUser))
 	}
-	if cfg.NsqdContainsFilter != "" {
-		opts = append(opts, config.OptNsqdContainsFilter(cfg.NsqdContainsFilter))
-	}
-	if cfg.NsqdRegexFilter != "" {
-		opts = append(opts, config.OptNsqdRegexFilter(cfg.NsqdRegexFilter))
-	}
-	if cfg.NsqdTCPAddress != "" {
-		opts = append(opts, config.OptNsqdTCPAddress(cfg.NsqdTCPAddress))
-	}
-	if cfg.WithWebLogs {
-		opts = append(opts, config.OptWithWebLogs(true))
-	}
 	return opts
 }
 
@@ -169,7 +150,7 @@ func getOpts() []config.Option {
 func showVersionFlag(cmd *cobra.Command) bool {
 	hasVersionFlag, err := cmd.Flags().GetBool("version")
 	if err != nil {
-		log.Fatal().Err(err).Msg("Cannot get version flag")
+		slog.Error("Cannot get version flag", "error", err)
 	}
 
 	if hasVersionFlag {
@@ -184,7 +165,7 @@ func touchConfigFile(configPath string) {
 		return
 	}
 
-	log.Info().Msgf("Creating config file: %s", configPath)
+	slog.Info("Creating config file", "file", configPath)
 	createConfig(configPath)
 }
 
@@ -192,11 +173,13 @@ func touchConfigFile(configPath string) {
 func createConfig(path string) {
 	err := gnsys.MakeDir(filepath.Dir(path))
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Cannot create dir %s", path)
+		slog.Error("Cannot create dir", "path", path, "error", err)
+		os.Exit(1)
 	}
 
 	err = os.WriteFile(path, []byte(configText), 0644)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Cannot write to file %s", path)
+		slog.Error("Cannot write to file", "path", path, "error", err)
+		os.Exit(1)
 	}
 }

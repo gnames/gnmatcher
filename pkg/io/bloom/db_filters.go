@@ -3,16 +3,16 @@ package bloom
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 	"github.com/gnames/gnmatcher/pkg/io/dbase"
-	"github.com/rs/zerolog/log"
 )
 
 func (em *exactMatcher) filtersFromDB(path string) error {
 	db := dbase.NewDB(em.cfg)
-	log.Info().Msg("Importing lookup data for stemmed canonicals")
+	slog.Info("Importing lookup data for stemmed canonicals")
 	cFilter, cSize, err := createFilter(db, "canonical_stems")
 	if err != nil {
 		return err

@@ -1,6 +1,7 @@
 package matcher
 
 import (
+	"log/slog"
 	"slices"
 	"sync"
 
@@ -12,7 +13,6 @@ import (
 	"github.com/gnames/gnmatcher/pkg/config"
 	"github.com/gnames/gnparser"
 	"github.com/gnames/gnparser/ent/parsed"
-	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -232,9 +232,9 @@ func loadNames(chIn chan<- nameIn, names []string) {
 
 func truncateNamesToMaxNumber(names []string, maxNum int) []string {
 	if l := len(names); l > maxNum {
-		log.Warn().Int("namesNum", l).
-			Str("example", names[0]).
-			Msgf("Too many names, truncating list to %d entries", maxNum)
+		slog.Warn(
+			"Too many names, truncating the list.",
+			"names-number", l, "max-number", maxNum)
 		names = names[0:maxNum]
 	}
 	return names

@@ -3,13 +3,14 @@ package virusio
 import (
 	"fmt"
 	"index/suffixarray"
+	"log/slog"
+	"os"
 	"strings"
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/gnames/gnmatcher/internal/ent/virus"
 	"github.com/gnames/gnmatcher/pkg/config"
 	"github.com/gnames/gnsys"
-	"github.com/rs/zerolog/log"
 )
 
 type virusio struct {
@@ -28,7 +29,7 @@ func New(cfg config.Config) virus.VirusMatcher {
 
 func (v *virusio) Init() {
 	v.prepareDir()
-	log.Info().Msg("Initializing viruses lookup data")
+	slog.Info("Initializing viruses lookup data")
 	v.prepareData()
 }
 
@@ -46,19 +47,19 @@ func (v *virusio) MatchVirus(s string) []mlib.MatchItem {
 			res[i] = matchItem
 		} else {
 			err := fmt.Errorf("cannot find %d index", idxs[i])
-			log.Warn().Err(err)
+			slog.Error("Cannof find index", "error", err)
 		}
 	}
 	return res
 }
 
 func (v *virusio) prepareDir() {
-	log.Info().Msg("Preparing directory for viruses")
+	slog.Info("Preparing directory for viruses")
 	bloomDir := v.cfg.VirusDir()
 	err := gnsys.MakeDir(v.cfg.VirusDir())
 	if err != nil {
-		log.Fatal().Err(err).
-			Msgf("Cannot create directory %s", bloomDir)
+		slog.Error("Cannot create directory", "path", bloomDir, "error", err)
+		os.Exit(1)
 	}
 }
 

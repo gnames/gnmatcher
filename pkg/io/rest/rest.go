@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -12,10 +13,6 @@ import (
 	"github.com/gnames/gnmatcher/pkg/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/rs/zerolog/log"
-	nsqcfg "github.com/sfgrp/lognsq/config"
-	"github.com/sfgrp/lognsq/ent/nsq"
-	"github.com/sfgrp/lognsq/io/nsqio"
 )
 
 var apiPath = "/api/v1/"
@@ -24,15 +21,10 @@ var apiPath = "/api/v1/"
 // this API is described by OpenAPI schema at
 // https://apidoc.gnames.org/gnmatcher
 func Run(m MatcherService) {
-	log.Info().Int("port", m.Port()).Msg("Starting HTTP API server")
+	slog.Info("Starting HTTP API server", "port", m.Port())
 	e := echo.New()
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORS())
-
-	loggerNSQ := setLogger(e, m)
-	if loggerNSQ != nil {
-		defer loggerNSQ.Stop()
-	}
 
 	e.GET("/", root)
 	e.GET("/api/v1", root)
@@ -111,11 +103,10 @@ func matchGET(m MatcherService) func(echo.Context) error {
 
 		result := m.MatchNames(names, opts...)
 		if l := len(names); l > 0 {
-			log.Info().
-				Int("namesNum", l).
-				Str("example", names[0]).
-				Str("method", "GET").
-				Msg("Name Match")
+			slog.Info("Names match",
+				"namesNum", l,
+				"example", names[0],
+				"method", "GET")
 		}
 		return c.JSON(http.StatusOK, result)
 	}
@@ -144,46 +135,11 @@ func matchPOST(m MatcherService) func(echo.Context) error {
 
 		result := m.MatchNames(inp.Names, opts...)
 		if l := len(inp.Names); l > 0 {
-			log.Info().
-				Int("namesNum", l).
-				Str("example", inp.Names[0]).
-				Str("method", "POST").
-				Msg("Name Match")
+			slog.Info("Names match",
+				"namesNum", l,
+				"example", inp.Names[0],
+				"method", "POST")
 		}
 		return c.JSON(http.StatusOK, result)
 	}
-}
-
-func setLogger(e *echo.Echo, m MatcherService) nsq.NSQ {
-	cfg := m.GetConfig()
-	nsqAddr := cfg.NsqdTCPAddress
-	withLogs := cfg.WithWebLogs
-	contains := cfg.NsqdContainsFilter
-	regex := cfg.NsqdRegexFilter
-
-	if nsqAddr != "" {
-		cfg := nsqcfg.Config{
-			StderrLogs: withLogs,
-			Topic:      "gnmatcher",
-			Address:    nsqAddr,
-			Contains:   contains,
-			Regex:      regex,
-		}
-		remote, err := nsqio.New(cfg)
-		logCfg := middleware.DefaultLoggerConfig
-		if err == nil {
-			logCfg.Output = remote
-			// set app logger too
-			log.Logger = log.Output(remote)
-		}
-		e.Use(middleware.LoggerWithConfig(logCfg))
-		if err != nil {
-			log.Warn().Err(err)
-		}
-		return remote
-	} else if withLogs {
-		e.Use(middleware.Logger())
-		return nil
-	}
-	return nil
 }

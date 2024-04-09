@@ -2,11 +2,11 @@ package bloom
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/rs/zerolog/log"
 )
 
 func saveFilters(path string, filters *bloomFilters) {
@@ -23,31 +23,34 @@ func saveFilters(path string, filters *bloomFilters) {
 
 		file, err = createFile(filePath)
 		if err != nil {
-			log.Fatal().Err(err).Msgf("Cannot create %s", filePath)
+			slog.Error("Cannot create path", "path", filePath, "error", err)
+			os.Exit(1)
 		}
 		if f == sizesFile {
 			err = saveSizesFile(file, filters)
 			if err != nil {
-				log.Fatal().Err(err).Msg("Cannot create sizesFile")
+				slog.Error("Cannot create sizesFile", "error", err)
+				os.Exit(1)
 			}
 			continue
 		}
 
 		err = saveFilterFile(filePath, file, filter)
 		if err != nil {
-			log.Fatal().Err(err).Msgf("Cannot create %s", filePath)
+			slog.Error("Cannot create file", "file", filePath, "error", err)
+			os.Exit(1)
 		}
 	}
 
 	if err == nil {
-		log.Info().Msg("Saved cached filters to disk")
+		slog.Info("Saved cached filters to disk")
 	}
 }
 
 func createFile(filePath string) (*os.File, error) {
 	file, err := os.Create(filePath)
 	if err != nil {
-		log.Warn().Err(err).Msgf("Could not create file %s", filePath)
+		slog.Error("Could not create file", "file", filePath, "error", err)
 	}
 	return file, err
 }
@@ -61,11 +64,11 @@ func saveFilterFile(
 	var err error
 	bin, err = filter.MarshalBinary()
 	if err != nil {
-		log.Warn().Err(err).Msgf("Could not serialize for %s", filePath)
+		slog.Error("Could not serialize for file", "file", filePath, "error", err)
 	}
 	_, err = file.Write(bin)
 	if err != nil {
-		log.Warn().Err(err).Msgf("Could not save %s", filePath)
+		slog.Error("Could not save", "file", filePath, "error", err)
 	}
 	return err
 }
@@ -75,7 +78,7 @@ func saveSizesFile(file *os.File, filters *bloomFilters) error {
 	sizes := fmt.Sprintf("CanonicalSize,%d\n",
 		filters.canonicalSize)
 	if _, err = file.WriteString(sizes); err != nil {
-		log.Warn().Err(err).Msg("Could not save filter sizes to disk")
+		slog.Error("Could not save filter sizes to disk", "error", err)
 	}
 	return err
 }

@@ -5,9 +5,10 @@ package dbase
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
+	"os"
 
 	"github.com/gnames/gnmatcher/pkg/config"
-	"github.com/rs/zerolog/log"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -16,7 +17,8 @@ import (
 func NewDB(cfg config.Config) *sql.DB {
 	db, err := sql.Open("postgres", dbUrl(cfg))
 	if err != nil {
-		log.Fatal().Err(err).Msg("Cannot create PostgreSQL connection")
+		slog.Error("Cannot create PostgreSQL connection", "error", err)
+		os.Exit(1)
 	}
 	return db
 }

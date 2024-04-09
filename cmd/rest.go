@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"log/slog"
 	"os"
 
 	"github.com/gnames/gnfmt"
@@ -31,8 +32,6 @@ import (
 	"github.com/gnames/gnmatcher/pkg/io/rest"
 	"github.com/gnames/gnmatcher/pkg/io/trie"
 	"github.com/gnames/gnmatcher/pkg/io/virusio"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 
 	"github.com/spf13/cobra"
 )
@@ -47,23 +46,21 @@ as well.`,
 	Run: func(cmd *cobra.Command, _ []string) {
 		debug, _ := cmd.Flags().GetBool("debug")
 		if debug {
-			zerolog.SetGlobalLevel(zerolog.DebugLevel)
-			log.Info().Msgf("Log level is set to '%s'", zerolog.DebugLevel.String())
+			slog.SetLogLoggerLevel(slog.LevelDebug)
 		}
 		port, err := cmd.Flags().GetInt("port")
 		if err != nil {
-			log.Fatal().Err(err).Msg("Cannot get port flag")
+			slog.Error("Cannot get port flag", "error", err)
+			os.Exit(1)
 		}
-		log.Logger = log.With().
-			Str("gnApp", "gnmatcher").
-			Logger()
 		cfg := gnmcnf.New(opts...)
 		em := bloom.New(cfg)
 		fm := trie.New(cfg)
 		vm := virusio.New(cfg)
 		gnm := gnmatcher.New(em, fm, vm, cfg)
 		if err != nil {
-			log.Fatal().Err(err).Msg("Cannot create an instance of GNmatcher")
+			slog.Error("Cannot create an instance of GNmatcher", "error", err)
+			os.Exit(1)
 		}
 
 		var enc gnfmt.Encoder = gnfmt.GNjson{}

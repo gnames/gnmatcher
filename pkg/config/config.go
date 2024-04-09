@@ -2,12 +2,11 @@
 package config
 
 import (
+	"log/slog"
 	"os"
 	"path/filepath"
-	"regexp"
 
 	"github.com/gnames/gnsys"
-	"github.com/rs/zerolog/log"
 )
 
 // Config collects and stores external configuration data.
@@ -47,28 +46,6 @@ type Config struct {
 	// PgUser is the user for the database.
 	PgUser string
 
-	// NsqdTCPAddress provides an address to the NSQ messenger TCP service. If
-	// this value is set and valid, the web logs will be published to the NSQ.
-	// The option is ignored if `Port` is not set.
-	//
-	// If WithWebLogs option is set to `false`, but `NsqdTCPAddress` is set to a
-	// valid URL, the logs will be sent to the NSQ messanging service, but they
-	// wil not appear as STRERR output.
-	// Example: `127.0.0.1:4150`
-	NsqdTCPAddress string
-
-	// NsqdContainsFilter logs should match the filter to be sent to NSQ
-	// service.
-	// Examples:
-	// "api" - logs should contain "api"
-	// "!api" - logs should not contain "apim
-	NsqdContainsFilter string
-
-	// NsqdRegexFilter logs should match the regular expression to be sent to
-	// NSQ service.
-	// Example: `api\/v(0|1)`
-	NsqdRegexFilter *regexp.Regexp
-
 	// WithSpeciesGroup is true when searching for "Aus bus" also searches for
 	// "Aus bus bus".
 	WithSpeciesGroup bool
@@ -80,10 +57,6 @@ type Config struct {
 	// WithRelaxedFuzzyMatch is true when it is allowed to use relaxed fuzzy
 	// match.
 	WithRelaxedFuzzyMatch bool
-
-	// WithWebLogs flag enables logs when running web-service. This flag is
-	// ignored if `Port` value is not set.
-	WithWebLogs bool
 }
 
 // TrieDir returns path where to dump/restore
@@ -117,7 +90,7 @@ func OptCacheDir(s string) Option {
 	return func(cfg *Config) {
 		cacheDir, err := gnsys.ConvertTilda(s)
 		if err != nil {
-			log.Warn().Err(err).Msgf("Cannot expand '~' in '%s'", s)
+			slog.Error("Cannot expand '~' in path", "path", s, "error", err)
 		}
 		cfg.CacheDir = cacheDir
 	}
@@ -142,11 +115,7 @@ func OptJobsNum(i int) Option {
 func OptMaxEditDist(i int) Option {
 	return func(cfg *Config) {
 		if i < 1 || i > 2 {
-			log.Warn().
-				Msgf(
-					"MaxEditDist can only be 1 or 2, keeping it at %d",
-					cfg.MaxEditDist,
-				)
+			slog.Error("MaxEditDist can only be 1 or 2, keeping it at 1")
 		} else {
 			cfg.MaxEditDist = i
 		}
@@ -205,40 +174,10 @@ func OptPgDB(s string) Option {
 	}
 }
 
-// OptNsqdTCPAddress provides an address of NSQ messanging service.
-func OptNsqdTCPAddress(s string) Option {
-	return func(cfg *Config) {
-		cfg.NsqdTCPAddress = s
-	}
-}
-
-// OptNsqdContainsFilter provides a filter for logs sent to NSQ service.
-func OptNsqdContainsFilter(s string) Option {
-	return func(cfg *Config) {
-		cfg.NsqdContainsFilter = s
-	}
-}
-
-// OptNsqdRegexFilter provides a regular expression filter for
-// logs sent to NSQ service.
-func OptNsqdRegexFilter(s string) Option {
-	return func(cfg *Config) {
-		r := regexp.MustCompile(s)
-		cfg.NsqdRegexFilter = r
-	}
-}
-
 // OptWithSpeciesGroup sets the WithSpeciesGroup field
 func OptWithSpeciesGroup(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithSpeciesGroup = b
-	}
-}
-
-// OptWithWebLogs sets the WithWebLogs field.
-func OptWithWebLogs(b bool) Option {
-	return func(cfg *Config) {
-		cfg.WithWebLogs = b
 	}
 }
 
@@ -253,16 +192,14 @@ func New(opts ...Option) Config {
 		cacheDir = filepath.Join(cacheDir, "gnmatcher")
 	}
 	cfg := Config{
-		CacheDir:       cacheDir,
-		MaxEditDist:    1,
-		JobsNum:        1,
-		PgHost:         "0.0.0.0",
-		PgPort:         5432,
-		PgUser:         "postgres",
-		PgPass:         "postgres",
-		PgDB:           "gnames",
-		NsqdTCPAddress: "",
-		WithWebLogs:    false,
+		CacheDir:    cacheDir,
+		MaxEditDist: 1,
+		JobsNum:     1,
+		PgHost:      "0.0.0.0",
+		PgPort:      5432,
+		PgUser:      "postgres",
+		PgPass:      "postgres",
+		PgDB:        "gnames",
 	}
 	for _, opt := range opts {
 		opt(&cfg)

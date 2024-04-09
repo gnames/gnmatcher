@@ -5,10 +5,12 @@
 package bloom
 
 import (
+	"log/slog"
+	"os"
+
 	"github.com/gnames/gnmatcher/internal/ent/exact"
 	"github.com/gnames/gnmatcher/pkg/config"
 	"github.com/gnames/gnsys"
-	"github.com/rs/zerolog/log"
 )
 
 type exactMatcher struct {
@@ -23,7 +25,7 @@ func New(cfg config.Config) exact.ExactMatcher {
 
 func (em *exactMatcher) Init() {
 	em.prepareDir()
-	log.Info().Msg("Initializing bloom filters")
+	slog.Info("Initializing bloom filters")
 	em.getFilters()
 }
 
@@ -40,10 +42,11 @@ func (em *exactMatcher) MatchCanonicalID(uuid string) bool {
 }
 
 func (em exactMatcher) prepareDir() {
-	log.Info().Msg("Preparing dir for bloom filters")
+	slog.Info("Preparing dir for bloom filters")
 	bloomDir := em.cfg.FiltersDir()
 	err := gnsys.MakeDir(em.cfg.FiltersDir())
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Cannot create directory %s", bloomDir)
+		slog.Error("Cannot create directory", "path", bloomDir, "error", err)
+		os.Exit(1)
 	}
 }

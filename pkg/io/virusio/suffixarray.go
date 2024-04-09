@@ -2,6 +2,7 @@ package virusio
 
 import (
 	"index/suffixarray"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -9,11 +10,10 @@ import (
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
 	"github.com/gnames/gnmatcher/pkg/io/dbase"
-	"github.com/rs/zerolog/log"
 )
 
 func (v *virusio) prepareData() {
-	log.Info().Msg("Preparing virus data")
+	slog.Info("Preparing virus data")
 	path := v.cfg.VirusDir()
 	var err error
 
@@ -23,8 +23,8 @@ func (v *virusio) prepareData() {
 
 	err = v.dataFromCache(path)
 	if err != nil {
-		log.Info().Msgf("Cache for viruses at '%s' is empty.", path)
-		log.Info().Msg("Virus data will be received from the database.")
+		slog.Info("Cache for viruses is empty.", "path", path)
+		slog.Info("Virus data will be received from the database.")
 	}
 
 	if v.sufary != nil {
@@ -34,16 +34,15 @@ func (v *virusio) prepareData() {
 	var data []mlib.MatchItem
 	data, err = v.dataFromDB(path)
 	if err != nil {
-		log.Fatal().Err(err).
-			Msgf("Cannot create filters at %s from database.", path)
+		slog.Error("Cannot create filters at %s from database.", "path", path)
+		os.Exit(1)
 	}
 	bs := v.processData(data)
 	err = v.saveData(bs)
 	if err != nil {
-		log.Fatal().Err(err).
-			Msgf("Cannot save virus data to disk at '%s'.", path)
+		slog.Error("Cannot save virus data to disk.", "path", path, "error", err)
 	}
-	log.Info().Msg("Finished saving Virus data.")
+	slog.Info("Finished saving Virus data.")
 }
 
 func (v *virusio) saveData(bs []byte) error {
@@ -87,7 +86,7 @@ func (v *virusio) processData(data []mlib.MatchItem) []byte {
 func (v *virusio) dataFromDB(path string) ([]mlib.MatchItem, error) {
 	var res []mlib.MatchItem
 	db := dbase.NewDB(v.cfg)
-	log.Info().Msg("Importing lookup data for viruses")
+	slog.Info("Importing lookup data for viruses")
 
 	q := `SELECT name_string_id, name, ds.id
   FROM verification v
@@ -99,7 +98,7 @@ func (v *virusio) dataFromDB(path string) ([]mlib.MatchItem, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Info().Msg("Setting Viruses Key-Value store")
+	slog.Info("Setting Viruses Key-Value store")
 
 	var uuid, name, currentID, currentName string
 	var dsID int

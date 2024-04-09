@@ -149,16 +149,11 @@ are also environment variables that override configuration file values.
 | ------------------------ | ------------------ |
 | GNM_CACHE_DIR            | CacheDir           |
 | GNM_JOBS_NUM             | JobsNum            |
-| GNM_MAX_EDIT_DIST        | MaxEditDist        |
 | GNM_PG_HOST              | PgHost             |
 | GNM_PG_PORT              | PgPort             |
 | GNM_PG_USER              | PgUser             |
 | GNM_PG_PASS              | PgPass             |
 | GNM_PG_DB                | PgDB               |
-| GNM_NSQD_TCP_ADDRESS     | NsqdTCPAddress     |
-| GNM_NSQD_CONTAINS_FILTER | NsqdContainsFilter |
-| GNM_NSQD_REGEX_FILTER    | NsqdRegexFilter    |
-| GNM_WITH_WEB_LOGS        | WithWebLogs        |
 
 ## Client
 

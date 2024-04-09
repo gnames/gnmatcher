@@ -5,10 +5,11 @@
 package bloom
 
 import (
+	"log/slog"
+	"os"
 	"sync"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/rs/zerolog/log"
 )
 
 // Names of the files to create cache of bloom filters.
@@ -45,7 +46,8 @@ func (em *exactMatcher) getFilters() {
 
 	err = em.filtersFromCache(path)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Cannot create filters at %s from cache", path)
+		slog.Error("Cannot create filters from cache", "path", path, "error", err)
+		os.Exit(1)
 	}
 
 	if em.filters != nil {
@@ -54,7 +56,11 @@ func (em *exactMatcher) getFilters() {
 
 	err = em.filtersFromDB(path)
 	if err != nil {
-		log.Fatal().Err(err).
-			Msgf("Cannot create filters at %s from database", path)
+		slog.Error(
+			"Cannot create filters from database",
+			"path", path,
+			"error", err,
+		)
+		os.Exit(1)
 	}
 }

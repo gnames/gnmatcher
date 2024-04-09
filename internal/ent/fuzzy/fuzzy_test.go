@@ -2,20 +2,18 @@ package fuzzy_test
 
 import (
 	"fmt"
+	"log/slog"
 	"testing"
 
 	"github.com/gnames/gnmatcher/internal/ent/fuzzy"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
 // EditDist without constraints
 func TestDist(t *testing.T) {
 	// to hide warnings
-	logLevel := log.Logger.GetLevel()
-	zerolog.SetGlobalLevel(zerolog.Disabled)
-	defer zerolog.SetGlobalLevel(logLevel)
+	slog.SetLogLoggerLevel(10)
+	defer slog.SetLogLoggerLevel(0)
 
 	testData := []struct {
 		str1, str2 string
@@ -44,7 +42,6 @@ func TestDist(t *testing.T) {
 		dist := fuzzy.EditDistance(v.str1, v.str2, false)
 		assert.Equal(t, v.dist, dist, msg)
 	}
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 }
 
 // BenchmarkDist checks the speed of fuzzy matching. Run it with:

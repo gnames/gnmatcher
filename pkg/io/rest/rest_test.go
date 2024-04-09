@@ -3,7 +3,9 @@ package rest_test
 import (
 	"bytes"
 	"io"
+	"log/slog"
 	"net/http"
+	"os"
 	"slices"
 	"testing"
 
@@ -11,7 +13,6 @@ import (
 	"github.com/gnames/gnlib/ent/gnvers"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,8 @@ func TestPing(t *testing.T) {
 
 	res, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal().Err(err)
+		slog.Error("Cannot read body", "error", err)
+		os.Exit(1)
 	}
 
 	assert.Equal(t, "pong", string(res))
@@ -389,9 +391,9 @@ func TestGet(t *testing.T) {
 	var response mlib.Output
 	err = gnfmt.GNjson{}.Decode(respBytes, &response)
 	assert.Nil(err)
-	assert.Equal(true, response.Meta.WithSpeciesGroup)
-	assert.Equal([]int{6, 7}, response.Meta.DataSources)
-	assert.Equal(1, response.Meta.NamesNum)
+	assert.Equal(true, response.WithSpeciesGroup)
+	assert.Equal([]int{6, 7}, response.DataSources)
+	assert.Equal(1, response.NamesNum)
 	matches := response.Matches
 	assert.Equal("Narcissus minor minor", matches[0].Name)
 }

@@ -8,22 +8,20 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/gnames/gnfmt v0.4.3
-	github.com/gnames/gnlib v0.42.0
+	github.com/gnames/gnlib v0.43.0
 	github.com/gnames/gnparser v1.9.1
 	github.com/gnames/gnsys v0.3.2
 	github.com/gnames/gnuuid v0.1.2
 	github.com/gnames/levenshtein v0.4.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.11.4
-	github.com/lmittmann/tint v1.0.4
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/rs/zerolog v1.32.0
-	github.com/sfgrp/lognsq v0.1.1
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/cobra-cli v1.3.0
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/perf v0.0.0-20240404204407-f3e401e020e4
+	golang.org/x/sync v0.7.0
 )
 
 require (
@@ -57,11 +55,11 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/nsqio/go-nsq v1.1.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rs/zerolog v1.32.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect

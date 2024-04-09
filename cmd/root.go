@@ -116,6 +116,7 @@ func getOpts() []config.Option {
 	err := viper.Unmarshal(cfg)
 	if err != nil {
 		slog.Error("Cannot deserialize config data", "error", err)
+		os.Exit(1)
 	}
 
 	if cfg.CacheDir != "" {
@@ -148,10 +149,7 @@ func getOpts() []config.Option {
 // showVersionFlag provides version and the build timestamp. If it returns
 // true, it means that version flag was given.
 func showVersionFlag(cmd *cobra.Command) bool {
-	hasVersionFlag, err := cmd.Flags().GetBool("version")
-	if err != nil {
-		slog.Error("Cannot get version flag", "error", err)
-	}
+	hasVersionFlag, _ := cmd.Flags().GetBool("version")
 
 	if hasVersionFlag {
 		fmt.Printf("\nversion: %s\nbuild: %s\n\n", gnmatcher.Version, gnmatcher.Build)

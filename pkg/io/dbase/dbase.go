@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
-	"os"
 
 	"github.com/gnames/gnmatcher/pkg/config"
 
@@ -14,13 +13,13 @@ import (
 )
 
 // NewDB creates a new instance of sql.DB using configuration data.
-func NewDB(cfg config.Config) *sql.DB {
+func NewDB(cfg config.Config) (*sql.DB, error) {
 	db, err := sql.Open("postgres", dbUrl(cfg))
 	if err != nil {
 		slog.Error("Cannot create PostgreSQL connection", "error", err)
-		os.Exit(1)
+		return nil, err
 	}
-	return db
+	return db, nil
 }
 
 func dbUrl(cfg config.Config) string {

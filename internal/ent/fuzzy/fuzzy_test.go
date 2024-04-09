@@ -12,8 +12,8 @@ import (
 // EditDist without constraints
 func TestDist(t *testing.T) {
 	// to hide warnings
-	slog.SetLogLoggerLevel(10)
-	defer slog.SetLogLoggerLevel(0)
+	oldLevel := slog.SetLogLoggerLevel(10)
+	defer slog.SetLogLoggerLevel(oldLevel)
 
 	testData := []struct {
 		str1, str2 string
@@ -50,7 +50,7 @@ func TestDist(t *testing.T) {
 func BenchmarkDist(b *testing.B) {
 	var out int
 	b.Run("CompareOnce", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			out = fuzzy.EditDistance("Pomatomus solatror", "Pomatomus saltator", false)
 		}
 		_ = fmt.Sprintf("%d\n", out)

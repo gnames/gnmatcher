@@ -10,7 +10,7 @@ import (
 // FuzzyMatcher describes methods needed for fuzzy matching.
 type FuzzyMatcher interface {
 	// Initialize data for the matcher.
-	Init()
+	Init() error
 
 	// SetConfig updates configuration of the matcher.
 	SetConfig(cfg config.Config)
@@ -27,5 +27,5 @@ type FuzzyMatcher interface {
 
 	// StemToCanonicals takes a stem and returns back canonicals
 	// that correspond to that stem.
-	StemToMatchItems(stem string) []mlib.MatchItem
+	StemToMatchItems(stem string) ([]mlib.MatchItem, error)
 }

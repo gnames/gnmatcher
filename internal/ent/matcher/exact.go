@@ -6,10 +6,14 @@ import (
 	"github.com/gnames/gnmatcher/internal/ent/fuzzy"
 )
 
-func (m matcher) matchStem(ns nameString) *mlib.Match {
-	matches := m.exactStemMatches(ns.CanonicalStemID, ns.CanonicalStem)
+func (m matcher) matchStem(ns nameString) (*mlib.Match, error) {
+	matches, err := m.exactStemMatches(ns.CanonicalStemID, ns.CanonicalStem)
+	if err != nil {
+		return nil, err
+	}
+
 	if len(matches) == 0 {
-		return nil
+		return nil, nil
 	}
 	matchType := vlib.Fuzzy
 	matchItems := make([]mlib.MatchItem, 0, len(matches))
@@ -33,20 +37,25 @@ func (m matcher) matchStem(ns nameString) *mlib.Match {
 
 	matchItems = m.filterDataSources(matchItems)
 	if len(matchItems) == 0 {
-		return nil
+		return nil, nil
 	}
 
-	return &mlib.Match{
+	res := &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  matchType,
 		MatchItems: matchItems,
 	}
+	return res, nil
 }
 
 // matchVirus returns the "virus" name the way it was given, without matching.
-func (m matcher) matchVirus(ns nameString) *mlib.Match {
-	matchItems := m.virusMatcher.MatchVirus(ns.Name)
+func (m matcher) matchVirus(ns nameString) (*mlib.Match, error) {
+	matchItems, err := m.virusMatcher.MatchVirus(ns.Name)
+	if err != nil {
+		return nil, err
+	}
+
 	matchType := vlib.Virus
 	if len(matchItems) == 0 {
 		matchType = vlib.NoMatch
@@ -54,10 +63,11 @@ func (m matcher) matchVirus(ns nameString) *mlib.Match {
 	for i := range matchItems {
 		matchItems[i].InputStr = ns.Name
 	}
-	return &mlib.Match{
+	res := &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  matchType,
 		MatchItems: matchItems,
 	}
+	return res, nil
 }

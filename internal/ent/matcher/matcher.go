@@ -1,6 +1,7 @@
 package matcher
 
 import (
+	"context"
 	"log/slog"
 	"slices"
 	"sync"
@@ -13,12 +14,17 @@ import (
 	"github.com/gnames/gnmatcher/pkg/config"
 	"github.com/gnames/gnparser"
 	"github.com/gnames/gnparser/ent/parsed"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
 	// MaxMaxNamesNum is the largest number of names that can be processed
 	// per request. If input contains more names, it will be truncated.
-	MaxNamesNum      = 10_000
+	MaxNamesNum = 10_000
+
+	// MaxRelaxFuzzyNum is the largest number of names that can be processed
+	// per request when relaxed fuzzy matching is enabled. If input contains
+	// more names, it will be truncated.
 	MaxRelaxFuzzyNum = 50
 )
 
@@ -44,22 +50,28 @@ func NewMatcher(
 	}
 }
 
-func (m matcher) Init() {
-	var wg sync.WaitGroup
-	wg.Add(3)
-	go func() {
-		defer wg.Done()
-		m.exactMatcher.Init()
-	}()
-	go func() {
-		defer wg.Done()
-		m.fuzzyMatcher.Init()
-	}()
-	go func() {
-		defer wg.Done()
-		m.virusMatcher.Init()
-	}()
-	wg.Wait()
+func (m matcher) Init() error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	g, _ := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		return m.exactMatcher.Init()
+	})
+
+	g.Go(func() error {
+		return m.fuzzyMatcher.Init()
+	})
+
+	g.Go(func() error {
+		return m.virusMatcher.Init()
+	})
+
+	if err := g.Wait(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type nameIn struct {
@@ -100,7 +112,7 @@ func (m matcher) MatchNames(
 	res := make([]mlib.Match, len(names))
 
 	go loadNames(chIn, names)
-	for i := 0; i < m.cfg.JobsNum; i++ {
+	for range m.cfg.JobsNum {
 		go m.matchWorker(chIn, chOut, &wgIn)
 	}
 
@@ -166,9 +178,10 @@ func (m matcher) matchWorker(
 	chIn <-chan nameIn,
 	chOut chan<- matchOut,
 	wg *sync.WaitGroup,
-) {
-	cfg := gnparser.NewConfig()
-	parser := gnparser.New(cfg)
+) error {
+	var err error
+	gnpCfg := gnparser.NewConfig()
+	parser := gnparser.New(gnpCfg)
 	defer wg.Done()
 
 	for tsk := range chIn {
@@ -185,12 +198,18 @@ func (m matcher) matchWorker(
 				chOut <- matchOut{index: tsk.index, match: *abbrResult}
 				continue
 			}
-			matchResult = m.matchStem(ns)
+			matchResult, err = m.matchStem(ns)
+			if err != nil {
+				return err
+			}
 
 			// if we are matching a whole species group, add group's
 			// data to the match.
 			if nsSpGr != nil {
-				spGrResult := m.matchStem(*nsSpGr)
+				spGrResult, err := m.matchStem(*nsSpGr)
+				if err != nil {
+					return err
+				}
 				ns.fixSpGrResult(spGrResult)
 				if matchResult == nil {
 					matchResult = spGrResult
@@ -210,16 +229,26 @@ func (m matcher) matchWorker(
 				continue
 			}
 		} else if ns.IsVirus {
-			matchResult = m.matchVirus(ns)
+			matchResult, err = m.matchVirus(ns)
+			if err != nil {
+				return err
+			}
 		}
 		if matchResult == nil {
-			matchResult = m.matchFuzzy(ns.Canonical, ns.CanonicalStem, ns)
+			matchResult, err = m.matchFuzzy(ns.Canonical, ns.CanonicalStem, ns)
+			if err != nil {
+				return err
+			}
 		}
 		if matchResult == nil {
-			matchResult = m.matchPartial(ns, parser)
+			matchResult, err = m.matchPartial(ns, parser)
+			if err != nil {
+				return err
+			}
 		}
 		chOut <- matchOut{index: tsk.index, match: *matchResult}
 	}
+	return nil
 }
 
 func loadNames(chIn chan<- nameIn, names []string) {
@@ -260,15 +289,20 @@ func detectAbbreviated(prsd *parsed.Parsed) *mlib.Match {
 	return nil
 }
 
-func (m matcher) exactStemMatches(stemUUID, stem string) []mlib.MatchItem {
+func (m matcher) exactStemMatches(
+	stemUUID, stem string,
+) ([]mlib.MatchItem, error) {
 	if !m.exactMatcher.MatchCanonicalID(stemUUID) {
-		return nil
+		return nil, nil
 	}
 	if m.fuzzyMatcher.MatchStemExact(stem) {
-		res := m.fuzzyMatcher.StemToMatchItems(stem)
-		return res
+		res, err := m.fuzzyMatcher.StemToMatchItems(stem)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
 	}
-	return nil
+	return nil, nil
 }
 
 func emptyResult(ns nameString) *mlib.Match {

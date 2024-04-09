@@ -2,8 +2,9 @@
 
 ## Unreleased
 
-## [v1.1.10] - 2024-04-09 Tue
+## [v1.1.10] - 2024-04-11 Thu
 
+- Add [#62]: improve error handling.
 - Add [#61]: switch to slog.
 - Add [#60]: add relaxed fuzzy matching.
 - Add: update modules, gnparser v1.9.1. Update to Go 1.22.
@@ -278,6 +279,10 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.10]: https://github.com/gnames/gnmatcher/compare/v1.1.9...v1.1.10
+[v1.1.9]: https://github.com/gnames/gnmatcher/compare/v1.1.8...v1.1.9
+[v1.1.8]: https://github.com/gnames/gnmatcher/compare/v1.1.7...v1.1.8
+[v1.1.7]: https://github.com/gnames/gnmatcher/compare/v1.1.6...v1.1.7
 [v1.1.6]: https://github.com/gnames/gnmatcher/compare/v1.1.5...v1.1.6
 [v1.1.5]: https://github.com/gnames/gnmatcher/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/gnames/gnmatcher/compare/v1.1.3...v1.1.4

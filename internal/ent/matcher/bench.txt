@@ -1,0 +1,2 @@
+PASS
+ok  	github.com/gnames/gnmatcher/internal/ent/matcher	0.005s

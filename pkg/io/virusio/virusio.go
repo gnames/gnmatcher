@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"index/suffixarray"
 	"log/slog"
-	"os"
 	"strings"
 
 	mlib "github.com/gnames/gnlib/ent/matcher"
@@ -27,10 +26,17 @@ func New(cfg config.Config) virus.VirusMatcher {
 	return &res
 }
 
-func (v *virusio) Init() {
-	v.prepareDir()
+func (v *virusio) Init() error {
+	err := v.prepareDir()
+	if err != nil {
+		return err
+	}
 	slog.Info("Initializing viruses lookup data")
-	v.prepareData()
+	err = v.prepareData()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // SetConfig updates configuration of the matcher.
@@ -38,29 +44,34 @@ func (v *virusio) SetConfig(cfg config.Config) {
 	v.cfg = cfg
 }
 
-func (v *virusio) MatchVirus(s string) []mlib.MatchItem {
+func (v *virusio) MatchVirus(s string) ([]mlib.MatchItem, error) {
 	bs := v.NameToBytes(s)
 	idxs := v.sufary.Lookup(bs, 21)
 	res := make([]mlib.MatchItem, len(idxs))
 	for i := range idxs {
 		if matchItem, ok := v.mapMatchItems[idxs[i]]; ok {
 			res[i] = matchItem
-		} else {
-			err := fmt.Errorf("cannot find %d index", idxs[i])
+			continue
+		}
+		err := fmt.Errorf("cannot find %d index", idxs[i])
+		if err != nil {
 			slog.Error("Cannof find index", "error", err)
+			// we do not break here, because we want to return as many
+			// matches as possible
 		}
 	}
-	return res
+	return res, nil
 }
 
-func (v *virusio) prepareDir() {
+func (v *virusio) prepareDir() error {
 	slog.Info("Preparing directory for viruses")
 	bloomDir := v.cfg.VirusDir()
 	err := gnsys.MakeDir(v.cfg.VirusDir())
 	if err != nil {
 		slog.Error("Cannot create directory", "path", bloomDir, "error", err)
-		os.Exit(1)
+		return err
 	}
+	return nil
 }
 
 var sep = "\x00"

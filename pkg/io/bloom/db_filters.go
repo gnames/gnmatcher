@@ -11,7 +11,11 @@ import (
 )
 
 func (em *exactMatcher) filtersFromDB(path string) error {
-	db := dbase.NewDB(em.cfg)
+	db, err := dbase.NewDB(em.cfg)
+	if err != nil {
+		return err
+	}
+
 	slog.Info("Importing lookup data for stemmed canonicals")
 	cFilter, cSize, err := createFilter(db, "canonical_stems")
 	if err != nil {

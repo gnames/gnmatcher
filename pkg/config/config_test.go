@@ -16,7 +16,7 @@ func TestNew(t *testing.T) {
 	deflt := config.Config{
 		CacheDir:    cacheDir,
 		MaxEditDist: 1,
-		JobsNum:     1,
+		JobsNum:     4,
 		PgHost:      "0.0.0.0",
 		PgPort:      5432,
 		PgUser:      "postgres",
@@ -45,8 +45,8 @@ func TestNewOpts(t *testing.T) {
 
 // MaxEditDist is limited to 1 or 2
 func TestMaxED(t *testing.T) {
-	slog.SetLogLoggerLevel(10)
-	defer slog.SetLogLoggerLevel(0)
+	oldLevel := slog.SetLogLoggerLevel(10)
+	defer slog.SetLogLoggerLevel(oldLevel)
 
 	cfg := config.New(config.OptMaxEditDist(5))
 	assert.Equal(t, 1, cfg.MaxEditDist)

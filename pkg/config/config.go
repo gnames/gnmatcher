@@ -115,7 +115,7 @@ func OptJobsNum(i int) Option {
 func OptMaxEditDist(i int) Option {
 	return func(cfg *Config) {
 		if i < 1 || i > 2 {
-			slog.Error("MaxEditDist can only be 1 or 2, keeping it at 1")
+			slog.Warn("MaxEditDist can only be 1 or 2, keeping it at 1")
 		} else {
 			cfg.MaxEditDist = i
 		}
@@ -194,7 +194,7 @@ func New(opts ...Option) Config {
 	cfg := Config{
 		CacheDir:    cacheDir,
 		MaxEditDist: 1,
-		JobsNum:     1,
+		JobsNum:     4,
 		PgHost:      "0.0.0.0",
 		PgPort:      5432,
 		PgUser:      "postgres",

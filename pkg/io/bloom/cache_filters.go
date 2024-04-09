@@ -31,7 +31,11 @@ func (em *exactMatcher) filtersFromCache(path string) error {
 
 func (em *exactMatcher) getFiltersFromCache(cPath, sizesPath string) error {
 	slog.Info("Geting bloom lookup data from a cache on disk")
-	cCfg := restoreConfigs(sizesPath)
+	cCfg, err := restoreConfigs(sizesPath)
+	if err != nil {
+		return err
+	}
+
 	cFilter := baseBloomfilter.New(cCfg)
 
 	cBytes, err := os.ReadFile(cPath)
@@ -49,16 +53,18 @@ func (em *exactMatcher) getFiltersFromCache(cPath, sizesPath string) error {
 	return nil
 }
 
-func restoreConfigs(sizeFile string) bloomfilter.Config {
+func restoreConfigs(sizeFile string) (bloomfilter.Config, error) {
 	var cCfg bloomfilter.Config
 	f, err := os.Open(sizeFile)
 	if err != nil {
 		slog.Error("Could not open file", "file", sizeFile, "error", err)
+		return cCfg, err
 	}
 	r := csv.NewReader(f)
 	rows, err := r.ReadAll()
 	if err != nil {
 		slog.Error("Could not read data from file", "file", sizeFile, "error", err)
+		return cCfg, err
 	}
 	for _, v := range rows {
 		size, err := strconv.Atoi(v[1])
@@ -67,6 +73,7 @@ func restoreConfigs(sizeFile string) bloomfilter.Config {
 				"data", v[1],
 				"error", err,
 			)
+			return cCfg, err
 		}
 		switch v[0] {
 		case "CanonicalSize":
@@ -77,5 +84,5 @@ func restoreConfigs(sizeFile string) bloomfilter.Config {
 			}
 		}
 	}
-	return cCfg
+	return cCfg, nil
 }

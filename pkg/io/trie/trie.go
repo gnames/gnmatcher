@@ -36,13 +36,31 @@ func New(cfg config.Config) fuzzy.FuzzyMatcher {
 	return &fm
 }
 
-func (fm *fuzzyMatcher) Init() {
+func (fm *fuzzyMatcher) Init() error {
+	var err error
 	fm.prepareDirs()
-	db := dbase.NewDB(fm.cfg)
+	db, err := dbase.NewDB(fm.cfg)
+	if err != nil {
+		return err
+	}
 	defer db.Close()
-	fm.trie = getTrie(fm.cfg.TrieDir(), db)
-	initStemsKV(fm.cfg.StemsDir(), db)
-	fm.kvStems = connectKeyVal(fm.cfg.StemsDir())
+
+	fm.trie, err = getTrie(fm.cfg.TrieDir(), db)
+	if err != nil {
+		return err
+	}
+
+	err = initStemsKV(fm.cfg.StemsDir(), db)
+	if err != nil {
+		return err
+	}
+
+	fm.kvStems, err = connectKeyVal(fm.cfg.StemsDir())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // SetConfig updates configuration of the matcher.
@@ -59,33 +77,41 @@ func (fm *fuzzyMatcher) MatchStemExact(stem string) bool {
 	return len(matches) > 0
 }
 
-func (fm *fuzzyMatcher) StemToMatchItems(stem string) []mlib.MatchItem {
+func (fm *fuzzyMatcher) StemToMatchItems(
+	stem string,
+) ([]mlib.MatchItem, error) {
 	var res []mlib.MatchItem
-	misGob := bytes.NewBuffer(getValue(fm.kvStems, stem))
-	err := fm.encoder.Decode(misGob.Bytes(), &res)
+
+	bs, err := getValue(fm.kvStems, stem)
+	if err != nil {
+		return nil, err
+	}
+	misGob := bytes.NewBuffer(bs)
+	err = fm.encoder.Decode(misGob.Bytes(), &res)
 	if err != nil {
 		slog.Error("Decode failed", "stem", stem, "error", err)
+		return res, err
 	}
-	return res
+	return res, nil
 }
 
 // getTrie generates an in-memory trie for levenshtein automata. Such tree
 // can either be constructed from database or from a dump file. The tree
 // consists stemmed canonical forms of _gnames_ database.
-func getTrie(triePath string, db *sql.DB) *levenshtein.MinTree {
+func getTrie(triePath string, db *sql.DB) (*levenshtein.MinTree, error) {
 	var trie *levenshtein.MinTree
 	trie, err := getCachedTrie(triePath)
 	if err == nil {
 		slog.Info("Trie data is rebuilt from cache")
-		return trie
+		return trie, nil
 	}
 
 	trie, err = populateAndSaveTrie(db, triePath)
 	if err != nil {
 		slog.Error("Cannot build trie from db", "error", err)
-		os.Exit(1)
+		return nil, err
 	}
-	return trie
+	return trie, nil
 }
 
 func getTrieSize(db *sql.DB) (int, error) {

@@ -9,7 +9,7 @@ import (
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
 )
 
-func saveFilters(path string, filters *bloomFilters) {
+func saveFilters(path string, filters *bloomFilters) error {
 	var err error
 	var nilFilter *baseBloomfilter.Bloomfilter
 	files := map[string]*baseBloomfilter.Bloomfilter{
@@ -24,13 +24,13 @@ func saveFilters(path string, filters *bloomFilters) {
 		file, err = createFile(filePath)
 		if err != nil {
 			slog.Error("Cannot create path", "path", filePath, "error", err)
-			os.Exit(1)
+			return err
 		}
 		if f == sizesFile {
 			err = saveSizesFile(file, filters)
 			if err != nil {
 				slog.Error("Cannot create sizesFile", "error", err)
-				os.Exit(1)
+				return err
 			}
 			continue
 		}
@@ -38,21 +38,22 @@ func saveFilters(path string, filters *bloomFilters) {
 		err = saveFilterFile(filePath, file, filter)
 		if err != nil {
 			slog.Error("Cannot create file", "file", filePath, "error", err)
-			os.Exit(1)
+			return err
 		}
 	}
 
-	if err == nil {
-		slog.Info("Saved cached filters to disk")
-	}
+	slog.Info("Saved cached filters to disk")
+	return nil
 }
 
 func createFile(filePath string) (*os.File, error) {
 	file, err := os.Create(filePath)
 	if err != nil {
 		slog.Error("Could not create file", "file", filePath, "error", err)
+		return nil, err
 	}
-	return file, err
+
+	return file, nil
 }
 
 func saveFilterFile(
@@ -65,12 +66,14 @@ func saveFilterFile(
 	bin, err = filter.MarshalBinary()
 	if err != nil {
 		slog.Error("Could not serialize for file", "file", filePath, "error", err)
+		return err
 	}
 	_, err = file.Write(bin)
 	if err != nil {
 		slog.Error("Could not save", "file", filePath, "error", err)
+		return err
 	}
-	return err
+	return nil
 }
 
 func saveSizesFile(file *os.File, filters *bloomFilters) error {
@@ -79,6 +82,7 @@ func saveSizesFile(file *os.File, filters *bloomFilters) error {
 		filters.canonicalSize)
 	if _, err = file.WriteString(sizes); err != nil {
 		slog.Error("Could not save filter sizes to disk", "error", err)
+		return err
 	}
-	return err
+	return nil
 }

@@ -11,66 +11,87 @@ import (
 
 // matchPartial tries to match all patial variants of a name-string. The
 // process stops as soon as a match was found.
-func (m matcher) matchPartial(ns nameString, parser gnparser.GNparser) *mlib.Match {
+func (m matcher) matchPartial(
+	ns nameString,
+	parser gnparser.GNparser,
+) (*mlib.Match, error) {
+	var res *mlib.Match
+	var err error
 	if ns.Partial == nil {
-		return emptyResult(ns)
+		return emptyResult(ns), nil
 	}
 
 	for _, partial := range ns.Partial.Multinomials {
-		if res := m.processPartial(partial, ns, parser); res != nil {
-			return res
+		if res, err = m.processPartial(partial, ns, parser); res != nil {
+			if err != nil {
+				return nil, err
+			}
+			return res, nil
 		}
 	}
-	return m.processPartialGenus(ns)
+	res, err = m.processPartialGenus(ns)
+	if err != nil {
+		return res, err
+	}
+	return res, nil
 }
 
-func (m matcher) processPartialGenus(ns nameString) *mlib.Match {
+func (m matcher) processPartialGenus(ns nameString) (*mlib.Match, error) {
 	gID := gnuuid.New(ns.Partial.Genus).String()
-	matchItems := m.exactStemMatches(gID, ns.Partial.Genus)
+	matchItems, err := m.exactStemMatches(gID, ns.Partial.Genus)
+	if err != nil {
+		return nil, err
+	}
 
 	matchItems = m.filterDataSources(matchItems)
 
 	if len(matchItems) == 0 && m.cfg.WithUninomialFuzzyMatch {
 		gen := ns.Partial.Genus
-		res := m.matchFuzzy(gen, gen, ns)
+		res, err := m.matchFuzzy(gen, gen, ns)
+		if err != nil {
+			return nil, err
+		}
 		if len(res.MatchItems) == 0 {
-			return nil
+			return nil, nil
 		}
 		res.MatchType = vlib.PartialFuzzy
 		for i := range res.MatchItems {
 			res.MatchItems[i].MatchType = vlib.PartialFuzzy
 		}
-		return res
+		return res, nil
 	}
 
 	if len(matchItems) == 0 {
-		return emptyResult(ns)
+		return emptyResult(ns), nil
 	}
 
 	for i := range matchItems {
 		matchItems[i].InputStr = ns.Partial.Genus
 		matchItems[i].MatchType = vlib.PartialExact
 	}
-	return &mlib.Match{
+	res := &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
 		MatchType:  vlib.PartialExact,
 		MatchItems: matchItems,
 	}
+	return res, nil
 }
 
 func (m matcher) processPartial(p multinomial, ns nameString,
-	parser gnparser.GNparser) *mlib.Match {
+	parser gnparser.GNparser) (*mlib.Match, error) {
 	names := []string{p.Tail, p.Head}
 	relax := m.cfg.WithRelaxedFuzzyMatch
 	for _, name := range names {
-		// TODO this is probably not efficient to use parser so many times
 		nsPart, parsed := newNameString(parser, name)
 		if !parsed.Parsed {
 			continue
 		}
 		matchType := vlib.PartialFuzzy
-		matches := m.exactStemMatches(nsPart.CanonicalStemID, nsPart.CanonicalStem)
+		matches, err := m.exactStemMatches(nsPart.CanonicalStemID, nsPart.CanonicalStem)
+		if err != nil {
+			return nil, err
+		}
 		if len(matches) > 0 {
 			matchItems := make([]mlib.MatchItem, 0, len(matches))
 			for _, v := range matches {
@@ -91,25 +112,29 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 
 			matchItems = m.filterDataSources(matchItems)
 			if len(matchItems) == 0 {
-				return nil
+				return nil, nil
 			}
 
-			return &mlib.Match{
+			res := &mlib.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
 				MatchType:  matchType,
 				MatchItems: matchItems,
 			}
+			return res, nil
 		}
 	}
 
 	// if exact partial failed, try fuzzy
 	for _, name := range names {
 		stem := stemmer.Stem(name).Stem
-		if res := m.matchFuzzy(name, stem, ns); res != nil {
+		if res, err := m.matchFuzzy(name, stem, ns); res != nil {
+			if err != nil {
+				return nil, err
+			}
 			res.MatchItems = m.filterDataSources(res.MatchItems)
 			if len(res.MatchItems) == 0 {
-				return nil
+				return nil, nil
 			}
 
 			for i := range res.MatchItems {
@@ -117,9 +142,9 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 			}
 
 			res.MatchType = vlib.PartialFuzzy
-			return res
+			return res, nil
 		}
 	}
 
-	return nil
+	return nil, nil
 }

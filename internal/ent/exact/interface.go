@@ -9,7 +9,7 @@ import "github.com/gnames/gnmatcher/pkg/config"
 type ExactMatcher interface {
 	// Init loads cached data into memory, and creates cache, if it does not
 	// exist yet.
-	Init()
+	Init() error
 
 	// SetConfig updates configuration of the matcher.
 	SetConfig(config config.Config)

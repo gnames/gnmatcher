@@ -6,7 +6,6 @@ package bloom
 
 import (
 	"log/slog"
-	"os"
 	"sync"
 
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
@@ -36,22 +35,22 @@ type bloomFilters struct {
 // If filters had been already created before, it just returns them.
 // Otherwise it creates filters from either database, or from cached files.
 // Creating filters from cache is significantly faster.
-func (em *exactMatcher) getFilters() {
+func (em *exactMatcher) getFilters() error {
 	path := em.cfg.FiltersDir()
 	var err error
 
 	if em.filters != nil {
-		return
+		return nil
 	}
 
 	err = em.filtersFromCache(path)
 	if err != nil {
 		slog.Error("Cannot create filters from cache", "path", path, "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	if em.filters != nil {
-		return
+		return nil
 	}
 
 	err = em.filtersFromDB(path)
@@ -61,6 +60,7 @@ func (em *exactMatcher) getFilters() {
 			"path", path,
 			"error", err,
 		)
-		os.Exit(1)
+		return err
 	}
+	return nil
 }

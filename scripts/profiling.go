@@ -101,7 +101,7 @@ func processData(chNames <-chan []string, wg *sync.WaitGroup) {
 }
 
 func namesToChannel(chNames chan<- []string) {
-	path := filepath.Join("..", "testdata", "testdata.csv")
+	path := filepath.Join("..", "internal", "testdata", "testdata.csv")
 	names := make([]string, 0, batch)
 	f, err := os.Open(path)
 	if err != nil {

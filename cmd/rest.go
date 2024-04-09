@@ -48,18 +48,15 @@ as well.`,
 		if debug {
 			slog.SetLogLoggerLevel(slog.LevelDebug)
 		}
-		port, err := cmd.Flags().GetInt("port")
-		if err != nil {
-			slog.Error("Cannot get port flag", "error", err)
-			os.Exit(1)
-		}
+		port, _ := cmd.Flags().GetInt("port")
+
 		cfg := gnmcnf.New(opts...)
 		em := bloom.New(cfg)
 		fm := trie.New(cfg)
 		vm := virusio.New(cfg)
-		gnm := gnmatcher.New(em, fm, vm, cfg)
+		gnm, err := gnmatcher.New(em, fm, vm, cfg)
 		if err != nil {
-			slog.Error("Cannot create an instance of GNmatcher", "error", err)
+			slog.Error("Error initializing matcher", "error", err)
 			os.Exit(1)
 		}
 

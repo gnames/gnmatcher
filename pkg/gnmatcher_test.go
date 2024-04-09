@@ -16,7 +16,7 @@ import (
 
 type mockExactMatcher struct{}
 
-func (em mockExactMatcher) Init() {}
+func (em mockExactMatcher) Init() error { return nil }
 
 func (em mockExactMatcher) SetConfig(cfg config.Config) {}
 
@@ -30,7 +30,7 @@ func (em mockExactMatcher) MatchNameStringID(s string) bool {
 
 type mockFuzzyMatcher struct{}
 
-func (fm mockFuzzyMatcher) Init() {}
+func (fm mockFuzzyMatcher) Init() error { return nil }
 
 func (fm mockFuzzyMatcher) SetConfig(cfg config.Config) {}
 
@@ -43,18 +43,22 @@ func (fm mockFuzzyMatcher) MatchStemExact(s string) bool {
 	return true
 }
 
-func (fm mockFuzzyMatcher) StemToMatchItems(s string) []mlib.MatchItem {
+func (fm mockFuzzyMatcher) StemToMatchItems(
+	s string,
+) ([]mlib.MatchItem, error) {
 	var res []mlib.MatchItem
-	return res
+	return res, nil
 }
 
 type mockVirusMatcher struct{}
 
-func (vm mockVirusMatcher) Init() {}
+func (vm mockVirusMatcher) Init() error { return nil }
 
 func (vm mockVirusMatcher) SetConfig(cfg config.Config) {}
 
-func (vm mockVirusMatcher) MatchVirus(s string) []mlib.MatchItem { return nil }
+func (vm mockVirusMatcher) MatchVirus(s string) ([]mlib.MatchItem, error) {
+	return nil, nil
+}
 
 func (vm mockVirusMatcher) NameToBytes(s string) []byte { return nil }
 
@@ -63,7 +67,8 @@ func TestVersion(t *testing.T) {
 	em := mockExactMatcher{}
 	fm := mockFuzzyMatcher{}
 	vm := mockVirusMatcher{}
-	gnm := gnmatcher.New(em, fm, vm, cfg)
+	gnm, err := gnmatcher.New(em, fm, vm, cfg)
+	assert.Nil(t, err)
 	ver := gnm.GetVersion()
 	verRegex := regexp.MustCompile(`^v[\d]+\.[\d]+\.[\d]+\+?`)
 	assert.Regexp(t, verRegex, ver.Version)
@@ -81,7 +86,11 @@ func Example() {
 	em := bloom.New(cfg)
 	fm := trie.New(cfg)
 	vm := virusio.New(cfg)
-	gnm := gnmatcher.New(em, fm, vm, cfg)
+	gnm, err := gnmatcher.New(em, fm, vm, cfg)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
 	for _, match := range res.Matches {
 		fmt.Println(match.Name)

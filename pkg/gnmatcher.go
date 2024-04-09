@@ -23,11 +23,14 @@ func New(
 	fm fuzzy.FuzzyMatcher,
 	vm virus.VirusMatcher,
 	cfg config.Config,
-) GNmatcher {
+) (GNmatcher, error) {
 	gnm := gnmatcher{cfg: cfg}
 	gnm.matcher = matcher.NewMatcher(em, fm, vm, cfg)
-	gnm.matcher.Init()
-	return gnm
+	err := gnm.matcher.Init()
+	if err != nil {
+		return nil, err
+	}
+	return gnm, nil
 }
 
 func (gnm gnmatcher) MatchNames(names []string, opts ...config.Option) mlib.Output {

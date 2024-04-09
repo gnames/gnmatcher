@@ -1,15 +1,16 @@
 goos: linux
 goarch: amd64
 pkg: github.com/gnames/gnmatcher/internal/ent/fuzzy
-BenchmarkDist/CompareOnce-8         	 2339416	       496 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2422130	       495 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2414035	       496 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2413192	       494 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2411318	       497 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2409723	       494 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2403802	       497 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2411041	       494 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2411641	       495 ns/op	      32 B/op	       1 allocs/op
-BenchmarkDist/CompareOnce-8         	 2416800	       498 ns/op	      32 B/op	       1 allocs/op
+cpu: 12th Gen Intel(R) Core(TM) i9-12900KF
+BenchmarkDist/CompareOnce-24         	 2794815	       422.0 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2878904	       412.7 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2863118	       414.0 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2851791	       430.1 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2675156	       427.4 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2820816	       423.5 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2868631	       417.0 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2724924	       436.9 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2933166	       446.9 ns/op	      88 B/op	       3 allocs/op
+BenchmarkDist/CompareOnce-24         	 2923574	       425.5 ns/op	      88 B/op	       3 allocs/op
 PASS
-ok  	github.com/gnames/gnmatcher/internal/ent/fuzzy	16.982s
+ok  	github.com/gnames/gnmatcher/internal/ent/fuzzy	16.376s

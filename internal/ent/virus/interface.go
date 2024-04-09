@@ -10,7 +10,7 @@ import (
 type VirusMatcher interface {
 	// Init loads cached data into memory, or creates cache, if it does not
 	// exist yet.
-	Init()
+	Init() error
 
 	// SetConfig updates configuration of the matcher.
 	SetConfig(cfg config.Config)
@@ -21,7 +21,7 @@ type VirusMatcher interface {
 	// virus name string from the database. If there are too many matches,
 	// the result is truncated. "Curated" databases have a priority in
 	// returned results.
-	MatchVirus(s string) []mlib.MatchItem
+	MatchVirus(s string) ([]mlib.MatchItem, error)
 
 	// NameToBytes normalizes a virus name by removing all extra spaces,
 	// converting all runes to lower case, adding '\x00' to the start and

@@ -12,11 +12,11 @@ func (m matcher) matchFuzzy(
 	canonical,
 	stem string,
 	ns nameString,
-) *mlib.Match {
+) (*mlib.Match, error) {
 	relax := m.cfg.WithRelaxedFuzzyMatch
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	res := &mlib.Match{
@@ -31,7 +31,11 @@ func (m matcher) matchFuzzy(
 		if editDistanceStem == -1 {
 			continue
 		}
-		matchItems := m.fuzzyMatcher.StemToMatchItems(stemMatch)
+		matchItems, err := m.fuzzyMatcher.StemToMatchItems(stemMatch)
+		if err != nil {
+			return nil, err
+		}
+
 		for _, matchItem := range matchItems {
 			matchItem.InputStr = canonical
 			// runs edit distance with checks, returns -1 if checks failed.
@@ -53,8 +57,8 @@ func (m matcher) matchFuzzy(
 
 	res.MatchItems = m.filterDataSources(res.MatchItems)
 	if len(res.MatchItems) == 0 {
-		return nil
+		return nil, nil
 	}
 
-	return res
+	return res, nil
 }

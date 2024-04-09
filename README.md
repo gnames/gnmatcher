@@ -7,9 +7,8 @@
 
 The [GNmatcher] is a utility for checking scientific name-strings against
 [canonical names] derived from a variety of [biodiversity datasets].
-The matching can be exact, partial, or fuzzy. [GNmatcher] does not
-tell which datasets provided found canonical name. For this purpose use
-[GNames] project.
+The matching can be exact, partial, or fuzzy. Usually [GNmatcher] is used
+as a component of a scientific names verification service ([GNames API]).
 
 ## Introduction
 
@@ -45,6 +44,9 @@ metadata described as a `Match` object in the [RESTful API documentation].
 
 The optimal size of the input is 5-10 thousand strings per array. Note
 that 10,000 is the maximal size, and larger arrays will be truncated.
+
+If the service is used with 'relaxed fuzzy matching' option, only 50 strings
+can be processed at a time.
 
 ## Performance
 

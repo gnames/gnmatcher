@@ -12,13 +12,13 @@ import (
 	"github.com/gnames/gnmatcher/pkg/io/dbase"
 )
 
-func (v *virusio) prepareData() {
+func (v *virusio) prepareData() error {
 	slog.Info("Preparing virus data")
 	path := v.cfg.VirusDir()
 	var err error
 
 	if v.sufary != nil {
-		return
+		return nil
 	}
 
 	err = v.dataFromCache(path)
@@ -28,21 +28,23 @@ func (v *virusio) prepareData() {
 	}
 
 	if v.sufary != nil {
-		return
+		return nil
 	}
 
 	var data []mlib.MatchItem
 	data, err = v.dataFromDB(path)
 	if err != nil {
 		slog.Error("Cannot create filters at %s from database.", "path", path)
-		os.Exit(1)
+		return err
 	}
 	bs := v.processData(data)
 	err = v.saveData(bs)
 	if err != nil {
 		slog.Error("Cannot save virus data to disk.", "path", path, "error", err)
+		return err
 	}
 	slog.Info("Finished saving Virus data.")
+	return nil
 }
 
 func (v *virusio) saveData(bs []byte) error {
@@ -85,7 +87,10 @@ func (v *virusio) processData(data []mlib.MatchItem) []byte {
 
 func (v *virusio) dataFromDB(path string) ([]mlib.MatchItem, error) {
 	var res []mlib.MatchItem
-	db := dbase.NewDB(v.cfg)
+	db, err := dbase.NewDB(v.cfg)
+	if err != nil {
+		return nil, err
+	}
 	slog.Info("Importing lookup data for viruses")
 
 	q := `SELECT name_string_id, name, ds.id

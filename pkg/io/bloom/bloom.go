@@ -6,7 +6,6 @@ package bloom
 
 import (
 	"log/slog"
-	"os"
 
 	"github.com/gnames/gnmatcher/internal/ent/exact"
 	"github.com/gnames/gnmatcher/pkg/config"
@@ -20,13 +19,22 @@ type exactMatcher struct {
 
 // New takes configuration object and returns ExactMatcher.
 func New(cfg config.Config) exact.ExactMatcher {
-	return &exactMatcher{cfg: cfg}
+	em := &exactMatcher{cfg: cfg}
+	return em
 }
 
-func (em *exactMatcher) Init() {
-	em.prepareDir()
+func (em *exactMatcher) Init() error {
+	err := em.prepareDir()
+	if err != nil {
+		return err
+	}
+
 	slog.Info("Initializing bloom filters")
-	em.getFilters()
+	err = em.getFilters()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // SetConfig updates configuration of the matcher.
@@ -41,12 +49,13 @@ func (em *exactMatcher) MatchCanonicalID(uuid string) bool {
 	return isIn
 }
 
-func (em exactMatcher) prepareDir() {
+func (em exactMatcher) prepareDir() error {
 	slog.Info("Preparing dir for bloom filters")
 	bloomDir := em.cfg.FiltersDir()
 	err := gnsys.MakeDir(em.cfg.FiltersDir())
 	if err != nil {
 		slog.Error("Cannot create directory", "path", bloomDir, "error", err)
-		os.Exit(1)
+		return err
 	}
+	return nil
 }

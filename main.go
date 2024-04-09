@@ -28,12 +28,13 @@ import (
 	"os"
 
 	"github.com/gnames/gnmatcher/cmd"
-	"github.com/lmittmann/tint"
 )
 
 func main() {
-	handle := slog.New(tint.NewHandler(os.Stderr, nil))
-	slog.SetDefault(handle)
+	handle := slog.New(slog.NewJSONHandler(os.Stderr, nil))
+	slog.SetDefault(handle.With(
+		slog.String("gnApp", "gnmatcher"),
+	))
 
 	cmd.Execute()
 }

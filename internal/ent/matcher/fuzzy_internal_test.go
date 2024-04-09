@@ -12,11 +12,13 @@ import (
 func TestFuzzyLimit(t *testing.T) {
 	ns := nameString{ID: "123", Name: "Pardosa maesta"}
 	m := matcher{fuzzyMatcher: fuzzyMatcherMock{}}
-	res := m.matchFuzzy("Pardosa maesta", "Pardosa maest", ns)
+	res, err := m.matchFuzzy("Pardosa maesta", "Pardosa maest", ns)
+	assert.Nil(t, err)
 	assert.Equal(t, 1, len(res.MatchItems))
 	assert.Equal(t, 1, res.MatchItems[0].EditDistance)
 	ns = nameString{ID: "124", Name: "Acacia may"}
-	res = m.matchFuzzy("Acacia may", "Acacia may", ns)
+	res, err = m.matchFuzzy("Acacia may", "Acacia may", ns)
+	assert.Nil(t, err)
 	assert.Nil(t, res)
 }
 
@@ -34,7 +36,7 @@ var stemToMatchItemsMock = map[string][]mlib.MatchItem{
 
 type fuzzyMatcherMock struct{}
 
-func (fuzzyMatcherMock) Init() {}
+func (fuzzyMatcherMock) Init() error { return nil }
 
 func (fuzzyMatcherMock) SetConfig(cfg config.Config) {}
 
@@ -49,10 +51,12 @@ func (fuzzyMatcherMock) MatchStemExact(stem string) bool {
 	return true
 }
 
-func (fuzzyMatcherMock) StemToMatchItems(stem string) []mlib.MatchItem {
+func (fuzzyMatcherMock) StemToMatchItems(
+	stem string,
+) ([]mlib.MatchItem, error) {
 	res := []mlib.MatchItem{}
 	if mis, ok := stemToMatchItemsMock[stem]; ok {
-		return mis
+		return mis, nil
 	}
-	return res
+	return res, nil
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/gnames/gnfmt"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnmatcher/pkg/io/dbase"
+	"github.com/gnames/gnmatcher/internal/io/dbase"
 )
 
 func (v *virusio) prepareData() error {

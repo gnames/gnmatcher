@@ -15,7 +15,7 @@ FLAGS_LD = -ldflags "-X github.com/gnames/$(PROJ_NAME)/pkg.Build=$(DATE) \
 FLAGS_REL = -trimpath -ldflags "-s -w \
 						-X github.com/gnames/$(PROJ_NAME)/pkg.Build=$(DATE)"
 
-GOCMD=go
+GOCMD= go
 GOINSTALL = $(GOCMD) install $(FLAGS_LD)
 GOBUILD = $(GOCMD) build $(FLAGS_LD)
 GORELEASE = $(GOCMD) build $(FLAGS_REL)
@@ -25,7 +25,7 @@ GOGET = $(GOCMD) get
 all: install
 
 test: deps install
-	go test -shuffle=on -race -coverprofile=coverage.txt -covermode=atomic ./...
+	go test -shuffle=on -count=1 -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 tools: deps
 	@echo Installing tools from tools.go

@@ -14,8 +14,8 @@ import (
 	"github.com/gnames/gnfmt"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/gnames/gnmatcher/internal/ent/fuzzy"
+	"github.com/gnames/gnmatcher/internal/io/dbase"
 	"github.com/gnames/gnmatcher/pkg/config"
-	"github.com/gnames/gnmatcher/pkg/io/dbase"
 	"github.com/gnames/gnsys"
 )
 

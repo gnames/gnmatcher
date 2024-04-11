@@ -7,7 +7,7 @@ import (
 
 	"github.com/devopsfaith/bloomfilter"
 	baseBloomfilter "github.com/devopsfaith/bloomfilter/bloomfilter"
-	"github.com/gnames/gnmatcher/pkg/io/dbase"
+	"github.com/gnames/gnmatcher/internal/io/dbase"
 )
 
 func (em *exactMatcher) filtersFromDB(path string) error {

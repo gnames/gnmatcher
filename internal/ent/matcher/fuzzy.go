@@ -14,6 +14,12 @@ func (m matcher) matchFuzzy(
 	ns nameString,
 ) (*mlib.Match, error) {
 	relax := m.cfg.WithRelaxedFuzzyMatch
+
+	matchType := vlib.Fuzzy
+	if relax {
+		matchType = vlib.FuzzyRelaxed
+	}
+
 	stemMatches := m.fuzzyMatcher.MatchStem(stem)
 	if len(stemMatches) == 0 {
 		return nil, nil
@@ -22,9 +28,10 @@ func (m matcher) matchFuzzy(
 	res := &mlib.Match{
 		ID:         ns.ID,
 		Name:       ns.Name,
-		MatchType:  vlib.Fuzzy,
+		MatchType:  matchType,
 		MatchItems: make([]mlib.MatchItem, 0, len(stemMatches)*2),
 	}
+
 	for _, stemMatch := range stemMatches {
 		editDistanceStem := fuzzy.EditDistance(stemMatch, stem, relax)
 		// -1 means edit distance got over threshold
@@ -48,9 +55,10 @@ func (m matcher) matchFuzzy(
 			if editDistance == -1 {
 				continue
 			}
+
 			matchItem.EditDistance = editDistance
 			matchItem.EditDistanceStem = editDistanceStem
-			matchItem.MatchType = vlib.Fuzzy
+			matchItem.MatchType = matchType
 			res.MatchItems = append(res.MatchItems, matchItem)
 		}
 	}

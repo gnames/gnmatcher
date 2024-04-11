@@ -192,15 +192,25 @@ func TestRelaxedFuzzy(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
 		msg, name, res string
+		uniFuzzy       bool
 		editDist       int
+		typ            vlib.MatchTypeValue
 	}{
-		{"bubo", "Bbo bbo", "Bubo bubo", 2},
+		{"bubo", "Bbo bbo", "Bubo bubo", false, 2, vlib.FuzzyRelaxed},
+		{"bubo", "Bbo bbo onetwo", "Bubo bubo", false, 2, vlib.PartialFuzzyRelaxed},
+		{"bubo", "Bubo bubo onetwo", "Bubo bubo", false, 0, vlib.PartialExact},
+		{"pom saltator", "Pomatom saltator", "Pomatomus saltator", false, 2, vlib.FuzzyRelaxed},
+		{"pomatomus", "Pomatom", "Pomatomus", true, 2, vlib.FuzzyRelaxed},
+		{"pomatomus part", "Pomatom aadsdss", "Pomatomus", true, 2, vlib.PartialFuzzyRelaxed},
 	}
 
 	for _, v := range tests {
 		params := mlib.Input{
 			Names:                 []string{v.name},
 			WithRelaxedFuzzyMatch: true,
+		}
+		if v.uniFuzzy {
+			params.WithUninomialFuzzyMatch = true
 		}
 		enc := gnfmt.GNjson{}
 		req, err := enc.Encode(params)
@@ -216,6 +226,10 @@ func TestRelaxedFuzzy(t *testing.T) {
 		assert.Nil(err)
 		matches := res.Matches
 		assert.GreaterOrEqual(len(matches[0].MatchItems), 1)
+		match := res.Matches[0].MatchItems[0]
+		assert.Equal(v.editDist, match.EditDistance, v.msg)
+		assert.Equal(v.typ, match.MatchType, v.msg)
+		assert.Equal(v.typ, matches[0].MatchType, v.msg)
 	}
 }
 

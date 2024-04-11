@@ -43,6 +43,11 @@ func (m matcher) processPartialGenus(ns nameString) (*mlib.Match, error) {
 		return nil, err
 	}
 
+	fuzzyMatchType := vlib.PartialFuzzy
+	if m.cfg.WithRelaxedFuzzyMatch {
+		fuzzyMatchType = vlib.PartialFuzzyRelaxed
+	}
+
 	matchItems = m.filterDataSources(matchItems)
 
 	if len(matchItems) == 0 && m.cfg.WithUninomialFuzzyMatch {
@@ -54,9 +59,9 @@ func (m matcher) processPartialGenus(ns nameString) (*mlib.Match, error) {
 		if len(res.MatchItems) == 0 {
 			return nil, nil
 		}
-		res.MatchType = vlib.PartialFuzzy
+		res.MatchType = fuzzyMatchType
 		for i := range res.MatchItems {
-			res.MatchItems[i].MatchType = vlib.PartialFuzzy
+			res.MatchItems[i].MatchType = fuzzyMatchType
 		}
 		return res, nil
 	}
@@ -82,12 +87,17 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 	parser gnparser.GNparser) (*mlib.Match, error) {
 	names := []string{p.Tail, p.Head}
 	relax := m.cfg.WithRelaxedFuzzyMatch
+
+	fuzzyMatchType := vlib.PartialFuzzy
+	if relax {
+		fuzzyMatchType = vlib.PartialFuzzyRelaxed
+	}
+
 	for _, name := range names {
 		nsPart, parsed := newNameString(parser, name)
 		if !parsed.Parsed {
 			continue
 		}
-		matchType := vlib.PartialFuzzy
 		matches, err := m.exactStemMatches(nsPart.CanonicalStemID, nsPart.CanonicalStem)
 		if err != nil {
 			return nil, err
@@ -97,15 +107,15 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 			for _, v := range matches {
 				v.InputStr = nsPart.Canonical
 				if v.MatchStr == v.InputStr {
-					matchType = vlib.PartialExact
-					v.MatchType = matchType
+					fuzzyMatchType = vlib.PartialExact
+					v.MatchType = fuzzyMatchType
 				} else {
 					editDistance := fuzzy.EditDistance(v.InputStr, v.MatchStr, relax)
 					if editDistance == -1 {
 						continue
 					}
 					v.EditDistance = editDistance
-					v.MatchType = vlib.PartialFuzzy
+					v.MatchType = fuzzyMatchType
 				}
 				matchItems = append(matchItems, v)
 			}
@@ -118,7 +128,7 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 			res := &mlib.Match{
 				ID:         ns.ID,
 				Name:       ns.Name,
-				MatchType:  matchType,
+				MatchType:  fuzzyMatchType,
 				MatchItems: matchItems,
 			}
 			return res, nil
@@ -138,10 +148,10 @@ func (m matcher) processPartial(p multinomial, ns nameString,
 			}
 
 			for i := range res.MatchItems {
-				res.MatchItems[i].MatchType = vlib.PartialFuzzy
+				res.MatchItems[i].MatchType = fuzzyMatchType
 			}
 
-			res.MatchType = vlib.PartialFuzzy
+			res.MatchType = fuzzyMatchType
 			return res, nil
 		}
 	}

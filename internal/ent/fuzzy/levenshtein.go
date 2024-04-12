@@ -46,7 +46,7 @@ func EditDistance(s1, s2 string, relax bool) int {
 func checkED(s1, s2 string, ed int, relax bool) int {
 	words1 := strings.Split(s1, " ")
 	words2 := strings.Split(s2, " ")
-	if len(words1) != len(words2) || relax {
+	if len(words1) != len(words2) || (relax && len(words1) > 1) {
 		return ed
 	}
 	for i, w := range words2 {

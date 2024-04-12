@@ -127,7 +127,6 @@ func OptMaxEditDist(i int) Option {
 func OptWithRelaxedFuzzyMatch(b bool) Option {
 	return func(cfg *Config) {
 		cfg.WithRelaxedFuzzyMatch = b
-		cfg.MaxEditDist = 2
 	}
 }
 

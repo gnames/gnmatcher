@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.12] - 2024-04-12 Fri
+
+- Fix: remove edit distance 2 from fuzzy relaxed match.
+
 ## [v1.1.11] - 2024-04-11 Thu
 
 - Add [#63]: add new match types for relaxed fuzzy match option.
@@ -283,6 +287,7 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.12]: https://github.com/gnames/gnmatcher/compare/v1.1.11...v1.1.12
 [v1.1.11]: https://github.com/gnames/gnmatcher/compare/v1.1.10...v1.1.11
 [v1.1.10]: https://github.com/gnames/gnmatcher/compare/v1.1.9...v1.1.10
 [v1.1.9]: https://github.com/gnames/gnmatcher/compare/v1.1.8...v1.1.9

@@ -21,11 +21,6 @@ const (
 	// MaxMaxNamesNum is the largest number of names that can be processed
 	// per request. If input contains more names, it will be truncated.
 	MaxNamesNum = 10_000
-
-	// MaxRelaxFuzzyNum is the largest number of names that can be processed
-	// per request when relaxed fuzzy matching is enabled. If input contains
-	// more names, it will be truncated.
-	MaxRelaxFuzzyNum = 50
 )
 
 type matcher struct {
@@ -104,9 +99,6 @@ func (m matcher) MatchNames(
 	m.virusMatcher.SetConfig(m.cfg)
 
 	maxNum := MaxNamesNum
-	if m.cfg.WithRelaxedFuzzyMatch {
-		maxNum = MaxRelaxFuzzyNum
-	}
 
 	names = truncateNamesToMaxNumber(names, maxNum)
 	res := make([]mlib.Match, len(names))

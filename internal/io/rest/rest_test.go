@@ -196,12 +196,11 @@ func TestRelaxedFuzzy(t *testing.T) {
 		editDist       int
 		typ            vlib.MatchTypeValue
 	}{
-		{"bubo", "Bbo bbo", "Bubo bubo", false, 2, vlib.FuzzyRelaxed},
-		{"bubo", "Bbo bbo onetwo", "Bubo bubo", false, 2, vlib.PartialFuzzyRelaxed},
+		{"bubo", "Bbo bubo", "Bubo bubo", false, 1, vlib.FuzzyRelaxed},
+		{"bubo", "Bubo bbo onetwo", "Bubo bubo", false, 1, vlib.PartialFuzzyRelaxed},
 		{"bubo", "Bubo bubo onetwo", "Bubo bubo", false, 0, vlib.PartialExact},
-		{"pom saltator", "Pomatom saltator", "Pomatomus saltator", false, 2, vlib.FuzzyRelaxed},
-		{"pomatomus", "Pomatom", "Pomatomus", true, 2, vlib.FuzzyRelaxed},
-		{"pomatomus part", "Pomatom aadsdss", "Pomatomus", true, 2, vlib.PartialFuzzyRelaxed},
+		{"pomatomus", "Pomatomu", "Pomatomus", true, 1, vlib.FuzzyRelaxed},
+		{"pomatomus part", "Pomatomu aadsdss", "Pomatomus", true, 1, vlib.PartialFuzzyRelaxed},
 	}
 
 	for _, v := range tests {

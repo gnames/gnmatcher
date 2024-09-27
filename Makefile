@@ -37,21 +37,21 @@ deps:
 
 build:
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) GOOS=linux $(GOBUILD);
+	$(NO_C) $(GOBUILD);
 
 dc: build
 	docker-compose build;
 
 buildrel:
 	$(GOCLEAN); \
-	$(FLAGS_SHARED) $(GORELEASE);
+	$(NO_C) $(GORELEASE);
 
 release: dockerhub
 	tar zcvf /tmp/$(PROJ_NAME)-$(VER)-linux.tar.gz $(PROJ_NAME); \
 	$(GOCLEAN);
 
 install:
-	$(FLAGS_SHARED) $(GOINSTALL);
+	$(NO_C) $(GOINSTALL);
 
 docker: buildrel
 	docker buildx build -t gnames/$(PROJ_NAME):latest -t gnames/$(PROJ_NAME):$(VERSION) .; \

@@ -91,6 +91,7 @@ func initConfig() {
 	// config file settings
 	_ = viper.BindEnv("CacheDir", "GNM_CACHE_DIR")
 	_ = viper.BindEnv("JobsNum", "GNM_JOBS_NUM")
+	_ = viper.BindEnv("MaxEditDist", "GNM_MAX_EDIT_DIST")
 	_ = viper.BindEnv("PgDB", "GNM_PG_DB")
 	_ = viper.BindEnv("PgHost", "GNM_PG_HOST")
 	_ = viper.BindEnv("PgPass", "GNM_PG_PASS")

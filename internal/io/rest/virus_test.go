@@ -48,9 +48,9 @@ func TestVirus(t *testing.T) {
 		{
 			msg:       "tobacco mosaic",
 			name:      "Tobacco mosaic virus",
-			matchStr:  "Tobacco mosaic virus",
+			matchStr:  "Tobacco Mosaic virus",
 			matchType: vlib.Virus,
-			matchlen:  16,
+			matchlen:  17,
 		},
 		{
 			msg:       "influenza overload",
@@ -83,7 +83,7 @@ func TestVirus(t *testing.T) {
 		res := response.Matches[i]
 		assert.Equal(v.name, res.Name, v.msg)
 		assert.Equal(v.matchType, res.MatchType, v.msg)
-		assert.Equal(v.matchlen, len(res.MatchItems))
+		assert.Equal(v.matchlen, len(res.MatchItems), v.msg)
 		if len(res.MatchItems) > 0 {
 			assert.Equal(v.matchStr, res.MatchItems[0].MatchStr)
 			assert.Equal(v.matchType, res.MatchItems[0].MatchType, v.msg)

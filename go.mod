@@ -9,12 +9,12 @@ require (
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/gnames/gnfmt v0.4.3
 	github.com/gnames/gnlib v0.43.0
-	github.com/gnames/gnparser v1.9.1
+	github.com/gnames/gnparser v1.10.1
 	github.com/gnames/gnsys v0.3.2
 	github.com/gnames/gnuuid v0.1.2
 	github.com/gnames/levenshtein v0.4.0
 	github.com/jinzhu/gorm v1.9.16
-	github.com/labstack/echo/v4 v4.11.4
+	github.com/labstack/echo/v4 v4.12.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/cobra-cli v1.3.0

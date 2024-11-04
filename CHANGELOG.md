@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## [v1.1.14]: - 2024-11-04 Mon
+
+- Add: version v1.1.14
+
+## [v1.1.13] - 2024-11-04 Mon
+
+- Add: updated modules
+- Add: updated tests
+
 ## [v1.1.12] - 2024-04-12 Fri
 
 - Fix: remove edit distance 2 from fuzzy relaxed match.
@@ -287,6 +296,8 @@
 
 This document follows [changelog guidelines]
 
+[v1.1.14]: https://github.com/gnames/gnmatcher/compare/v1.1.13...v1.1.14
+[v1.1.13]: https://github.com/gnames/gnmatcher/compare/v1.1.12...v1.1.13
 [v1.1.12]: https://github.com/gnames/gnmatcher/compare/v1.1.11...v1.1.12
 [v1.1.11]: https://github.com/gnames/gnmatcher/compare/v1.1.10...v1.1.11
 [v1.1.10]: https://github.com/gnames/gnmatcher/compare/v1.1.9...v1.1.10

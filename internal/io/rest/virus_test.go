@@ -48,7 +48,7 @@ func TestVirus(t *testing.T) {
 		{
 			msg:       "tobacco mosaic",
 			name:      "Tobacco mosaic virus",
-			matchStr:  "Tobacco Mosaic virus",
+			matchStr:  "Tobacco mosaic virus",
 			matchType: vlib.Virus,
 			matchlen:  17,
 		},

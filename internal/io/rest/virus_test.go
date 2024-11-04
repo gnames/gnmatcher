@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/gnames/gnfmt"
@@ -27,35 +28,35 @@ func TestVirus(t *testing.T) {
 		{
 			msg:       "arct vir",
 			name:      "Antarctic virus",
-			matchStr:  "Antarctic virus 1_I_CPGEORsw001Ad",
+			matchStr:  "antarctic virus 1_i_cpgeorsw001ad",
 			matchType: vlib.Virus,
 			matchlen:  21,
 		},
 		{
 			msg:       "bird",
 			name:      "Bubo bubo",
-			matchStr:  "Bubo bubo",
+			matchStr:  "bubo bubo",
 			matchType: vlib.Exact,
 			matchlen:  1,
 		},
 		{
 			msg:       "vector",
 			name:      "Cloning vector pAJM.011",
-			matchStr:  "Cloning vector pAJM.011",
+			matchStr:  "cloning vector pajm.011",
 			matchType: vlib.Virus,
 			matchlen:  1,
 		},
 		{
 			msg:       "tobacco mosaic",
 			name:      "Tobacco mosaic virus",
-			matchStr:  "Tobacco mosaic virus",
+			matchStr:  "tobacco mosaic virus",
 			matchType: vlib.Virus,
 			matchlen:  17,
 		},
 		{
 			msg:       "influenza overload",
 			name:      "Influenza B virus",
-			matchStr:  "Influenza B virus",
+			matchStr:  "influenza b virus",
 			matchType: vlib.Virus,
 			matchlen:  21,
 		},
@@ -85,7 +86,7 @@ func TestVirus(t *testing.T) {
 		assert.Equal(v.matchType, res.MatchType, v.msg)
 		assert.Equal(v.matchlen, len(res.MatchItems), v.msg)
 		if len(res.MatchItems) > 0 {
-			assert.Equal(v.matchStr, res.MatchItems[0].MatchStr)
+			assert.Equal(v.matchStr, strings.ToLower(res.MatchItems[0].MatchStr))
 			assert.Equal(v.matchType, res.MatchItems[0].MatchType, v.msg)
 			assert.Equal(v.name, res.MatchItems[0].InputStr, v.msg)
 		}

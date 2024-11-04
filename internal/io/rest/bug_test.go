@@ -26,6 +26,13 @@ var bugs = []struct {
 		editDistance:   1,
 	},
 	{
+		msg:            "#123 502 for Phegoptera",
+		name:           "Phegoptera",
+		matchCanonical: "Phegoptera",
+		matchType:      vlib.Exact,
+		editDistance:   0,
+	},
+	{
 		msg:            "#23 gnmatcher, Misspelling of Drosophila",
 		name:           "Drosohila melanogaster",
 		matchCanonical: "Drosophila melanogaster",

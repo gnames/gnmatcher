@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // LoadEnv allows to change configuration during runtime without CLI.
@@ -28,7 +29,7 @@ func strOpts() []Option {
 	}
 
 	for envVar, optFunc := range envToOpt {
-		envVal := os.Getenv(envVar)
+		envVal := strings.TrimSpace(os.Getenv(envVar))
 		if envVal != "" {
 			res = append(res, optFunc(envVal))
 		}
@@ -48,7 +49,7 @@ func intOpts() []Option {
 		if envVar == "" {
 			continue
 		}
-		val := os.Getenv(envVar)
+		val := strings.TrimSpace(os.Getenv(envVar))
 		i, err := strconv.Atoi(val)
 		if err != nil {
 			slog.Warn("Cannot convert to int", "env", envVar, "value", val)

@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+.envrc
 
 # environment variable settings for docker and kubernetes
 .env

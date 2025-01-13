@@ -2,19 +2,20 @@ package config_test
 
 import (
 	"log/slog"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/gnames/gnmatcher/pkg/config"
-	"github.com/gnames/gnsys"
 	"github.com/stretchr/testify/assert"
 )
 
 // NewConfig constructor
 func TestNew(t *testing.T) {
 	cfg := config.New()
-	cacheDir, _ := gnsys.ConvertTilda("~/.cache/gnmatcher")
+	cacheDir, _ := os.UserCacheDir()
 	deflt := config.Config{
-		CacheDir:    cacheDir,
+		CacheDir:    filepath.Join(cacheDir, "gnmatcher"),
 		MaxEditDist: 1,
 		JobsNum:     4,
 		PgHost:      "0.0.0.0",
@@ -60,9 +61,9 @@ func TestMaxED(t *testing.T) {
 
 func TestHelpers(t *testing.T) {
 	cfg := config.New()
-	assert.Contains(t, cfg.TrieDir(), "/.cache/gnmatcher/trie")
-	assert.Contains(t, cfg.FiltersDir(), "/.cache/gnmatcher/bloom")
-	assert.Contains(t, cfg.StemsDir(), "/.cache/gnmatcher/stems-kv")
+	assert.Contains(t, cfg.TrieDir(), "/gnmatcher/trie")
+	assert.Contains(t, cfg.FiltersDir(), "/gnmatcher/bloom")
+	assert.Contains(t, cfg.StemsDir(), "/gnmatcher/stems-kv")
 }
 
 func opts() []config.Option {

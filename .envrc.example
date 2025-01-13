@@ -1,0 +1,24 @@
+# Direcory to keep all working files and subdirectories
+export GNM_CACHE_DIR=/var/gnmatcher
+
+# Number of jobs for parallel tasks
+export GNM_JOBS_NUM=4
+
+# Maximal Edit Distance before fuzzy matching aborts.
+# It can be either 1 or 2, 2 is significantly slower.
+export GNM_MAX_EDIT_DIST=1
+
+# Postgresql database
+export GNM_PG_DB=gnames
+
+# Postgresql host for gnames database
+export GNM_PG_HOST=localhost
+
+# Postgresql password
+export GNM_PG_PASS="mypass"
+
+# Postgresql host for gnames database
+export GNM_PG_PORT=5432
+
+# Postgresql user
+export GNM_PG_USER=postgres

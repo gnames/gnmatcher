@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [v1.1.16]: 2025-01-13 Mon
+
+- Add: update modules, make tests compatible with Mac.
+
+## [v1.1.15]: - 2024-11-15 Fri
+
+- Add: update modules.
+
 ## [v1.1.14]: - 2024-11-04 Mon
 
 - Add: version v1.1.14

@@ -2,7 +2,13 @@
 
 ## Unreleased
 
-## [v1.1.16]: 2025-01-13 Mon
+## [v1.1.17]: - 2025-01-29 Wed
+
+Add: update modules.
+Fix: potential nil panic.
+Fix: .envrc example.
+
+## [v1.1.16]: - 2025-01-13 Mon
 
 - Add: update modules, make tests compatible with Mac.
 

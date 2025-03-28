@@ -362,8 +362,15 @@ func TestDataSources(t *testing.T) {
 		itemsNum   int
 		matchTypes []string
 	}{
-		{"no ds", "Narcissus minor minor", []int{}, []int{12, 165, 167, 169}, 1, []string{"Exact"}},
-		{"grin txmy", "Narcissus minor minor", []int{6}, []int{6}, 1, []string{"PartialExact"}},
+		{
+			"no ds",
+			"Narcissus minor minor",
+			[]int{},
+			[]int{6, 12, 165, 167, 169},
+			1,
+			[]string{"Exact"},
+		},
+		{"grin txmy", "Narcissus minor minor", []int{6}, []int{6}, 1, []string{"Exact"}},
 	}
 
 	for _, v := range tests {

@@ -366,7 +366,7 @@ func TestDataSources(t *testing.T) {
 			"no ds",
 			"Narcissus minor minor",
 			[]int{},
-			[]int{6, 12, 165, 167, 169},
+			[]int{6, 12, 165, 167, 169, 194},
 			1,
 			[]string{"Exact"},
 		},

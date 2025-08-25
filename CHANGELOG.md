@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [v1.1.20] - 2026-08-22 Fri
+
+Add: update modules, tests
+
+## [v1.1.19] - 2025-04-01 Tue
+
+Add: update modules
+
 ## [v1.1.18] - 2025-02-25 Tue
 
 Add: update modules

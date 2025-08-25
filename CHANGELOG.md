@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.21] - 2025-08-25 Mon
+
+Fix: version had to be updated
+
 ## [v1.1.20] - 2026-08-22 Fri
 
 Add: update modules, tests
@@ -322,6 +326,13 @@ Fix: .envrc example.
 
 This document follows [changelog guidelines]
 
+[v1.1.21]: https://github.com/gnames/gnmatcher/compare/v1.1.19...v1.1.21
+[v1.1.20]: https://github.com/gnames/gnmatcher/compare/v1.1.19...v1.1.20
+[v1.1.19]: https://github.com/gnames/gnmatcher/compare/v1.1.18...v1.1.19
+[v1.1.18]: https://github.com/gnames/gnmatcher/compare/v1.1.17...v1.1.18
+[v1.1.17]: https://github.com/gnames/gnmatcher/compare/v1.1.16...v1.1.17
+[v1.1.16]: https://github.com/gnames/gnmatcher/compare/v1.1.15...v1.1.16
+[v1.1.15]: https://github.com/gnames/gnmatcher/compare/v1.1.14...v1.1.15
 [v1.1.14]: https://github.com/gnames/gnmatcher/compare/v1.1.13...v1.1.14
 [v1.1.13]: https://github.com/gnames/gnmatcher/compare/v1.1.12...v1.1.13
 [v1.1.12]: https://github.com/gnames/gnmatcher/compare/v1.1.11...v1.1.12
@@ -388,6 +399,7 @@ This document follows [changelog guidelines]
 [v0.2.0]: https://github.com/gnames/gnmatcher/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/gnames/gnmatcher/compare/v0.0.0...v0.1.0
 [v0.0.0]: https://github.com/gnames/gnmatcher/tree/v0.0.0
+
 [#70]: https://github.com/gnames/gnmatcher/issues/70
 [#69]: https://github.com/gnames/gnmatcher/issues/69
 [#68]: https://github.com/gnames/gnmatcher/issues/68

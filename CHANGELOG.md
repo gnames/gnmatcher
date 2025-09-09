@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.22] - 2025-09-09 Tue
+
+Add: update modules, Go 1.25
+
 ## [v1.1.21] - 2025-08-25 Mon
 
 Fix: version had to be updated
@@ -326,6 +330,7 @@ Fix: .envrc example.
 
 This document follows [changelog guidelines]
 
+[v1.1.22]: https://github.com/gnames/gnmatcher/compare/v1.1.20...v1.1.22
 [v1.1.21]: https://github.com/gnames/gnmatcher/compare/v1.1.19...v1.1.21
 [v1.1.20]: https://github.com/gnames/gnmatcher/compare/v1.1.19...v1.1.20
 [v1.1.19]: https://github.com/gnames/gnmatcher/compare/v1.1.18...v1.1.19

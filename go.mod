@@ -8,7 +8,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/gnames/gnfmt v0.6.3
-	github.com/gnames/gnlib v0.51.0
+	github.com/gnames/gnlib v0.52.0
 	github.com/gnames/gnparser v1.11.8
 	github.com/gnames/gnsys v0.3.9
 	github.com/gnames/gnuuid v0.2.0

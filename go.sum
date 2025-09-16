@@ -183,10 +183,6 @@ github.com/gin-gonic/gin v1.1.5-0.20170702092826-d459835d2b07/go.mod h1:7cKuhb5q
 github.com/gnames/gnfmt v0.1.0/go.mod h1:WG9c3CoiVrGc1SDsxLk7zjmv2B4UIzI00m4K5Khc/d0=
 github.com/gnames/gnfmt v0.6.3 h1:nPkobK4ez1jqJ+T9fnrElUVNWS65MbpYaVJOTPy85oQ=
 github.com/gnames/gnfmt v0.6.3/go.mod h1:zNOde0Wjti0bq6TFgIoBsScZO8ZO0dNNfMB1CclRyYk=
-github.com/gnames/gnlib v0.50.0 h1:B9ee2/AyYZc3ASvfruacITNBzP012HK07yh4t838H/E=
-github.com/gnames/gnlib v0.50.0/go.mod h1:b6xRhWgaoWpK0tpotqO/iVsw5w+IVBMwrRPR9XBglL8=
-github.com/gnames/gnlib v0.51.0 h1:t6jNaJHlhUFdxnDEbDwQXnrZn3E+ONt6+3PKd7PJqLY=
-github.com/gnames/gnlib v0.51.0/go.mod h1:b6xRhWgaoWpK0tpotqO/iVsw5w+IVBMwrRPR9XBglL8=
 github.com/gnames/gnlib v0.52.0 h1:3cUAsxleJKQtGyg6b43dhfOAbx5O56LnbIRVHp+HcEM=
 github.com/gnames/gnlib v0.52.0/go.mod h1:pQLYBmiIj7SfBJBWF7KG5pXwRY8n+7/QlHdVuiDVCSQ=
 github.com/gnames/gnparser v1.11.8 h1:wQJft9BJ770Q1yJhRL1C9iXgKIBRwpvE0WgCo1J2Ifk=

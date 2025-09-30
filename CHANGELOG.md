@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.23] - 2025-09-30 Tue
+
+Add: update modules
+
 ## [v1.1.22] - 2025-09-09 Tue
 
 Add: update modules, Go 1.25

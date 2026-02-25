@@ -2,9 +2,14 @@
 
 ## Unreleased
 
+## [v1.1.24] - 2026-02-25 Wed
+
+Add: update modules.
+Add: switch from make to just.
+
 ## [v1.1.23] - 2025-09-30 Tue
 
-Add: update modules
+Add: update modules.
 
 ## [v1.1.22] - 2025-09-09 Tue
 

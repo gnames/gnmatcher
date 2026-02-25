@@ -4,7 +4,7 @@
 app := "gnmatcher"
 org := "github.com/gnames/"
 build_dir := "out/"
-release_dir := build_dir + "releases/"
+release_dir := "/tmp/"
 test_opts := "-parallel=1 -shuffle=on -count=1 -race -coverprofile=coverage.txt -covermode=atomic"
 
 no_c := "CGO_ENABLED=0"

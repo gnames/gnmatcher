@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.25] - 2026-03-03 Tue
+
+Fix [#64] - stop breaking when WithUninomiaFuzzyMatch=true in config.
+
 ## [v1.1.24] - 2026-02-25 Wed
 
 Add: update modules.
@@ -339,6 +343,8 @@ Fix: .envrc example.
 
 This document follows [changelog guidelines]
 
+[v1.1.25]: https://github.com/gnames/gnmatcher/compare/v1.1.24...v1.1.25
+[v1.1.24]: https://github.com/gnames/gnmatcher/compare/v1.1.23...v1.1.24
 [v1.1.22]: https://github.com/gnames/gnmatcher/compare/v1.1.20...v1.1.22
 [v1.1.21]: https://github.com/gnames/gnmatcher/compare/v1.1.19...v1.1.21
 [v1.1.20]: https://github.com/gnames/gnmatcher/compare/v1.1.19...v1.1.20

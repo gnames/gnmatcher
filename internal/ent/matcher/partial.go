@@ -57,7 +57,7 @@ func (m matcher) processPartialGenus(ns nameString) (*mlib.Match, error) {
 			return nil, err
 		}
 		if res == nil || len(res.MatchItems) == 0 {
-			return nil, nil
+			return emptyResult(ns), nil
 		}
 		res.MatchType = fuzzyMatchType
 		for i := range res.MatchItems {

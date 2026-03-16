@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [v1.1.26] - 2026-03-16 Mon
+
+Add: refactor to gnm := gnmatcher.New(cfg) and gnm.Init which makes it
+     more idiomatic and simplifies using gnmatcher as a library by gnames.
+
 ## [v1.1.25] - 2026-03-03 Tue
 
 Fix [#64] - stop breaking when WithUninomiaFuzzyMatch=true in config.

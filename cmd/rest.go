@@ -26,10 +26,7 @@ import (
 	"os"
 
 	"github.com/gnames/gnfmt"
-	"github.com/gnames/gnmatcher/internal/io/bloom"
 	"github.com/gnames/gnmatcher/internal/io/rest"
-	"github.com/gnames/gnmatcher/internal/io/trie"
-	"github.com/gnames/gnmatcher/internal/io/virusio"
 	gnmatcher "github.com/gnames/gnmatcher/pkg"
 	gnmcnf "github.com/gnames/gnmatcher/pkg/config"
 
@@ -51,11 +48,8 @@ as well.`,
 		port, _ := cmd.Flags().GetInt("port")
 
 		cfg := gnmcnf.New(opts...)
-		em := bloom.New(cfg)
-		fm := trie.New(cfg)
-		vm := virusio.New(cfg)
-		gnm, err := gnmatcher.New(em, fm, vm, cfg)
-		if err != nil {
+		gnm := gnmatcher.New(cfg)
+		if err := gnm.Init(); err != nil {
 			slog.Error("Error initializing matcher", "error", err)
 			os.Exit(1)
 		}

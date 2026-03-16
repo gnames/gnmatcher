@@ -3,10 +3,10 @@ package gnmatcher
 import (
 	"github.com/gnames/gnlib/ent/gnvers"
 	mlib "github.com/gnames/gnlib/ent/matcher"
-	"github.com/gnames/gnmatcher/internal/ent/exact"
-	"github.com/gnames/gnmatcher/internal/ent/fuzzy"
 	"github.com/gnames/gnmatcher/internal/ent/matcher"
-	"github.com/gnames/gnmatcher/internal/ent/virus"
+	"github.com/gnames/gnmatcher/internal/io/bloom"
+	"github.com/gnames/gnmatcher/internal/io/trie"
+	"github.com/gnames/gnmatcher/internal/io/virusio"
 	"github.com/gnames/gnmatcher/pkg/config"
 )
 
@@ -16,21 +16,20 @@ type gnmatcher struct {
 	matcher matcher.Matcher
 }
 
-// New is a constructor for GNmatcher interface. It takes two
-// interfaces ExactMatcher and FuzzyMatcher.
-func New(
-	em exact.ExactMatcher,
-	fm fuzzy.FuzzyMatcher,
-	vm virus.VirusMatcher,
-	cfg config.Config,
-) (GNmatcher, error) {
-	gnm := gnmatcher{cfg: cfg}
-	gnm.matcher = matcher.NewMatcher(em, fm, vm, cfg)
-	err := gnm.matcher.Init()
-	if err != nil {
-		return nil, err
+// New creates a GNmatcher from config. It wires internal components but
+// performs no I/O. Call Init() to load caches and connect to the database.
+func New(cfg config.Config) GNmatcher {
+	em := bloom.New(cfg)
+	fm := trie.New(cfg)
+	vm := virusio.New(cfg)
+	return gnmatcher{
+		cfg:     cfg,
+		matcher: matcher.NewMatcher(em, fm, vm, cfg),
 	}
-	return gnm, nil
+}
+
+func (gnm gnmatcher) Init() error {
+	return gnm.matcher.Init()
 }
 
 func (gnm gnmatcher) MatchNames(names []string, opts ...config.Option) mlib.Output {

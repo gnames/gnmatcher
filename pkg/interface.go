@@ -18,6 +18,10 @@ import (
 
 // GNmatcher is a public API to the project functionality.
 type GNmatcher interface {
+	// Init loads data from cache on disk, and, if cache is empty, populates it
+	// from gnames database. Must be called once after New before any matching.
+	Init() error
+
 	// MatchNames takes a slice of scientific name-strings with options and
 	// returns back matches to canonical forms of known scientific names. The
 	// following matches are attempted:

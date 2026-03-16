@@ -104,11 +104,9 @@ package main
 
 import (
   "fmt"
+  "log"
   gnmatcher "github.com/gnames/gnmatcher/pkg"
   "github.com/gnames/gnmatcher/pkg/config"
-  "github.com/gnames/gnmatcher/internal/io/bloom"
-  "github.com/gnames/gnmatcher/internal/io/trie"
-  "github.com/gnames/gnmatcher/internal/io/virusio"
 )
 
 func Example() {
@@ -119,10 +117,11 @@ func Example() {
 	// If data are imported already, it still takes several seconds to
 	// load lookup data into memory.
 	cfg := config.New()
-	em := bloom.New(cfg)
-	fm := trie.New(cfg)
-	vm := virusio.New(cfg)
-	gnm := gnmatcher.New(em, fm, vm, cfg)
+	gnm := gnmatcher.New(cfg)
+	err := gnm.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 	res := gnm.MatchNames([]string{"Pomatomus saltator", "Pardosa moesta"})
 	for _, match := range res.Matches {
 		fmt.Println(match.Name)
@@ -151,6 +150,7 @@ are also environment variables that override configuration file values.
 | ------------------------ | ------------------ |
 | GNM_CACHE_DIR            | CacheDir           |
 | GNM_JOBS_NUM             | JobsNum            |
+| GNM_MAX_EDIT_DIST        | MaxEditDist        |
 | GNM_PG_HOST              | PgHost             |
 | GNM_PG_PORT              | PgPort             |
 | GNM_PG_USER              | PgUser             |

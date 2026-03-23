@@ -1,0 +1,28 @@
+{
+  "title": "gnmatcher: A fast scientific name matching service",
+  "description": "GNmatcher provides fast matching of scientific name-strings against canonical names derived from a variety of biodiversity datasets. It supports exact, partial, and fuzzy matching and is used as a component of the GNames scientific name verification service.",
+  "license": "MIT",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Mozzherin, Dmitry",
+      "affiliation": "Species File Group, University of Illinois",
+      "orcid": "0000-0003-1593-1417"
+    }
+  ],
+  "keywords": [
+    "biodiversity",
+    "taxonomy",
+    "scientific names",
+    "name matching",
+    "fuzzy matching",
+    "Go"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/gnames/gnmatcher",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

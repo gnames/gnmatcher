@@ -2,6 +2,7 @@
 
 [![API](https://img.shields.io/badge/OpenAPI3-1.0.0-89bf04)](https://apidoc.globalnames.org/gnmatcher)
 [![GoDoc](https://godoc.org/github.com/gnames/gnmatcher?status.svg)](https://pkg.go.dev/github.com/gnames/gnmatcher)
+[![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.18777771.svg)][zenodo]
 
 ``import "github.com/gnames/gnmatcher"``
 
@@ -192,3 +193,4 @@ it to the following:
 [GNmatcher]: https://github.com/gnames/gnmatcher
 [GNames]: https://github.com/gnames/gnames
 [GNames API]: https://apidoc.globalnames.org/gnames
+[zenodo]: https://zenodo.org/records/18777771

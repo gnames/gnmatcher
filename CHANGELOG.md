@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v1.1.27] - 2026-05-18 Mon
+
+Add: update modules.
+
 ## [v1.1.26] - 2026-03-16 Mon
 
 Add: refactor to gnm := gnmatcher.New(cfg) and gnm.Init which makes it

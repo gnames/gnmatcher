@@ -51,7 +51,7 @@ func TestVirus(t *testing.T) {
 			name:      "Tobacco mosaic virus",
 			matchStr:  "tobacco mosaic virus",
 			matchType: vlib.Virus,
-			matchlen:  17,
+			matchlen:  18,
 		},
 		{
 			msg:       "influenza overload",

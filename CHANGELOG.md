@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## [v1.1.29] - 2026-10-27 Tue
+
+Fix: names memory allocation for trie.
+
+## [v1.1.28] - 2026-10-26 Mon
+
+Add: update modules, Go v1.27.3.
+Add: update virus test.
+
 ## [v1.1.27] - 2026-05-18 Mon
 
 Add: update modules.
@@ -352,6 +361,10 @@ Fix: .envrc example.
 
 This document follows [changelog guidelines]
 
+[v1.1.29]: https://github.com/gnames/gnmatcher/compare/v1.1.28...v1.1.29
+[v1.1.28]: https://github.com/gnames/gnmatcher/compare/v1.1.27...v1.1.28
+[v1.1.27]: https://github.com/gnames/gnmatcher/compare/v1.1.26...v1.1.27
+[v1.1.26]: https://github.com/gnames/gnmatcher/compare/v1.1.25...v1.1.26
 [v1.1.25]: https://github.com/gnames/gnmatcher/compare/v1.1.24...v1.1.25
 [v1.1.24]: https://github.com/gnames/gnmatcher/compare/v1.1.23...v1.1.24
 [v1.1.22]: https://github.com/gnames/gnmatcher/compare/v1.1.20...v1.1.22

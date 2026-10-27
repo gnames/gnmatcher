@@ -141,7 +141,7 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 	if err != nil {
 		return trie, err
 	}
-	names := make([]string, size)
+	names := make([]string, 0, size)
 
 	var name string
 	q := "SELECT name FROM canonical_stems order by name"

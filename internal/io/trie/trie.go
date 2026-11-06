@@ -5,13 +5,14 @@ package trie
 import (
 	"bytes"
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
 
 	"github.com/dgraph-io/badger/v2"
-	"github.com/dvirsky/levenshtein"
 	"github.com/gnames/gnfmt"
+	flib "github.com/gnames/gnlib/ent/fuzzy"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	"github.com/gnames/gnmatcher/internal/ent/fuzzy"
 	"github.com/gnames/gnmatcher/internal/io/dbase"
@@ -23,7 +24,7 @@ const trieFile = "stem.trie"
 
 type fuzzyMatcher struct {
 	cfg     config.Config
-	trie    *levenshtein.MinTree
+	trie    *flib.Trie
 	kvStems *badger.DB
 	encoder gnfmt.Encoder
 }
@@ -69,11 +70,11 @@ func (fm *fuzzyMatcher) SetConfig(cfg config.Config) {
 }
 
 func (fm *fuzzyMatcher) MatchStem(stem string) []string {
-	return fm.trie.FuzzyMatches(stem, fm.cfg.MaxEditDist)
+	return fm.trie.Matches(stem, fm.cfg.MaxEditDist)
 }
 
 func (fm *fuzzyMatcher) MatchStemExact(stem string) bool {
-	matches := fm.trie.FuzzyMatches(stem, 0)
+	matches := fm.trie.Matches(stem, 0)
 	return len(matches) > 0
 }
 
@@ -98,8 +99,8 @@ func (fm *fuzzyMatcher) StemToMatchItems(
 // getTrie generates an in-memory trie for levenshtein automata. Such tree
 // can either be constructed from database or from a dump file. The tree
 // consists stemmed canonical forms of _gnames_ database.
-func getTrie(triePath string, db *sql.DB) (*levenshtein.MinTree, error) {
-	var trie *levenshtein.MinTree
+func getTrie(triePath string, db *sql.DB) (*flib.Trie, error) {
+	var trie *flib.Trie
 	trie, err := getCachedTrie(triePath)
 	if err == nil {
 		slog.Info("Trie data is rebuilt from cache")
@@ -115,7 +116,7 @@ func getTrie(triePath string, db *sql.DB) (*levenshtein.MinTree, error) {
 }
 
 func getTrieSize(db *sql.DB) (int, error) {
-	q := "SELECT count(*) from canonical_stems"
+	q := fmt.Sprintf("SELECT count(*) FROM (%s) s", dbase.StemIDsSQL)
 	var num int
 	row := db.QueryRow(q)
 	if err := row.Scan(&num); err != nil {
@@ -124,19 +125,19 @@ func getTrieSize(db *sql.DB) (int, error) {
 	return num, nil
 }
 
-func getCachedTrie(triePath string) (*levenshtein.MinTree, error) {
-	var trie *levenshtein.MinTree
+func getCachedTrie(triePath string) (*flib.Trie, error) {
+	var trie *flib.Trie
 	path := filepath.Join(triePath, trieFile)
 	trieFile, err := os.Open(path)
 	if err != nil {
 		return trie, err
 	}
-	return levenshtein.LoadMinTree(trieFile)
+	return flib.LoadTrie(trieFile)
 }
 
-func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, error) {
+func populateAndSaveTrie(db *sql.DB, triePath string) (*flib.Trie, error) {
 	slog.Info("Getting trie data from database")
-	var trie *levenshtein.MinTree
+	var trie *flib.Trie
 	size, err := getTrieSize(db)
 	if err != nil {
 		return trie, err
@@ -144,7 +145,10 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 	names := make([]string, 0, size)
 
 	var name string
-	q := "SELECT name FROM canonical_stems order by name"
+	q := fmt.Sprintf(
+		"SELECT name FROM canonical_stems WHERE id IN (%s) ORDER BY name",
+		dbase.StemIDsSQL,
+	)
 	rows, err := db.Query(q)
 	if err != nil {
 		return trie, err
@@ -162,7 +166,7 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*levenshtein.MinTree, err
 	if err != nil {
 		return trie, err
 	}
-	trie, err = levenshtein.NewMinTreeWrite(names, w)
+	trie, err = flib.NewTrieWrite(names, w)
 	if err != nil {
 		return trie, err
 	}

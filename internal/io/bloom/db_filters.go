@@ -17,7 +17,7 @@ func (em *exactMatcher) filtersFromDB(path string) error {
 	}
 
 	slog.Info("Importing lookup data for stemmed canonicals")
-	cFilter, cSize, err := createFilter(db, "canonical_stems")
+	cFilter, cSize, err := createFilter(db)
 	if err != nil {
 		return err
 	}
@@ -31,20 +31,19 @@ func (em *exactMatcher) filtersFromDB(path string) error {
 
 func createFilter(
 	db *sql.DB,
-	table string,
 ) (*baseBloomfilter.Bloomfilter, uint, error) {
 	var err error
 	var nilFilter *baseBloomfilter.Bloomfilter
 
-	size, err := getFilterSize(db, table)
+	size, err := getFilterSize(db)
 	if err != nil {
 		return nilFilter, 0, err
 	}
-	return newFilter(db, table, size)
+	return newFilter(db, size)
 }
 
-func getFilterSize(db *sql.DB, table string) (uint, error) {
-	q := fmt.Sprintf("SELECT COUNT(*) FROM %s", table)
+func getFilterSize(db *sql.DB) (uint, error) {
+	q := fmt.Sprintf("SELECT COUNT(*) FROM (%s) s", dbase.StemIDsSQL)
 	var num uint
 	row := db.QueryRow(q)
 	if err := row.Scan(&num); err != nil {
@@ -55,7 +54,6 @@ func getFilterSize(db *sql.DB, table string) (uint, error) {
 
 func newFilter(
 	db *sql.DB,
-	table string,
 	filterSize uint,
 ) (*baseBloomfilter.Bloomfilter, uint, error) {
 	var uuid string
@@ -66,9 +64,7 @@ func newFilter(
 	}
 	bf := baseBloomfilter.New(cfg)
 
-	q := fmt.Sprintf("SELECT id FROM %s", table)
-
-	rows, err := db.Query(q)
+	rows, err := db.Query(dbase.StemIDsSQL)
 	if err != nil {
 		return bf, filterSize, err
 	}

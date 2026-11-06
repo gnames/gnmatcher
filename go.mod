@@ -6,13 +6,11 @@ require (
 	github.com/devopsfaith/bloomfilter v1.4.0
 	github.com/dgraph-io/badger/v2 v2.2007.4
 	github.com/dustin/go-humanize v1.1.0
-	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8
 	github.com/gnames/gnfmt v0.6.5
 	github.com/gnames/gnlib v0.71.0
 	github.com/gnames/gnparser v1.15.2
 	github.com/gnames/gnsys v0.4.4
 	github.com/gnames/gnuuid v0.2.0
-	github.com/gnames/levenshtein v0.4.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.16.2
 	github.com/mitchellh/go-homedir v1.1.0
@@ -33,9 +31,11 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgraph-io/ristretto v0.2.0 // indirect
 	github.com/dgryski/go-farm v0.0.0-20240924180020-3414d57e47da // indirect
+	github.com/dvirsky/levenshtein v0.0.0-20200624034316-59b26b61c3c8 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/gnames/gnstats v0.2.3 // indirect
+	github.com/gnames/levenshtein v0.4.0 // indirect
 	github.com/gnames/organizer v0.1.1 // indirect
 	github.com/gnames/tribool v0.1.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
@@ -87,3 +87,5 @@ tool (
 	github.com/spf13/cobra-cli
 	golang.org/x/perf/cmd/benchstat
 )
+
+replace github.com/gnames/gnlib => ../gnlib

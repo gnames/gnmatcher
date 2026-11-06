@@ -185,8 +185,6 @@ github.com/gin-gonic/gin v1.1.5-0.20170702092826-d459835d2b07/go.mod h1:7cKuhb5q
 github.com/gnames/gnfmt v0.1.0/go.mod h1:WG9c3CoiVrGc1SDsxLk7zjmv2B4UIzI00m4K5Khc/d0=
 github.com/gnames/gnfmt v0.6.5 h1:p6mw/Dcub7g2i3gbiEV3X5aVvO0X4XUODkwsX7YQ72c=
 github.com/gnames/gnfmt v0.6.5/go.mod h1:VL7mM0BzryW5+8D9tvZ56ZnvZsGf4Vum8u7U3GuBXcY=
-github.com/gnames/gnlib v0.71.0 h1:bdCK/GqpnrwZLqmpqt7okxFYKotz+E0Q/W1JcvNTb3s=
-github.com/gnames/gnlib v0.71.0/go.mod h1:7/Tvt8pSomW08dnCqGkReSUr5/l5AttcMSWqmYldMOo=
 github.com/gnames/gnparser v1.15.2 h1:BTNMFRBW4QuDw3NbT+pMmfxK+7pceUJAXkn+3oHJscM=
 github.com/gnames/gnparser v1.15.2/go.mod h1:NBrwLLC8upETOn+JGDpFWw2sJQj3eD7PeOrjtKyWaEY=
 github.com/gnames/gnstats v0.2.3 h1:l7Ujgyy+E0r+GTqNUu0hgj1cxke1eJNry/h4vaCSyn4=

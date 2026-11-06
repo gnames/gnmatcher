@@ -1,9 +1,9 @@
 package matcher
 
 import (
+	"github.com/gnames/gnlib/ent/fuzzy"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnmatcher/internal/ent/fuzzy"
 )
 
 func (m matcher) matchStem(ns nameString) (*mlib.Match, error) {

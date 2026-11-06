@@ -1,9 +1,9 @@
 package matcher
 
 import (
+	"github.com/gnames/gnlib/ent/fuzzy"
 	mlib "github.com/gnames/gnlib/ent/matcher"
 	vlib "github.com/gnames/gnlib/ent/verifier"
-	"github.com/gnames/gnmatcher/internal/ent/fuzzy"
 	"github.com/gnames/gnparser"
 	"github.com/gnames/gnparser/ent/stemmer"
 	"github.com/gnames/gnuuid"

@@ -39,6 +39,7 @@ func initStemsKV(path string, db *sql.DB) error {
               ON ns.canonical_id = c.id
             JOIN name_string_indices nsi
               ON ns.id = nsi.name_string_id
+          WHERE NOT c.maybe_misspelling
         GROUP BY c.name, c.id, s.name, nsi.data_source_id
           ORDER BY name_stem`
 

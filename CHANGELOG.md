@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+Add: skip canonical forms with the `maybe_misspelling` flag, so misspelled
+ION names do not block fuzzy matching. It requires a database created by a
+gndb version that has this column, and a rebuild of the cache directory.
+
+Add: use edit distance and trie from gnlib.
+
 ## [v1.1.29] - 2026-10-27 Tue
 
 Fix: names memory allocation for trie.

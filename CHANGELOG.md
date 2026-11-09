@@ -1,12 +1,12 @@
 # Changelog
 
-## Unreleased
+## [v1.2.0] - 2026-11-09 Mon
 
 Add: skip canonical forms with the `maybe_misspelling` flag, so misspelled
 ION names do not block fuzzy matching. It requires a database created by a
 gndb version that has this column, and a rebuild of the cache directory.
-
 Add: use edit distance and trie from gnlib.
+Add: use released gnlib v0.72.0, update modules.
 
 ## [v1.1.29] - 2026-10-27 Tue
 
@@ -367,6 +367,7 @@ Fix: .envrc example.
 
 This document follows [changelog guidelines]
 
+[v1.2.0]: https://github.com/gnames/gnmatcher/compare/v1.1.29...v1.2.0
 [v1.1.29]: https://github.com/gnames/gnmatcher/compare/v1.1.28...v1.1.29
 [v1.1.28]: https://github.com/gnames/gnmatcher/compare/v1.1.27...v1.1.28
 [v1.1.27]: https://github.com/gnames/gnmatcher/compare/v1.1.26...v1.1.27

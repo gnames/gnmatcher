@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [v1.2.1] - 2026-11-10 Tue
 
 Fix: slow start. Read the `all_canonicals_misspelled` flag of
 `canonical_stems` instead of joining `name_strings` and `canonicals` for bloom filters and trie.
@@ -374,6 +374,7 @@ Fix: .envrc example.
 
 This document follows [changelog guidelines]
 
+[v1.2.1]: https://github.com/gnames/gnmatcher/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/gnames/gnmatcher/compare/v1.1.29...v1.2.0
 [v1.1.29]: https://github.com/gnames/gnmatcher/compare/v1.1.28...v1.1.29
 [v1.1.28]: https://github.com/gnames/gnmatcher/compare/v1.1.27...v1.1.28

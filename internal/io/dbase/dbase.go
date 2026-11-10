@@ -12,17 +12,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// StemIDsSQL selects IDs of stems that have at least one canonical form
-// without the maybe_misspelling flag. Other stems are hidden from matching,
-// otherwise a misspelling matches itself exactly, and fuzzy matching to the
-// correct name never runs. gndb computes the flag, so the database has to be
-// created by a version of gndb that has this column.
-const StemIDsSQL = `
-SELECT DISTINCT ns.canonical_stem_id
-FROM name_strings ns
-JOIN canonicals c ON c.id = ns.canonical_id
-WHERE ns.canonical_stem_id IS NOT NULL AND NOT c.maybe_misspelling`
-
 // NewDB creates a new instance of sql.DB using configuration data.
 func NewDB(cfg config.Config) (*sql.DB, error) {
 	db, err := sql.Open("postgres", dbUrl(cfg))

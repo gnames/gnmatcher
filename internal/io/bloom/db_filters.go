@@ -2,7 +2,6 @@ package bloom
 
 import (
 	"database/sql"
-	"fmt"
 	"log/slog"
 
 	"github.com/devopsfaith/bloomfilter"
@@ -43,7 +42,8 @@ func createFilter(
 }
 
 func getFilterSize(db *sql.DB) (uint, error) {
-	q := fmt.Sprintf("SELECT COUNT(*) FROM (%s) s", dbase.StemIDsSQL)
+	q := "SELECT COUNT(*) FROM canonical_stems " +
+		"WHERE NOT all_canonicals_misspelled"
 	var num uint
 	row := db.QueryRow(q)
 	if err := row.Scan(&num); err != nil {
@@ -64,7 +64,12 @@ func newFilter(
 	}
 	bf := baseBloomfilter.New(cfg)
 
-	rows, err := db.Query(dbase.StemIDsSQL)
+	// Stems flagged by gndb are hidden from matching, otherwise a misspelling
+	// matches itself exactly, and fuzzy matching to the correct name never
+	// runs.
+	rows, err := db.Query(
+		"SELECT id FROM canonical_stems WHERE NOT all_canonicals_misspelled",
+	)
 	if err != nil {
 		return bf, filterSize, err
 	}

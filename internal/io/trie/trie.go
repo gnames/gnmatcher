@@ -5,7 +5,6 @@ package trie
 import (
 	"bytes"
 	"database/sql"
-	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -116,7 +115,8 @@ func getTrie(triePath string, db *sql.DB) (*flib.Trie, error) {
 }
 
 func getTrieSize(db *sql.DB) (int, error) {
-	q := fmt.Sprintf("SELECT count(*) FROM (%s) s", dbase.StemIDsSQL)
+	q := "SELECT count(*) FROM canonical_stems " +
+		"WHERE NOT all_canonicals_misspelled"
 	var num int
 	row := db.QueryRow(q)
 	if err := row.Scan(&num); err != nil {
@@ -145,10 +145,8 @@ func populateAndSaveTrie(db *sql.DB, triePath string) (*flib.Trie, error) {
 	names := make([]string, 0, size)
 
 	var name string
-	q := fmt.Sprintf(
-		"SELECT name FROM canonical_stems WHERE id IN (%s) ORDER BY name",
-		dbase.StemIDsSQL,
-	)
+	q := "SELECT name FROM canonical_stems " +
+		"WHERE NOT all_canonicals_misspelled ORDER BY name"
 	rows, err := db.Query(q)
 	if err != nil {
 		return trie, err

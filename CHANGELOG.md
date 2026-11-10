@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+Fix: slow start. Read the `all_canonicals_misspelled` flag of
+`canonical_stems` instead of joining `name_strings` and `canonicals` for bloom filters and trie.
+It requires a database with this column, created or migrated by the
+current gndb.
+
 ## [v1.2.0] - 2026-11-09 Mon
 
 Add: skip canonical forms with the `maybe_misspelling` flag, so misspelled
